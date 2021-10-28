@@ -6,6 +6,7 @@ import (
 	"github.com/mongorpc/mongorpc/proto"
 )
 
+// Get document by id from collection in database
 func (srv *MongoRPCServer) GetDocument(ctx context.Context, in *proto.GetDocumentRequest) (*proto.GetDocumentResponse, error) {
 
 	// Get document
@@ -19,6 +20,8 @@ func (srv *MongoRPCServer) GetDocument(ctx context.Context, in *proto.GetDocumen
 		// Document: doc,
 	}, nil
 }
+
+// List documents from collection in database
 func (srv *MongoRPCServer) ListDocuments(ctx context.Context, in *proto.ListDocumentsRequest) (*proto.ListDocumentsResponse, error) {
 
 	// Get documents
@@ -32,6 +35,8 @@ func (srv *MongoRPCServer) ListDocuments(ctx context.Context, in *proto.ListDocu
 		// Documents: docs,
 	}, nil
 }
+
+// Create document in collection in database
 func (srv *MongoRPCServer) CreateDocument(ctx context.Context, in *proto.CreateDocumentRequest) (*proto.CreateDocumentResponse, error) {
 
 	// Create document
@@ -45,6 +50,8 @@ func (srv *MongoRPCServer) CreateDocument(ctx context.Context, in *proto.CreateD
 		// Document: doc,
 	}, nil
 }
+
+// Update document in collection in database
 func (srv *MongoRPCServer) UpdateDocument(ctx context.Context, in *proto.UpdateDocumentRequest) (*proto.UpdateDocumentResponse, error) {
 
 	// Update document
@@ -58,14 +65,18 @@ func (srv *MongoRPCServer) UpdateDocument(ctx context.Context, in *proto.UpdateD
 		// Document: doc,
 	}, nil
 }
+
+// Delete document from collection in database
 func (srv *MongoRPCServer) DeleteDocument(ctx context.Context, in *proto.DeleteDocumentRequest) (*proto.DeleteDocumentResponse, error) {
 
 	// Delete document
-	// err := deleteDocument(in.Collection, in.Id)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	res, err := srv.DB.Database(in.Collection).Collection(in.Collection).DeleteOne(ctx, in.DocumentId)
+	if err != nil {
+		return nil, err
+	}
 
 	// Return document
-	return &proto.DeleteDocumentResponse{}, nil
+	return &proto.DeleteDocumentResponse{
+		DeletedCount: res.DeletedCount,
+	}, nil
 }
