@@ -5,6 +5,7 @@ import (
 	"net"
 	"time"
 
+	"github.com/mongorpc/mongorpc"
 	pb "github.com/mongorpc/mongorpc/proto"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -16,17 +17,12 @@ const (
 	port = ":50051"
 )
 
-type MongoRPCServer struct {
-	pb.UnimplementedMongoRPCServer
-	client *mongo.Client
-}
-
 func main() {
 	// connect to mongodb
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://localhost:2707"))
+	database, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://localhost:2707"))
 	if err != nil {
 		logrus.Fatalf("failed to Connect: %v", err)
 	}
@@ -37,10 +33,10 @@ func main() {
 		logrus.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterMongoRPCServer(s, &MongoRPCServer{
-		client: client,
+	pb.RegisterMongoRPCServer(s, &mongorpc.MongoRPCServer{
+		DB: database,
 	})
-	logrus.Printf("server listening at %v", lis.Addr())
+	logrus.Printf("mongorpc server is listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		logrus.Fatalf("failed to serve: %v", err)
 	}
