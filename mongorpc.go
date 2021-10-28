@@ -1,8 +1,6 @@
 package mongorpc
 
 import (
-	"fmt"
-
 	pb "github.com/mongorpc/mongorpc/proto"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -16,12 +14,11 @@ type MongoRPCServer struct {
 func parseJSON(json map[string]interface{}) map[string]*pb.Value {
 	res := map[string]*pb.Value{}
 	for k, v := range json {
-
 		switch value := v.(type) {
 		case nil:
 			res[k] = &pb.Value{
 				ValueType: &pb.Value_NullValue{
-					// TODO: Assign something to null value
+					NullValue: pb.NullValue_NULL_VALUE,
 				},
 			}
 		case bool:
@@ -83,8 +80,6 @@ func parseJSON(json map[string]interface{}) map[string]*pb.Value {
 				},
 			}
 		default:
-			fmt.Println(value)
-			//check for timestamp
 			logrus.Println("UNKNOWN TYPE: ", value)
 		}
 	}
@@ -95,14 +90,11 @@ func parseJSON(json map[string]interface{}) map[string]*pb.Value {
 func parseArray(array []interface{}) []*pb.Value {
 	res := []*pb.Value{}
 	for _, v := range array {
-		// xType := fmt.Sprintf("%T", v)
-		// fmt.Println(xType)
 		switch value := v.(type) {
-
 		case nil:
 			res = append(res, &pb.Value{
 				ValueType: &pb.Value_NullValue{
-					// TODO: Assign something to null value
+					NullValue: pb.NullValue_NULL_VALUE,
 				},
 			})
 		case bool:
@@ -164,7 +156,6 @@ func parseArray(array []interface{}) []*pb.Value {
 				},
 			})
 		default:
-			//check for timestamp
 			logrus.Println("UNKNOWN TYPE: ", value)
 		}
 	}
