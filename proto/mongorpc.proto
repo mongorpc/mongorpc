@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC
+// Copyright 2021 MongoRPC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,35 +18,50 @@ package mongorpc;
 
 option go_package = "github.com/mongorpc/mongorpc/proto";
 
+// Null is a special type that is used to represent a null value in a MongoDB
 enum Null {
   NULL_VALUE = 0;
 }
 
+// Array is a special type that is used to represent an array value in a MongoDB
 message Array {
   repeated Value values = 1;
 }
 
+// Map is a special type that is used to represent a map value in a MongoDB
 message Map {
   map<string, Value> fields = 1;
 }
 
+// Timestamp is a special type that is used to represent a timestamp value in a MongoDB
 message Timestamp {
   int64 seconds = 1;
   int32 nanos = 2;
 }
 
+// Value is a special type that is used to represent a value in a MongoDB
 message Value {
   oneof type {
+    // double represents a double value in a MongoDB
     double double_value = 1;
+    // string represents a string value in a MongoDB
     string string_value = 2;
+    // Map represents a map value in a MongoDB
     Map map_value = 3;
+    // Array represents an array value in a MongoDB
     Array array_value = 4;
+    // Bytes represents a bytes value in a MongoDB
     bytes bytes_value = 5;
+    // Boolean represents a boolean value in a MongoDB
+    bool bool_value = 8;
+    // Timestamp represents a timestamp value in a MongoDB
+    Timestamp date_value = 9;
+    // Null represents a null value in a MongoDB
+    Null null_value = 10;
+    // integer represents an integer value in a MongoDB
+    int64 integer_value = 23;
     //undefined = 6;
     // ObjectId object_id_value = 7;
-    bool bool_value = 8;
-    Timestamp date_value = 9;
-    Null null_value = 10;
     //regex regex_value = 11;
     //dbPointer db_pointer_value = 12;
     //code code_value = 13;
@@ -59,75 +74,118 @@ message Value {
     //int64 timestamp_value = 20;
     //minKey min_key_value = 21;
     //maxKey max_key_value = 22;
-    int64 integer_value = 23;
+
   }
 }
 
+// ListCollectionsRequest is a special type that is used to represent a list collections request in a MongoDB
 message ListCollectionsRequest {
+  // Database name
   string database = 1;
 }
 
+// ListCollectionsResponse is a special type that is used to represent a list collections response in a MongoDB
 message ListCollectionsResponse {
+  // Array of collection names
   Array collections = 1;
 }
 
+// GetCollectionRequest is a special type that is used to represent a get collection request in a MongoDB
 message GetDocumentRequest {
+  // The database to query
   string database = 1;
+  // The collection to query
   string collection = 2;
+  // The document to query
   string document_id = 3;
 }
 
+// GetDocumentResponse is a special type that is used to represent a get document response in a MongoDB
 message GetDocumentResponse {
+  // Document Value
   Value document = 1;
 }
 
+// ListDocumentsRequest is a special type that is used to represent a list documents request in a MongoDB
 message ListDocumentsRequest {
+  // The database to query
   string database = 1;
+  // The collection to query
   string collection = 2;
+  // Limit the number of documents returned
   int32 limit = 3;
+  // Skip the first n documents
   int32 skip = 4;
 }
 
+// ListDocumentsResponse is a special type that is used to represent a list documents response in a MongoDB
 message ListDocumentsResponse {
+  // Array of documents
   Array documents = 1;
 }
 
+// InsertDocumentRequest is a special type that is used to represent a insert document request in a MongoDB
 message CreateDocumentRequest {
+  // The database to insert the document into
   string database = 1;
+  // The collection to insert the document into
   string collection = 2;
+  // The document to insert
   Value document = 3;
 }
 
+// InsertDocumentResponse is a special type that is used to represent a insert document response in a MongoDB
 message CreateDocumentResponse {
+  // document id
   string document_id = 1;
 }
 
+// UpdateDocumentRequest is a special type that is used to represent a update document request in a MongoDB
 message UpdateDocumentRequest {
+  // The database to use
   string database = 1;
+  // The collection to use
   string collection = 2;
+  // The document to update
   string document_id = 3;
+  // Document Values
   Value document = 4;
 }
 
+// UpdateDocumentResponse is a special type that is used to represent a update document response in a MongoDB
 message UpdateDocumentResponse {
+  // Document ID of the updated document
   string document_id = 1;
 }
 
+// DeleteDocumentRequest is a special type that is used to represent a delete document request in a MongoDB
 message DeleteDocumentRequest {
+  // database name
   string database = 1;
+  // collection name
   string collection = 2;
+  // document id
   string document_id = 3;
 }
 
+// DeleteDocumentResponse is a special type that is used to represent a delete document response in a MongoDB
 message DeleteDocumentResponse {
+  // Deleted Document Count
   int64 DeletedCount = 1;
 }
 
+// MongoRPC
 service MongoRPC {
+  // ListCollections lists the collections in a database.
   rpc ListCollections(ListCollectionsRequest) returns (ListCollectionsResponse);
+  // GetDocument gets a document from a collection.
   rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
+  // ListDocuments lists the documents in a collection.
   rpc ListDocuments(ListDocumentsRequest) returns (ListDocumentsResponse);
+  // CreateDocument creates a document in a collection.
   rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse);
+  // UpdateDocument updates a document in a collection.
   rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
+  // DeleteDocument deletes a document from a collection.
   rpc DeleteDocument(DeleteDocumentRequest) returns (DeleteDocumentResponse);
 }
