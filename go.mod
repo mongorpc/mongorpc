@@ -3,6 +3,7 @@ module github.com/mongorpc/mongorpc
 go 1.17
 
 require (
+	github.com/sirupsen/logrus v1.4.2
 	go.mongodb.org/mongo-driver v1.7.3
 	google.golang.org/grpc v1.41.0
 	google.golang.org/protobuf v1.27.1
@@ -13,6 +14,7 @@ require (
 	github.com/golang/protobuf v1.5.0 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
+	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.0.2 // indirect
