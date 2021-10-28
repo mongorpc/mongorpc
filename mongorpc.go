@@ -28,41 +28,41 @@ func EncodeMap(m map[string]interface{}) *proto.Map {
 				},
 			}
 		} else {
-			switch v.(type) {
+			switch value := v.(type) {
 			case int:
 				result[k] = &proto.Value{
 					Type: &proto.Value_IntegerValue{
-						IntegerValue: int64(v.(int)),
+						IntegerValue: int64(value),
 					},
 				}
 			case string:
 				result[k] = &proto.Value{
 					Type: &proto.Value_StringValue{
-						StringValue: v.(string),
+						StringValue: value,
 					},
 				}
 			case bool:
 				result[k] = &proto.Value{
 					Type: &proto.Value_BoolValue{
-						BoolValue: v.(bool),
+						BoolValue: value,
 					},
 				}
 			case float64:
 				result[k] = &proto.Value{
 					Type: &proto.Value_DoubleValue{
-						DoubleValue: v.(float64),
+						DoubleValue: value,
 					},
 				}
 			case []interface{}:
 				result[k] = &proto.Value{
 					Type: &proto.Value_ArrayValue{
-						ArrayValue: EncodeArray(v.([]interface{})),
+						ArrayValue: EncodeArray(value),
 					},
 				}
 			case map[string]interface{}:
 				result[k] = &proto.Value{
 					Type: &proto.Value_MapValue{
-						MapValue: EncodeMap(v.(map[string]interface{})),
+						MapValue: EncodeMap(value),
 					},
 				}
 			}
@@ -83,41 +83,41 @@ func EncodeArray(arr []interface{}) *proto.Array {
 				},
 			})
 		} else {
-			switch v.(type) {
+			switch value := v.(type) {
 			case int:
 				result = append(result, &proto.Value{
 					Type: &proto.Value_IntegerValue{
-						IntegerValue: int64(v.(int)),
+						IntegerValue: int64(value),
 					},
 				})
 			case string:
 				result = append(result, &proto.Value{
 					Type: &proto.Value_StringValue{
-						StringValue: v.(string),
+						StringValue: value,
 					},
 				})
 			case bool:
 				result = append(result, &proto.Value{
 					Type: &proto.Value_BoolValue{
-						BoolValue: v.(bool),
+						BoolValue: value,
 					},
 				})
 			case float64:
 				result = append(result, &proto.Value{
 					Type: &proto.Value_DoubleValue{
-						DoubleValue: v.(float64),
+						DoubleValue: value,
 					},
 				})
 			case []interface{}:
 				result = append(result, &proto.Value{
 					Type: &proto.Value_ArrayValue{
-						ArrayValue: EncodeArray(v.([]interface{})),
+						ArrayValue: EncodeArray(value),
 					},
 				})
 			case map[string]interface{}:
 				result = append(result, &proto.Value{
 					Type: &proto.Value_MapValue{
-						MapValue: EncodeMap(v.(map[string]interface{})),
+						MapValue: EncodeMap(value),
 					},
 				})
 			}
