@@ -15,28 +15,35 @@ func (server *MongoRPCServer) ListCollections(ctx context.Context, in *proto.Lis
 	if err != nil {
 		return nil, err
 	}
-	defer cur.Close(ctx)
-	var jsonDocument map[string]interface{}
+
+	var results bson.A
 	for cur.Next(ctx) {
 		var result bson.D
 		err := cur.Decode(&result)
 		if err != nil {
 			return nil, err
 		}
-
-		temporaryBytes, err := bson.MarshalExtJSON(result, true, true)
-		if err != nil {
-			return nil, err
-		}
-		err = json.Unmarshal(temporaryBytes, &jsonDocument)
-		if err != nil {
-			return nil, err
-		}
+		results = append(results, result)
 	}
 	if err := cur.Err(); err != nil {
 		return nil, err
 	}
+	defer cur.Close(ctx)
+
+	temporaryBytes, err := json.Marshal(results)
+	if err != nil {
+		logrus.Error(err)
+		return nil, err
+	}
+	var jsonDocuments []interface{}
+	err = json.Unmarshal(temporaryBytes, &jsonDocuments)
+	if err != nil {
+		return nil, err
+	}
+
 	return &proto.ListCollectionsResponse{
-		Fields: parseJSON(jsonDocument),
+		Collections: &proto.ArrayValue{
+			Values: ArrayToValue(jsonDocuments),
+		},
 	}, err
 }

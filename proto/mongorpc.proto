@@ -117,7 +117,7 @@ message ListCollectionsRequest {
 }
 
 message ListCollectionsResponse {
-  map<string, Value> fields = 1;
+  ArrayValue collections = 1;
 }
 
 service MongoRPC {
