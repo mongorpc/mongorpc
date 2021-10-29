@@ -6,4 +6,7 @@ enabled = true
 
   [analyzers.meta]
   import_root = "github.com/mongorpc/mongorpc"
-  dependencies_vendored = false
+
+[[transformers]]
+name = "gofmt"
+enabled = true
