@@ -43,18 +43,17 @@ func main() {
 		mongorpc: c,
 	}
 
-	e.listCollections()
-	e.listDocuments()
-	e.getDocument()
-	e.createDocument()
+	e.ListCollections()
+	e.ListDocuments()
+	e.DocumentByID()
+	e.CreateDocument()
 
 	// update document
 	// updateDocument(movie, data, err, result, c, ctx, insertResp)
-
 }
 
 // list all collections
-func (c *ExampleClient) listCollections() {
+func (c *ExampleClient) ListCollections() {
 	r, err := c.mongorpc.ListCollections(c.ctx, &proto.ListCollectionsRequest{
 		Database: "sample_mflix",
 	})
@@ -65,7 +64,7 @@ func (c *ExampleClient) listCollections() {
 }
 
 // get document
-func (c *ExampleClient) getDocument() {
+func (c *ExampleClient) DocumentByID() {
 	doc, err := c.mongorpc.GetDocument(c.ctx, &proto.GetDocumentRequest{
 		Database:   "sample_mflix",
 		Collection: "movies",
@@ -78,7 +77,7 @@ func (c *ExampleClient) getDocument() {
 }
 
 // list all documents
-func (c *ExampleClient) listDocuments() {
+func (c *ExampleClient) ListDocuments() {
 	documents, err := c.mongorpc.ListDocuments(c.ctx, &proto.ListDocumentsRequest{
 		Database:   "sample_mflix",
 		Collection: "movies",
@@ -91,7 +90,7 @@ func (c *ExampleClient) listDocuments() {
 }
 
 // create document
-func (c *ExampleClient) createDocument() {
+func (c *ExampleClient) CreateDocument() {
 
 	// Movie document
 	movie := Movie{
