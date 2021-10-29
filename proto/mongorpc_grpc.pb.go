@@ -18,11 +18,17 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MongoRPCClient interface {
+	// ListCollections lists the collections in a database.
 	ListCollections(ctx context.Context, in *ListCollectionsRequest, opts ...grpc.CallOption) (*ListCollectionsResponse, error)
+	// GetDocument gets a document from a collection.
 	GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error)
+	// ListDocuments lists the documents in a collection.
 	ListDocuments(ctx context.Context, in *ListDocumentsRequest, opts ...grpc.CallOption) (*ListDocumentsResponse, error)
+	// CreateDocument creates a document in a collection.
 	CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error)
+	// UpdateDocument updates a document in a collection.
 	UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*UpdateDocumentResponse, error)
+	// DeleteDocument deletes a document from a collection.
 	DeleteDocument(ctx context.Context, in *DeleteDocumentRequest, opts ...grpc.CallOption) (*DeleteDocumentResponse, error)
 }
 
@@ -92,11 +98,17 @@ func (c *mongoRPCClient) DeleteDocument(ctx context.Context, in *DeleteDocumentR
 // All implementations must embed UnimplementedMongoRPCServer
 // for forward compatibility
 type MongoRPCServer interface {
+	// ListCollections lists the collections in a database.
 	ListCollections(context.Context, *ListCollectionsRequest) (*ListCollectionsResponse, error)
+	// GetDocument gets a document from a collection.
 	GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error)
+	// ListDocuments lists the documents in a collection.
 	ListDocuments(context.Context, *ListDocumentsRequest) (*ListDocumentsResponse, error)
+	// CreateDocument creates a document in a collection.
 	CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error)
+	// UpdateDocument updates a document in a collection.
 	UpdateDocument(context.Context, *UpdateDocumentRequest) (*UpdateDocumentResponse, error)
+	// DeleteDocument deletes a document from a collection.
 	DeleteDocument(context.Context, *DeleteDocumentRequest) (*DeleteDocumentResponse, error)
 	mustEmbedUnimplementedMongoRPCServer()
 }

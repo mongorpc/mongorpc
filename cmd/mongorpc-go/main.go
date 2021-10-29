@@ -2,8 +2,11 @@ package main
 
 import (
 	"context"
+	"encoding/json"
+	"math/rand"
 	"time"
 
+	"github.com/mongorpc/mongorpc"
 	"github.com/mongorpc/mongorpc/proto"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -37,4 +40,123 @@ func main() {
 		logrus.Fatalf("could not get collection: %v", err)
 	}
 	logrus.Printf("Collection: %s", r.Collections)
+
+	// get document
+	doc, err := c.GetDocument(ctx, &proto.GetDocumentRequest{
+		Database:   "sample_mflix",
+		Collection: "movies",
+		DocumentId: "573a1390f29313caabcd4135",
+	})
+	if err != nil {
+		logrus.Fatalf("could not get document: %v", err)
+	}
+	logrus.Printf("Document: %s", doc.Document)
+
+	// list documents
+	documents, err := c.ListDocuments(ctx, &proto.ListDocumentsRequest{
+		Database:   "sample_mflix",
+		Collection: "movies",
+		Limit:      1,
+	}, grpc.MaxCallRecvMsgSize(1024*1024*1024))
+	if err != nil {
+		logrus.Fatalf("could not get documents: %v", err)
+	}
+	logrus.Printf("Documents: %s", documents.Documents)
+
+	movie := Movie{
+		Title: "The Shawshank Redemption",
+		Year:  "1994",
+	}
+
+	var result map[string]interface{}
+
+	data, err := json.Marshal(movie)
+	if err != nil {
+		logrus.Fatalf("could not marshal movie: %v", err)
+	}
+
+	err = json.Unmarshal(data, &result)
+	if err != nil {
+		logrus.Fatalf("could not unmarshal movie: %v", err)
+	}
+
+	// create document
+	insertResp, err := c.CreateDocument(ctx, &proto.CreateDocumentRequest{
+		Database:   "sample_mflix",
+		Collection: "moviesx",
+		Document: &proto.Value{
+			Type: &proto.Value_MapValue{
+				MapValue: mongorpc.EncodeMap(result),
+			},
+		},
+	})
+	if err != nil {
+		logrus.Fatalf("could not create document: %v", err)
+	}
+	logrus.Printf("Document: %s", insertResp.DocumentId)
+
+	// update document
+	movie.Title = randomMovieTitle()
+	movie.Year = "1972"
+	data, err = json.Marshal(movie)
+	if err != nil {
+		logrus.Fatalf("could not marshal movie: %v", err)
+	}
+
+	err = json.Unmarshal(data, &result)
+	if err != nil {
+		logrus.Fatalf("could not unmarshal movie: %v", err)
+	}
+
+	updateResp, err := c.UpdateDocument(ctx, &proto.UpdateDocumentRequest{
+		Database:   "sample_mflix",
+		Collection: "moviesx",
+		DocumentId: insertResp.DocumentId,
+		Document: &proto.Value{
+			Type: &proto.Value_MapValue{
+				MapValue: mongorpc.EncodeMap(result),
+			},
+		},
+	})
+	if err != nil {
+		logrus.Fatalf("could not update document: %v", err)
+	}
+	logrus.Printf("Document: %s", updateResp)
+
+}
+
+type Movie struct {
+	Title string `json:"name"`
+	Year  string `json:"year"`
+}
+
+func randomMovieTitle() string {
+	movies := []string{
+		"The Shawshank Redemption",
+		"The Godfather",
+		"The Godfather: Part II",
+		"The Dark Knight",
+		"12 Angry",
+		"Schindler's List",
+		"Pulp Fiction",
+		"The Lord of the Rings: The Return of the King",
+		"Fight Club",
+		"The Lord of the Rings: The Fellowship of the Ring",
+		"Forrest Gump",
+		"Inception",
+		"Star Wars: Episode V - The Empire Strikes Back",
+		"The Lord of the Rings: The Two Towers",
+		"One Flew Over the Cuckoo's Nest",
+		"In the Name of the Father",
+		"Goodfellas",
+		"Star Wars: Episode IV - A New Hope",
+		"Seven Samurai",
+		"The Matrix",
+		"City of God",
+		"Se7en",
+		"The Silence of the Lambs",
+		"It's a Wonderful Life",
+		"Life Is Beautiful",
+	}
+	return movies[rand.Intn(len(movies))]
 }

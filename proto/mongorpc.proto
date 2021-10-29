@@ -18,6 +18,8 @@ package mongorpc;
 
 option go_package = "github.com/mongorpc/mongorpc/proto";
 
+// TODO: convert all document_id to ObjectId
+
 // Null is a special type that is used to represent a null value in a MongoDB
 enum Null {
   NULL_VALUE = 0;
@@ -37,6 +39,10 @@ message Map {
 message Timestamp {
   int64 seconds = 1;
   int32 nanos = 2;
+}
+
+message ObjectID {
+  string id = 1;
 }
 
 // Value is a special type that is used to represent a value in a MongoDB
@@ -61,7 +67,7 @@ message Value {
     // integer represents an integer value in a MongoDB
     int64 integer_value = 23;
     //undefined = 6;
-    // ObjectId object_id_value = 7;
+    ObjectID object_id_value = 7;
     //regex regex_value = 11;
     //dbPointer db_pointer_value = 12;
     //code code_value = 13;
@@ -154,8 +160,10 @@ message UpdateDocumentRequest {
 
 // UpdateDocumentResponse is a special type that is used to represent a update document response in a MongoDB
 message UpdateDocumentResponse {
-  // Document ID of the updated document
-  string document_id = 1;
+  int64 matched_count = 1;
+  int64 modified_count = 2;
+  int64 upserted_count = 3;
+  Value upserted_id = 4;
 }
 
 // DeleteDocumentRequest is a special type that is used to represent a delete document request in a MongoDB
