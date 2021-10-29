@@ -19,9 +19,17 @@ func (srv *MongoRPCServer) GetDocument(ctx context.Context, in *proto.GetDocumen
 		return nil, err
 	}
 
+	// filter document by id
+	filter := bson.D{
+		primitive.E{
+			Key:   "_id",
+			Value: docID,
+		},
+	}
+
 	// Get document
 	opts := options.FindOne()
-	result := srv.DB.Database(in.Database).Collection(in.Collection).FindOne(ctx, bson.D{{"_id", docID}}, opts)
+	result := srv.DB.Database(in.Database).Collection(in.Collection).FindOne(ctx, filter, opts)
 
 	if err := result.Err(); err != nil {
 
@@ -110,8 +118,24 @@ func (srv *MongoRPCServer) UpdateDocument(ctx context.Context, in *proto.UpdateD
 		return nil, err
 	}
 
+	// filter document by id
+	filter := bson.D{
+		primitive.E{
+			Key:   "_id",
+			Value: docID,
+		},
+	}
+
+	// options for update
+	opts := bson.D{
+		primitive.E{
+			Key:   "$set",
+			Value: doc,
+		},
+	}
+
 	// Update document
-	result, err := srv.DB.Database(in.Database).Collection(in.Collection).UpdateOne(ctx, bson.D{{"_id", docID}}, bson.D{{"$set", doc}})
+	result, err := srv.DB.Database(in.Database).Collection(in.Collection).UpdateOne(ctx, filter, opts)
 	if err != nil {
 		logrus.Println(err)
 		return nil, err
