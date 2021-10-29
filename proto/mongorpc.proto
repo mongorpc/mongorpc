@@ -21,17 +21,17 @@ option go_package = "github.com/mongorpc/mongorpc/proto";
 // TODO: convert all document_id to ObjectId
 
 // Null is a special type that is used to represent a null value in a MongoDB
-enum Null {
+enum NullValue {
   NULL_VALUE = 0;
 }
 
 // Array is a special type that is used to represent an array value in a MongoDB
-message Array {
+message ArrayValue {
   repeated Value values = 1;
 }
 
 // Map is a special type that is used to represent a map value in a MongoDB
-message Map {
+message MapValue {
   map<string, Value> fields = 1;
 }
 
@@ -53,9 +53,9 @@ message Value {
     // string represents a string value in a MongoDB
     string string_value = 2;
     // Map represents a map value in a MongoDB
-    Map map_value = 3;
+    MapValue map_value = 3;
     // Array represents an array value in a MongoDB
-    Array array_value = 4;
+    ArrayValue array_value = 4;
     // Bytes represents a bytes value in a MongoDB
     bytes bytes_value = 5;
     // Boolean represents a boolean value in a MongoDB
@@ -63,7 +63,7 @@ message Value {
     // Timestamp represents a timestamp value in a MongoDB
     Timestamp date_value = 9;
     // Null represents a null value in a MongoDB
-    Null null_value = 10;
+    NullValue null_value = 10;
     // integer represents an integer value in a MongoDB
     int64 integer_value = 23;
     //undefined = 6;
@@ -93,7 +93,7 @@ message ListCollectionsRequest {
 // ListCollectionsResponse is a special type that is used to represent a list collections response in a MongoDB
 message ListCollectionsResponse {
   // Array of collection names
-  Array collections = 1;
+  ArrayValue collections = 1;
 }
 
 // GetCollectionRequest is a special type that is used to represent a get collection request in a MongoDB
@@ -127,7 +127,7 @@ message ListDocumentsRequest {
 // ListDocumentsResponse is a special type that is used to represent a list documents response in a MongoDB
 message ListDocumentsResponse {
   // Array of documents
-  Array documents = 1;
+  ArrayValue documents = 1;
 }
 
 // InsertDocumentRequest is a special type that is used to represent a insert document request in a MongoDB

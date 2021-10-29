@@ -17,12 +17,12 @@ type MongoRPCServer struct {
 
 // Encoder encodes a values to a mongorpc proto types
 type MongoRPCEncoder interface {
-	EncodeArray([]interface{}) proto.Array
+	EncodeArray([]interface{}) proto.ArrayValue
 }
 
 // Decoder decodes a mongorpc proto types to a values
 type MongoRPCDecoder interface {
-	DecodeArray(proto.Array) []interface{}
+	DecodeArray(proto.ArrayValue) []interface{}
 }
 
 func DecodeValue(v *proto.Value) interface{} {
@@ -50,7 +50,7 @@ func DecodeValue(v *proto.Value) interface{} {
 }
 
 // DecodeMap decodes a mongorpc proto types to a map
-func DecodeMap(m *proto.Map) map[string]interface{} {
+func DecodeMap(m *proto.MapValue) map[string]interface{} {
 	result := map[string]interface{}{}
 
 	// iterate over the map
@@ -80,7 +80,7 @@ func DecodeMap(m *proto.Map) map[string]interface{} {
 	return result
 }
 
-func DecodeArray(a *proto.Array) []interface{} {
+func DecodeArray(a *proto.ArrayValue) []interface{} {
 	result := []interface{}{}
 
 	// iterate over the array
@@ -134,7 +134,7 @@ func DecodeArray(a *proto.Array) []interface{} {
 // }
 
 // EncodeMap encodes a map to a mongorpc proto types
-func EncodeMap(m map[string]interface{}) *proto.Map {
+func EncodeMap(m map[string]interface{}) *proto.MapValue {
 	result := map[string]*proto.Value{}
 
 	// iterate over the map
@@ -144,7 +144,7 @@ func EncodeMap(m map[string]interface{}) *proto.Map {
 		if v == nil {
 			result[k] = &proto.Value{
 				Type: &proto.Value_NullValue{
-					NullValue: proto.Null_NULL_VALUE,
+					NullValue: proto.NullValue_NULL_VALUE,
 				},
 			}
 		} else {
@@ -232,13 +232,13 @@ func EncodeMap(m map[string]interface{}) *proto.Map {
 	}
 
 	// return the proto map
-	return &proto.Map{
+	return &proto.MapValue{
 		Fields: result,
 	}
 }
 
 // DecodeMap decodes a mongorpc proto types to a map
-func EncodeArray(arr []interface{}) *proto.Array {
+func EncodeArray(arr []interface{}) *proto.ArrayValue {
 	result := []*proto.Value{}
 
 	// iterate over the array
@@ -248,7 +248,7 @@ func EncodeArray(arr []interface{}) *proto.Array {
 		if v == nil {
 			result = append(result, &proto.Value{
 				Type: &proto.Value_NullValue{
-					NullValue: proto.Null_NULL_VALUE,
+					NullValue: proto.NullValue_NULL_VALUE,
 				},
 			})
 		} else {
@@ -336,7 +336,7 @@ func EncodeArray(arr []interface{}) *proto.Array {
 	}
 
 	// return the proto array
-	return &proto.Array{
+	return &proto.ArrayValue{
 		Values: result,
 	}
 }

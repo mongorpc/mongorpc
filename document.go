@@ -65,7 +65,7 @@ func (srv *MongoRPCServer) ListDocuments(ctx context.Context, in *proto.ListDocu
 	}
 
 	// convert []map[string]interface{} to proto.arrary
-	docs := proto.Array{}
+	docs := proto.ArrayValue{}
 	for _, doc := range arrDocuments {
 		docs.Values = append(docs.Values, &proto.Value{
 			Type: &proto.Value_MapValue{
