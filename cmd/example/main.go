@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"math/rand"
 	"time"
 
 	"github.com/mongorpc/mongorpc"
@@ -16,6 +15,12 @@ const (
 	// gRPC server address
 	address = "localhost:50051"
 )
+
+// Example MongoRPC Client
+type ExampleClient struct {
+	ctx      context.Context
+	mongorpc proto.MongoRPCClient
+}
 
 func main() {
 	// Set up a connection to the server.
@@ -32,28 +37,36 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
 
-	// Get List of Collections
-	listCollections(err, c, ctx)
-	// list documents
-	err, movie, result, data := listDocuments(err, c, ctx)
-	// create document
-	insertResp := createDocument(err, c, ctx, result)
+	// Create a new client
+	e := ExampleClient{
+		ctx:      ctx,
+		mongorpc: c,
+	}
+
+	e.listCollections()
+	e.listDocuments()
+	e.getDocument()
+	e.createDocument()
+
 	// update document
-	updateDocument(movie, data, err, result, c, ctx, insertResp)
+	// updateDocument(movie, data, err, result, c, ctx, insertResp)
 
 }
 
-func listCollections(err error, c proto.MongoRPCClient, ctx context.Context) {
-	r, err := c.ListCollections(ctx, &proto.ListCollectionsRequest{
+// list all collections
+func (c *ExampleClient) listCollections() {
+	r, err := c.mongorpc.ListCollections(c.ctx, &proto.ListCollectionsRequest{
 		Database: "sample_mflix",
 	})
 	if err != nil {
 		logrus.Fatalf("could not get collection: %v", err)
 	}
 	logrus.Printf("Collection: %s", r.Collections)
+}
 
-	// get document
-	doc, err := c.GetDocument(ctx, &proto.GetDocumentRequest{
+// get document
+func (c *ExampleClient) getDocument() {
+	doc, err := c.mongorpc.GetDocument(c.ctx, &proto.GetDocumentRequest{
 		Database:   "sample_mflix",
 		Collection: "movies",
 		DocumentId: "573a1390f29313caabcd4135",
@@ -64,8 +77,9 @@ func listCollections(err error, c proto.MongoRPCClient, ctx context.Context) {
 	logrus.Printf("Document: %s", doc.Document)
 }
 
-func listDocuments(err error, c proto.MongoRPCClient, ctx context.Context) (error, Movie, map[string]interface{}, []byte) {
-	documents, err := c.ListDocuments(ctx, &proto.ListDocumentsRequest{
+// list all documents
+func (c *ExampleClient) listDocuments() {
+	documents, err := c.mongorpc.ListDocuments(c.ctx, &proto.ListDocumentsRequest{
 		Database:   "sample_mflix",
 		Collection: "movies",
 		Limit:      1,
@@ -74,60 +88,34 @@ func listDocuments(err error, c proto.MongoRPCClient, ctx context.Context) (erro
 		logrus.Fatalf("could not get documents: %v", err)
 	}
 	logrus.Printf("Documents: %s", documents.Documents)
+}
 
+// create document
+func (c *ExampleClient) createDocument() {
+
+	// Movie document
 	movie := Movie{
 		Title: "The Shawshank Redemption",
 		Year:  "1994",
 	}
 
+	// Encode the movie to JSON
 	var result map[string]interface{}
-
 	data, err := json.Marshal(movie)
 	if err != nil {
 		logrus.Fatalf("could not marshal movie: %v", err)
 	}
 
-	err = json.Unmarshal(data, &result)
-	if err != nil {
-		logrus.Fatalf("could not unmarshal movie: %v", err)
-	}
-	return err, movie, result, data
-}
-
-func updateDocument(movie Movie, data []byte, err error, result map[string]interface{}, c proto.MongoRPCClient, ctx context.Context, insertResp *proto.CreateDocumentResponse) {
-	movie.Title = randomMovieTitle()
-	movie.Year = "1972"
-	data, err = json.Marshal(movie)
-	if err != nil {
-		logrus.Fatalf("could not marshal movie: %v", err)
-	}
-
+	// Decode the JSON to a map
 	err = json.Unmarshal(data, &result)
 	if err != nil {
 		logrus.Fatalf("could not unmarshal movie: %v", err)
 	}
 
-	updateResp, err := c.UpdateDocument(ctx, &proto.UpdateDocumentRequest{
+	// create movie document
+	insertResp, err := c.mongorpc.CreateDocument(c.ctx, &proto.CreateDocumentRequest{
 		Database:   "sample_mflix",
-		Collection: "moviesx",
-		DocumentId: insertResp.DocumentId,
-		Document: &proto.Value{
-			Type: &proto.Value_MapValue{
-				MapValue: mongorpc.EncodeMap(result),
-			},
-		},
-	})
-	if err != nil {
-		logrus.Fatalf("could not update document: %v", err)
-	}
-	logrus.Printf("Document: %s", updateResp)
-}
-
-func createDocument(err error, c proto.MongoRPCClient, ctx context.Context, result map[string]interface{}) *proto.CreateDocumentResponse {
-
-	insertResp, err := c.CreateDocument(ctx, &proto.CreateDocumentRequest{
-		Database:   "sample_mflix",
-		Collection: "moviesx",
+		Collection: "sample_movies",
 		Document: &proto.Value{
 			Type: &proto.Value_MapValue{
 				MapValue: mongorpc.EncodeMap(result),
@@ -138,41 +126,12 @@ func createDocument(err error, c proto.MongoRPCClient, ctx context.Context, resu
 		logrus.Fatalf("could not create document: %v", err)
 	}
 	logrus.Printf("Document: %s", insertResp.DocumentId)
-	return insertResp
 }
 
+// Movie struct
 type Movie struct {
-	Title string `json:"name"`
-	Year  string `json:"year"`
-}
-
-func randomMovieTitle() string {
-	movies := []string{
-		"The Shawshank Redemption",
-		"The Godfather",
-		"The Godfather: Part II",
-		"The Dark Knight",
-		"12 Angry",
-		"Schindler's List",
-		"Pulp Fiction",
-		"The Lord of the Rings: The Return of the King",
-		"Fight Club",
-		"The Lord of the Rings: The Fellowship of the Ring",
-		"Forrest Gump",
-		"Inception",
-		"Star Wars: Episode V - The Empire Strikes Back",
-		"The Lord of the Rings: The Two Towers",
-		"One Flew Over the Cuckoo's Nest",
-		"In the Name of the Father",
-		"Goodfellas",
-		"Star Wars: Episode IV - A New Hope",
-		"Seven Samurai",
-		"The Matrix",
-		"City of God",
-		"Se7en",
-		"The Silence of the Lambs",
-		"It's a Wonderful Life",
-		"Life Is Beautiful",
-	}
-	return movies[rand.Intn(len(movies))]
+	// Title of the movie
+	Title string `json:"title"`
+	// Year of the movie
+	Year string `json:"year"`
 }
