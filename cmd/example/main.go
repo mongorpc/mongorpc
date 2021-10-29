@@ -33,6 +33,17 @@ func main() {
 	defer cancel()
 
 	// Get List of Collections
+	listCollections(err, c, ctx)
+	// list documents
+	err, movie, result, data := listDocuments(err, c, ctx)
+	// create document
+	insertResp := createDocument(err, c, ctx, result)
+	// update document
+	updateDocument(movie, data, err, result, c, ctx, insertResp)
+
+}
+
+func listCollections(err error, c proto.MongoRPCClient, ctx context.Context) {
 	r, err := c.ListCollections(ctx, &proto.ListCollectionsRequest{
 		Database: "sample_mflix",
 	})
@@ -51,8 +62,9 @@ func main() {
 		logrus.Fatalf("could not get document: %v", err)
 	}
 	logrus.Printf("Document: %s", doc.Document)
+}
 
-	// list documents
+func listDocuments(err error, c proto.MongoRPCClient, ctx context.Context) (error, Movie, map[string]interface{}, []byte) {
 	documents, err := c.ListDocuments(ctx, &proto.ListDocumentsRequest{
 		Database:   "sample_mflix",
 		Collection: "movies",
@@ -79,23 +91,10 @@ func main() {
 	if err != nil {
 		logrus.Fatalf("could not unmarshal movie: %v", err)
 	}
+	return err, movie, result, data
+}
 
-	// create document
-	insertResp, err := c.CreateDocument(ctx, &proto.CreateDocumentRequest{
-		Database:   "sample_mflix",
-		Collection: "moviesx",
-		Document: &proto.Value{
-			Type: &proto.Value_MapValue{
-				MapValue: mongorpc.EncodeMap(result),
-			},
-		},
-	})
-	if err != nil {
-		logrus.Fatalf("could not create document: %v", err)
-	}
-	logrus.Printf("Document: %s", insertResp.DocumentId)
-
-	// update document
+func updateDocument(movie Movie, data []byte, err error, result map[string]interface{}, c proto.MongoRPCClient, ctx context.Context, insertResp *proto.CreateDocumentResponse) {
 	movie.Title = randomMovieTitle()
 	movie.Year = "1972"
 	data, err = json.Marshal(movie)
@@ -122,7 +121,24 @@ func main() {
 		logrus.Fatalf("could not update document: %v", err)
 	}
 	logrus.Printf("Document: %s", updateResp)
+}
 
+func createDocument(err error, c proto.MongoRPCClient, ctx context.Context, result map[string]interface{}) *proto.CreateDocumentResponse {
+
+	insertResp, err := c.CreateDocument(ctx, &proto.CreateDocumentRequest{
+		Database:   "sample_mflix",
+		Collection: "moviesx",
+		Document: &proto.Value{
+			Type: &proto.Value_MapValue{
+				MapValue: mongorpc.EncodeMap(result),
+			},
+		},
+	})
+	if err != nil {
+		logrus.Fatalf("could not create document: %v", err)
+	}
+	logrus.Printf("Document: %s", insertResp.DocumentId)
+	return insertResp
 }
 
 type Movie struct {
