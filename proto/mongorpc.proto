@@ -84,6 +84,84 @@ message Value {
   }
 }
 
+// Filter is a special type that is used to represent a filter in a MongoDB
+message Filter {
+  // The key of the filter
+  message Operator {
+    // == is a special operator that is used to represent an equality filter in a MongoDB
+    message Equal {
+      string field = 1;
+      Value value = 2;
+    }
+    // != is a special operator that is used to represent an inequality filter in a MongoDB
+    message NotEqual {
+      string field = 1;
+      Value value = 2;
+    }
+    // < is a special operator that is used to represent a less than filter in a MongoDB
+    message Less {
+      string field = 1;
+      Value value = 2;
+    }
+    // <= is a special operator that is used to represent a less than or equal to filter in a MongoDB
+    message LessEqual {
+      string field = 1;
+      Value value = 2;
+    }
+    // > is a special operator that is used to represent a greater than filter in a MongoDB
+    message Greater {
+      string field = 1;
+      Value value = 2;
+    }
+    // >= is a special operator that is used to represent a greater than or equal to filter in a MongoDB
+    message GreaterEqual {
+      string field = 1;
+      Value value = 2;
+    }
+    // in is a special operator that is used to represent an in filter in a MongoDB
+    message In {
+      string field = 1;
+      repeated Value values = 2;
+    }
+    // nin is a special operator that is used to represent a not in filter in a MongoDB
+    message NotIn {
+      string field = 1;
+      repeated Value values = 2;
+    }
+    // Exists is a special operator that is used to represent an exists filter in a MongoDB
+    message Exists {
+      string field = 1;
+    }
+    // Not exists is a special operator that is used to represent a not exists filter in a MongoDB
+    message NotExists {
+      string field = 1;
+    }
+    // one of operator
+    oneof operator {
+      // Equal represents an equal operator in a MongoDB
+      Equal equal = 1;
+      // NotEqual represents a not equal operator in a MongoDB
+      NotEqual not_equal = 2;
+      // Less represents a less operator in a MongoDB
+      Less less = 3;
+      // LessEqual represents a less equal operator in a MongoDB
+      LessEqual less_equal = 4;
+      // Greater represents a greater operator in a MongoDB
+      Greater greater = 5;
+      // GreaterEqual represents a greater equal operator in a MongoDB
+      GreaterEqual greater_equal = 6;
+      // In represents an in operator in a MongoDB
+      In in = 7;
+      // NotIn represents a not in operator in a MongoDB
+      NotIn not_in = 8;
+      // Exists represents an exists operator in a MongoDB
+      Exists exists = 9;
+      // NotExists represents a not exists operator in a MongoDB
+      NotExists not_exists = 10;
+    }
+  }
+}
+
 // ListCollectionsRequest is a special type that is used to represent a list collections request in a MongoDB
 message ListCollectionsRequest {
   // Database name
@@ -179,7 +257,7 @@ message DeleteDocumentRequest {
 // DeleteDocumentResponse is a special type that is used to represent a delete document response in a MongoDB
 message DeleteDocumentResponse {
   // Deleted Document Count
-  int64 DeletedCount = 1;
+  int64 deleted_count = 1;
 }
 
 // MongoRPC
