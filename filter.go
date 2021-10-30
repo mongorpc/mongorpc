@@ -12,12 +12,13 @@ func DecodeSortOrder(ascending bool) int {
 	// ascending order for a field, set the field to 1 in the sort document.
 	if ascending {
 		return 1
+	} else {
+		// descending order for a field, set the field and -1 in the sort documents.
+		return -1
 	}
-
-	// descending order for a field, set the field and -1 in the sort documents.
-	return -1
 }
 
+// Decode sort to bson
 func DecodeSort(fields []*proto.Sort) bson.D {
 	sort := bson.D{}
 	for _, s := range fields {
