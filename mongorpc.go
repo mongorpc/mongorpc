@@ -5,6 +5,7 @@ import (
 
 	"github.com/mongorpc/mongorpc/proto"
 	"github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -109,30 +110,6 @@ func DecodeArray(a *proto.ArrayValue) []interface{} {
 	// return the array
 	return result
 }
-
-// func EncodeValue(v interface{}) *proto.Value {
-
-// 	switch v.(type) {
-// 	case nil:
-// 		return &proto.Value{Type: &proto.Value_NullValue{}}
-// 	case int:
-// 		return &proto.Value{Type: &proto.Value_IntegerValue{IntegerValue: v.(int)}}
-// 	case string:
-// 		return &proto.Value{Type: &proto.Value_StringValue{StringValue: v.(string)}}
-// 	case bool:
-// 		return &proto.Value{Type: &proto.Value_BoolValue{BoolValue: v.(bool)}}
-// 	case float64:
-// 		return &proto.Value{Type: &proto.Value_DoubleValue{DoubleValue: v.(float64)}}
-// 	case []interface{}:
-// 		return &proto.Value{Type: &proto.Value_ArrayValue{ArrayValue: EncodeArray(v.([]interface{})).(*proto.Array)}}
-// 	case map[string]interface{}:
-// 		return &proto.Value{Type: &proto.Value_MapValue{MapValue: EncodeMap(v.(map[string]interface{})).(*proto.Map)}}
-// 	default:
-// 		logrus.Error("Unsupported type: ", reflect.TypeOf(v))
-// 	}
-
-// 	return nil
-// }
 
 // EncodeMap encodes a map to a mongorpc proto types
 func EncodeMap(m map[string]interface{}) *proto.MapValue {
@@ -340,4 +317,148 @@ func EncodeArray(arr []interface{}) *proto.ArrayValue {
 	return &proto.ArrayValue{
 		Values: result,
 	}
+}
+
+// proto ascending bool to mongodb sort order
+func DecodeSortOrder(ascending bool) int {
+	// ascending order for a field, set the field to 1 in the sort document.
+	if ascending {
+		return 1
+	} else {
+		// descending order for a field, set the field and -1 in the sort documents.
+		return -1
+	}
+}
+
+// Decode sort to bson sort
+func DecodeSort(fields []*proto.Sort) bson.D {
+	sort := bson.D{}
+	for _, s := range fields {
+		sort = append(sort, bson.E{
+			Key:   s.Field,
+			Value: DecodeSortOrder(s.Ascending),
+		})
+	}
+	return sort
+}
+
+// Decode a mongorpc proto filter to a bson filter
+func DecodeFilter(filters []*proto.Filter) map[string]map[string]interface{} {
+	filter := Filter()
+	for _, f := range filters {
+		switch op := f.Operator.(type) {
+		case *proto.Filter_Equal:
+
+			switch op.Equal.Value.Type.(type) {
+			case *proto.Value_StringValue:
+				filter = filter.EqString(op.Equal.Field, op.Equal.Value.GetStringValue())
+
+			case *proto.Value_IntegerValue:
+				filter = filter.EqInt64(op.Equal.Field, op.Equal.Value.GetIntegerValue())
+
+			case *proto.Value_DoubleValue:
+				filter = filter.EqFloat64(op.Equal.Field, op.Equal.Value.GetDoubleValue())
+
+			case *proto.Value_BoolValue:
+				filter = filter.EqBool(op.Equal.Field, op.Equal.Value.GetBoolValue())
+
+			default:
+				logrus.Errorln("unsupported type")
+			}
+
+		case *proto.Filter_NotEqual:
+
+			switch op.NotEqual.Value.Type.(type) {
+			case *proto.Value_StringValue:
+				filter = filter.NeString(op.NotEqual.Field, op.NotEqual.Value.GetStringValue())
+
+			case *proto.Value_IntegerValue:
+				filter = filter.NeInt64(op.NotEqual.Field, op.NotEqual.Value.GetIntegerValue())
+
+			case *proto.Value_DoubleValue:
+				filter = filter.NeFloat64(op.NotEqual.Field, op.NotEqual.Value.GetDoubleValue())
+
+			case *proto.Value_BoolValue:
+				filter = filter.NeBool(op.NotEqual.Field, op.NotEqual.Value.GetBoolValue())
+
+			default:
+				logrus.Errorln("unsupported type")
+			}
+
+		case *proto.Filter_Less:
+
+			switch op.Less.Value.Type.(type) {
+			case *proto.Value_StringValue:
+				filter = filter.LtString(op.Less.Field, op.Less.Value.GetStringValue())
+
+			case *proto.Value_IntegerValue:
+				filter = filter.LtInt64(op.Less.Field, op.Less.Value.GetIntegerValue())
+
+			case *proto.Value_DoubleValue:
+				filter = filter.LtFloat64(op.Less.Field, op.Less.Value.GetDoubleValue())
+
+			case *proto.Value_BoolValue:
+				filter = filter.LtBool(op.Less.Field, op.Less.Value.GetBoolValue())
+
+			default:
+				logrus.Errorln("unsupported type")
+			}
+
+		case *proto.Filter_LessEqual:
+
+			switch op.LessEqual.Value.Type.(type) {
+			case *proto.Value_StringValue:
+				filter = filter.LteString(op.LessEqual.Field, op.LessEqual.Value.GetStringValue())
+
+			case *proto.Value_IntegerValue:
+				filter = filter.LteInt64(op.LessEqual.Field, op.LessEqual.Value.GetIntegerValue())
+
+			case *proto.Value_DoubleValue:
+				filter = filter.LteFloat64(op.LessEqual.Field, op.LessEqual.Value.GetDoubleValue())
+
+			case *proto.Value_BoolValue:
+				filter = filter.LteBool(op.LessEqual.Field, op.LessEqual.Value.GetBoolValue())
+
+			default:
+				logrus.Errorln("unsupported type")
+			}
+
+		case *proto.Filter_Greater:
+
+			switch op.Greater.Value.Type.(type) {
+			case *proto.Value_StringValue:
+				filter = filter.GtString(op.Greater.Field, op.Greater.Value.GetStringValue())
+
+			case *proto.Value_IntegerValue:
+				filter = filter.GtInt64(op.Greater.Field, op.Greater.Value.GetIntegerValue())
+
+			case *proto.Value_DoubleValue:
+				filter = filter.GtFloat64(op.Greater.Field, op.Greater.Value.GetDoubleValue())
+
+			case *proto.Value_BoolValue:
+				filter = filter.GtBool(op.Greater.Field, op.Greater.Value.GetBoolValue())
+
+			default:
+				logrus.Errorln("unsupported type")
+			}
+
+		case *proto.Filter_In:
+			// TODO: support in
+
+		case *proto.Filter_NotIn:
+			// TODO: support not in
+
+		case *proto.Filter_Exists:
+			filter = filter.Exists(op.Exists.Field, true)
+
+		case *proto.Filter_NotExists:
+			filter = filter.Exists(op.NotExists.Field, false)
+
+		default:
+			logrus.Errorln("unsupported type")
+		}
+
+		// End of array
+	}
+	return filter.Build()
 }
