@@ -362,6 +362,8 @@ func DecodeFilter(filters []*proto.Filter) map[string]map[string]interface{} {
 			case *proto.Value_BoolValue:
 				filter = filter.EqBool(op.Equal.Field, op.Equal.Value.GetBoolValue())
 
+			// TODO: add support for other types
+
 			default:
 				logrus.Errorln("unsupported type")
 			}
