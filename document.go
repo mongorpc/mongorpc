@@ -60,8 +60,14 @@ func (srv *MongoRPCServer) ListDocuments(ctx context.Context, in *proto.ListDocu
 	findOptions.SetLimit(int64(in.Limit))
 	findOptions.SetSkip(int64(in.Skip))
 
+	// add sort to find options
+	findOptions.SetSort(DecodeSort(in.Sort))
+
+	// TODO: add filter in findOptions
+	filter := DecodeFilter(in.Filter)
+
 	// Get documents
-	results, err := srv.DB.Database(in.Database).Collection(in.Collection).Find(ctx, bson.D{}, findOptions)
+	results, err := srv.DB.Database(in.Database).Collection(in.Collection).Find(ctx, filter, findOptions)
 	if err != nil {
 		return nil, err
 	}

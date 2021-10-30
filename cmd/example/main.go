@@ -43,10 +43,10 @@ func main() {
 		mongorpc: c,
 	}
 
-	e.ListCollections()
+	// e.ListCollections()
 	e.ListDocuments()
-	e.DocumentByID()
-	e.CreateDocument()
+	// e.DocumentByID()
+	// e.CreateDocument()
 
 	// update document
 	// updateDocument(movie, data, err, result, c, ctx, insertResp)
@@ -78,10 +78,34 @@ func (c *ExampleClient) DocumentByID() {
 
 // list all documents
 func (c *ExampleClient) ListDocuments() {
+	// sort by year
+	sort := []*proto.Sort{}
+	sort = append(sort, &proto.Sort{
+		Field:     "year",
+		Ascending: true,
+	})
+
+	// filter by year
+	filter := []*proto.Filter{}
+	filter = append(filter, &proto.Filter{
+		Operator: &proto.Filter_Equal{
+			Equal: &proto.Equal{
+				Field: "type",
+				Value: &proto.Value{
+					Type: &proto.Value_StringValue{
+						StringValue: "movie",
+					},
+				},
+			},
+		},
+	})
+
 	documents, err := c.mongorpc.ListDocuments(c.ctx, &proto.ListDocumentsRequest{
 		Database:   "sample_mflix",
 		Collection: "movies",
-		Limit:      1,
+		Limit:      10,
+		Sort:       sort,
+		Filter:     filter,
 	}, grpc.MaxCallRecvMsgSize(1024*1024*1024))
 	if err != nil {
 		logrus.Fatalf("could not get documents: %v", err)

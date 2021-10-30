@@ -25,6 +25,7 @@ type MongoRPCDecoder interface {
 	DecodeArray(proto.ArrayValue) []interface{}
 }
 
+// Decode Value to a map
 func DecodeValue(v *proto.Value) interface{} {
 
 	switch v.Type.(type) {

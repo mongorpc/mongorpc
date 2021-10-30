@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/sirupsen/logrus v1.4.2
+	github.com/slavabobik/greenleaf v0.0.7
 	go.mongodb.org/mongo-driver v1.7.3
 	google.golang.org/grpc v1.41.0
 	google.golang.org/protobuf v1.27.1
