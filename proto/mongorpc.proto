@@ -84,6 +84,12 @@ message Value {
   }
 }
 
+// Set the Sort Order
+message Sort {
+  string field = 1;
+  bool ascending = 2;
+}
+
 // Filter is a special type that is used to represent a filter in a MongoDB
 message Filter {
   // The key of the filter
@@ -200,6 +206,10 @@ message ListDocumentsRequest {
   int32 limit = 3;
   // Skip the first n documents
   int32 skip = 4;
+  // Filter to apply to the query
+  repeated Filter filter = 5;
+  // Sort to apply to the query
+  repeated Sort sort = 6;
 }
 
 // ListDocumentsResponse is a special type that is used to represent a list documents response in a MongoDB
