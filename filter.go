@@ -16,7 +16,7 @@ func Filter() *FilterBuilder {
 	}
 }
 
-func (f *FilterBuilder) addSelector(field string, operator string, value interface{}) *FilterBuilder {
+func (f *FilterBuilder) addSelector(field, operator string, value interface{}) *FilterBuilder {
 	v, ok := f.selector[field]
 	if !ok {
 		f.selector[field] = map[string]interface{}{operator: value}
@@ -78,7 +78,7 @@ func (f *FilterBuilder) EqInt8(field string, value int8) *FilterBuilder {
 }
 
 // EqString ...
-func (f *FilterBuilder) EqString(field string, value string) *FilterBuilder {
+func (f *FilterBuilder) EqString(field, value string) *FilterBuilder {
 	return f.addSelector(field, "$eq", value)
 }
 
@@ -153,7 +153,7 @@ func (f *FilterBuilder) NeInt8(field string, value int8) *FilterBuilder {
 }
 
 // NeString ...
-func (f *FilterBuilder) NeString(field string, value string) *FilterBuilder {
+func (f *FilterBuilder) NeString(field, value string) *FilterBuilder {
 	return f.addSelector(field, "$ne", value)
 }
 
@@ -228,7 +228,7 @@ func (f *FilterBuilder) GtInt8(field string, value int8) *FilterBuilder {
 }
 
 // GtString ...
-func (f *FilterBuilder) GtString(field string, value string) *FilterBuilder {
+func (f *FilterBuilder) GtString(field, value string) *FilterBuilder {
 	return f.addSelector(field, "$gt", value)
 }
 
@@ -303,7 +303,7 @@ func (f *FilterBuilder) GteInt8(field string, value int8) *FilterBuilder {
 }
 
 // GteString ...
-func (f *FilterBuilder) GteString(field string, value string) *FilterBuilder {
+func (f *FilterBuilder) GteString(field, value string) *FilterBuilder {
 	return f.addSelector(field, "$gte", value)
 }
 
@@ -378,7 +378,7 @@ func (f *FilterBuilder) LtInt8(field string, value int8) *FilterBuilder {
 }
 
 // LtString ...
-func (f *FilterBuilder) LtString(field string, value string) *FilterBuilder {
+func (f *FilterBuilder) LtString(field, value string) *FilterBuilder {
 	return f.addSelector(field, "$lt", value)
 }
 
@@ -453,7 +453,7 @@ func (f *FilterBuilder) LteInt8(field string, value int8) *FilterBuilder {
 }
 
 // LteString ...
-func (f *FilterBuilder) LteString(field string, value string) *FilterBuilder {
+func (f *FilterBuilder) LteString(field, value string) *FilterBuilder {
 	return f.addSelector(field, "$lte", value)
 }
 
