@@ -30,6 +30,8 @@ type MongoRPCClient interface {
 	UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*UpdateDocumentResponse, error)
 	// DeleteDocument deletes a document from a collection.
 	DeleteDocument(ctx context.Context, in *DeleteDocumentRequest, opts ...grpc.CallOption) (*DeleteDocumentResponse, error)
+	// Listen listens for changes to a document in a collection.
+	Listen(ctx context.Context, in *ListenRequest, opts ...grpc.CallOption) (MongoRPC_ListenClient, error)
 }
 
 type mongoRPCClient struct {
@@ -94,6 +96,38 @@ func (c *mongoRPCClient) DeleteDocument(ctx context.Context, in *DeleteDocumentR
 	return out, nil
 }
 
+func (c *mongoRPCClient) Listen(ctx context.Context, in *ListenRequest, opts ...grpc.CallOption) (MongoRPC_ListenClient, error) {
+	stream, err := c.cc.NewStream(ctx, &MongoRPC_ServiceDesc.Streams[0], "/mongorpc.MongoRPC/Listen", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &mongoRPCListenClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type MongoRPC_ListenClient interface {
+	Recv() (*ListenResponse, error)
+	grpc.ClientStream
+}
+
+type mongoRPCListenClient struct {
+	grpc.ClientStream
+}
+
+func (x *mongoRPCListenClient) Recv() (*ListenResponse, error) {
+	m := new(ListenResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // MongoRPCServer is the server API for MongoRPC service.
 // All implementations must embed UnimplementedMongoRPCServer
 // for forward compatibility
@@ -110,6 +144,8 @@ type MongoRPCServer interface {
 	UpdateDocument(context.Context, *UpdateDocumentRequest) (*UpdateDocumentResponse, error)
 	// DeleteDocument deletes a document from a collection.
 	DeleteDocument(context.Context, *DeleteDocumentRequest) (*DeleteDocumentResponse, error)
+	// Listen listens for changes to a document in a collection.
+	Listen(*ListenRequest, MongoRPC_ListenServer) error
 	mustEmbedUnimplementedMongoRPCServer()
 }
 
@@ -134,6 +170,9 @@ func (UnimplementedMongoRPCServer) UpdateDocument(context.Context, *UpdateDocume
 }
 func (UnimplementedMongoRPCServer) DeleteDocument(context.Context, *DeleteDocumentRequest) (*DeleteDocumentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteDocument not implemented")
+}
+func (UnimplementedMongoRPCServer) Listen(*ListenRequest, MongoRPC_ListenServer) error {
+	return status.Errorf(codes.Unimplemented, "method Listen not implemented")
 }
 func (UnimplementedMongoRPCServer) mustEmbedUnimplementedMongoRPCServer() {}
 
@@ -256,6 +295,27 @@ func _MongoRPC_DeleteDocument_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MongoRPC_Listen_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(ListenRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(MongoRPCServer).Listen(m, &mongoRPCListenServer{stream})
+}
+
+type MongoRPC_ListenServer interface {
+	Send(*ListenResponse) error
+	grpc.ServerStream
+}
+
+type mongoRPCListenServer struct {
+	grpc.ServerStream
+}
+
+func (x *mongoRPCListenServer) Send(m *ListenResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // MongoRPC_ServiceDesc is the grpc.ServiceDesc for MongoRPC service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -288,6 +348,12 @@ var MongoRPC_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MongoRPC_DeleteDocument_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Listen",
+			Handler:       _MongoRPC_Listen_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "mongorpc.proto",
 }

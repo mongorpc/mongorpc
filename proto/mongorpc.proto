@@ -277,6 +277,24 @@ message DeleteDocumentResponse {
   int64 deleted_count = 1;
 }
 
+message ListenRequest {
+  // The database to listen to
+  string database = 1;
+  // The collection to listen to
+  string collection = 2;
+  // The document to listen to
+  string document_id = 3;
+  // The operation to listen to
+  string operation = 4;
+}
+
+message ListenResponse {
+  // The operation that was performed
+  string operation = 1;
+  // The document that was modified
+  Value document = 2;
+}
+
 // MongoRPC
 service MongoRPC {
   // ListCollections lists the collections in a database.
@@ -291,4 +309,6 @@ service MongoRPC {
   rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
   // DeleteDocument deletes a document from a collection.
   rpc DeleteDocument(DeleteDocumentRequest) returns (DeleteDocumentResponse);
+  // Listen listens for changes to a document in a collection.
+  rpc Listen(ListenRequest) returns (stream ListenResponse);
 }

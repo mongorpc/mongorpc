@@ -43,13 +43,35 @@ func main() {
 		mongorpc: c,
 	}
 
-	// e.ListCollections()
+	e.ListCollections()
 	e.ListDocuments()
-	// e.DocumentByID()
-	// e.CreateDocument()
+	e.DocumentByID()
+	e.CreateDocument()
 
-	// update document
-	// updateDocument(movie, data, err, result, c, ctx, insertResp)
+	// var waitGroup sync.WaitGroup
+
+	// // listen document changes
+	// stream, err := e.mongorpc.Listen(ctx, &proto.ListenRequest{
+	// 	Database:   "sample_mflix",
+	// 	Collection: "sample_movies",
+	// })
+
+	// if err != nil {
+	// 	logrus.Fatalf("could not listen: %v", err)
+	// }
+
+	// waitGroup.Add(1)
+	// go func() {
+	// 	for {
+	// 		resp, err := stream.Recv()
+	// 		if err != nil {
+	// 			logrus.Fatalf("could not listen: %v", err)
+	// 		}
+	// 		logrus.Printf("Changes: %s", resp.Document)
+	// 	}
+	// }()
+
+	// waitGroup.Wait()
 }
 
 // list all collections
