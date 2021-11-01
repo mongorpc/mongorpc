@@ -27,7 +27,6 @@
 - [ ] Bulk Update
 - [ ] Bulk Delete
 - [ ] Bulk Replace
-
 - [ ] Authendication (~jwt rpc middleware)
 - [ ] Permission Based Collection Read & Write (~permission middleware) (~firestore roles)
     - [ ] Roles Compiler
