@@ -43,12 +43,23 @@ func main() {
 		mongorpc: c,
 	}
 
-	e.ListCollections()
-	e.ListDocuments()
+	// e.ListCollections()
+	// e.ListDocuments()
 	e.DocumentByID()
-	e.CreateDocument()
+	// e.CreateDocument()
 
-	e.CreateIndex()
+	res, err := c.ListIndexes(ctx, &proto.ListIndexesRequest{
+		Database:   "sample_mflix",
+		Collection: "movies",
+	})
+
+	if err != nil {
+		logrus.Fatalf("could not get indexes: %v", err)
+	}
+
+	logrus.Printf("Indexes: %s", res.Indexes)
+
+	// e.CreateIndex()
 
 	// var waitGroup sync.WaitGroup
 

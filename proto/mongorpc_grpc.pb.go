@@ -37,7 +37,7 @@ type MongoRPCClient interface {
 	// Creates indexes on collections.
 	CreateIndex(ctx context.Context, in *CreateIndexRequest, opts ...grpc.CallOption) (*CreateIndexResponse, error)
 	// Lists indexes on collections.
-	GetIndexes(ctx context.Context, in *GetIndexesRequest, opts ...grpc.CallOption) (*GetIndexesResponse, error)
+	ListIndexes(ctx context.Context, in *ListIndexesRequest, opts ...grpc.CallOption) (*ListIndexesResponse, error)
 	// Deletes indexes on collections.
 	DeleteIndex(ctx context.Context, in *DeleteIndexRequest, opts ...grpc.CallOption) (*DeleteIndexResponse, error)
 	// Reindexes indexes on collections.
@@ -168,9 +168,9 @@ func (c *mongoRPCClient) CreateIndex(ctx context.Context, in *CreateIndexRequest
 	return out, nil
 }
 
-func (c *mongoRPCClient) GetIndexes(ctx context.Context, in *GetIndexesRequest, opts ...grpc.CallOption) (*GetIndexesResponse, error) {
-	out := new(GetIndexesResponse)
-	err := c.cc.Invoke(ctx, "/mongorpc.MongoRPC/GetIndexes", in, out, opts...)
+func (c *mongoRPCClient) ListIndexes(ctx context.Context, in *ListIndexesRequest, opts ...grpc.CallOption) (*ListIndexesResponse, error) {
+	out := new(ListIndexesResponse)
+	err := c.cc.Invoke(ctx, "/mongorpc.MongoRPC/ListIndexes", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -272,7 +272,7 @@ type MongoRPCServer interface {
 	// Creates indexes on collections.
 	CreateIndex(context.Context, *CreateIndexRequest) (*CreateIndexResponse, error)
 	// Lists indexes on collections.
-	GetIndexes(context.Context, *GetIndexesRequest) (*GetIndexesResponse, error)
+	ListIndexes(context.Context, *ListIndexesRequest) (*ListIndexesResponse, error)
 	// Deletes indexes on collections.
 	DeleteIndex(context.Context, *DeleteIndexRequest) (*DeleteIndexResponse, error)
 	// Reindexes indexes on collections.
@@ -323,8 +323,8 @@ func (UnimplementedMongoRPCServer) Listen(*ListenRequest, MongoRPC_ListenServer)
 func (UnimplementedMongoRPCServer) CreateIndex(context.Context, *CreateIndexRequest) (*CreateIndexResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateIndex not implemented")
 }
-func (UnimplementedMongoRPCServer) GetIndexes(context.Context, *GetIndexesRequest) (*GetIndexesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetIndexes not implemented")
+func (UnimplementedMongoRPCServer) ListIndexes(context.Context, *ListIndexesRequest) (*ListIndexesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListIndexes not implemented")
 }
 func (UnimplementedMongoRPCServer) DeleteIndex(context.Context, *DeleteIndexRequest) (*DeleteIndexResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteIndex not implemented")
@@ -528,20 +528,20 @@ func _MongoRPC_CreateIndex_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MongoRPC_GetIndexes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetIndexesRequest)
+func _MongoRPC_ListIndexes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListIndexesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MongoRPCServer).GetIndexes(ctx, in)
+		return srv.(MongoRPCServer).ListIndexes(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/mongorpc.MongoRPC/GetIndexes",
+		FullMethod: "/mongorpc.MongoRPC/ListIndexes",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MongoRPCServer).GetIndexes(ctx, req.(*GetIndexesRequest))
+		return srv.(MongoRPCServer).ListIndexes(ctx, req.(*ListIndexesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -730,8 +730,8 @@ var MongoRPC_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MongoRPC_CreateIndex_Handler,
 		},
 		{
-			MethodName: "GetIndexes",
-			Handler:    _MongoRPC_GetIndexes_Handler,
+			MethodName: "ListIndexes",
+			Handler:    _MongoRPC_ListIndexes_Handler,
 		},
 		{
 			MethodName: "DeleteIndex",

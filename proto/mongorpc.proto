@@ -338,14 +338,14 @@ message CreateIndexResponse {
   string name = 1;
 }
 
-message GetIndexesRequest {
+message ListIndexesRequest {
   // The database to use
   string database = 1;
   // The collection to use
   string collection = 2;
 }
 
-message GetIndexesResponse {
+message ListIndexesResponse {
   // The indexes
   repeated Index indexes = 1;
 }
@@ -504,7 +504,7 @@ service MongoRPC {
   // Creates indexes on collections.
   rpc CreateIndex(CreateIndexRequest) returns (CreateIndexResponse);
   // Lists indexes on collections.
-  rpc GetIndexes(GetIndexesRequest) returns (GetIndexesResponse);
+  rpc ListIndexes(ListIndexesRequest) returns (ListIndexesResponse);
   // Deletes indexes on collections.
   rpc DeleteIndex(DeleteIndexRequest) returns (DeleteIndexResponse);
   // Reindexes indexes on collections.
