@@ -303,6 +303,155 @@ message ListenResponse {
   Value document = 2;
 }
 
+message Index {
+  // The name of the index
+  string name = 1;
+  // The keys to index
+  repeated IndexKey keys = 2;
+  // The unique flag
+  bool unique = 3;
+}
+
+message IndexKey {
+  // The field to index
+  string field = 1;
+  // The direction to index
+  IndexDirection direction = 2;
+}
+
+message IndexDirection {
+  // Ascending
+  int32 ASCENDING = 1;
+  // Descending
+  int32 DESCENDING = 2;
+}
+
+message CreateIndexRequest {
+  // The database to use
+  string database = 1;
+  // The collection to use
+  string collection = 2;
+  // The index to create
+  Index index = 3;
+}
+
+message CreateIndexResponse {
+  // The name of the index
+  string name = 1;
+}
+
+message GetIndexesRequest {
+  // The database to use
+  string database = 1;
+  // The collection to use
+  string collection = 2;
+}
+
+message GetIndexesResponse {
+  // The indexes
+  repeated Index indexes = 1;
+}
+
+message DeleteIndexRequest {
+  // The database to use
+  string database = 1;
+  // The collection to use
+  string collection = 2;
+  // The name of the index to delete
+  string name = 3;
+}
+
+message DeleteIndexResponse {
+  // The name of the index that was deleted
+  string name = 1;
+}
+
+message ReindexRequest {
+  // The database to use
+  string database = 1;
+  // The collection to use
+  string collection = 2;
+  // The name of the index to delete
+  string name = 3;
+}
+
+message ReindexResponse {
+  // The name of the index that was reindexed
+  string name = 1;
+}
+
+message CountDocumentsResponse {
+  // The count of documents
+  int64 count = 1;
+}
+
+message Empty {}
+
+message CollectionStatsRequest {
+  // The database to use
+  string database = 1;
+  // The collection to use
+  string collection = 2;
+}
+
+message CollectionStatsResponse {
+  // The count of documents
+  int64 count = 1;
+  // The size of the collection
+  int64 size = 2;
+  // The average document size
+  int64 avg_obj_size = 3;
+  // The storage size of the collection
+  int64 storage_size = 4;
+  // The total index size
+  int64 total_index_size = 5;
+  // The total size of the indexes
+  int64 index_size = 6;
+  // The number of indexes
+  int32 num_indexes = 7;
+  // The number of indexes
+  int32 nindexes = 8;
+  // The free storage size
+  int64 free_storage_size = 9;
+}
+
+message CreateCollectionRequest {
+  // The database to use
+  string database = 1;
+  // The collection to use
+  string collection = 2;
+  // The name of the collection
+  string name = 3;
+}
+
+message CreateCollectionResponse {
+  // The name of the collection
+  string name = 1;
+}
+
+message RenameCollectionRequest {
+  // The database to use
+  string database = 1;
+  // The collection to use
+  string collection = 2;
+  // The name of the collection
+  string name = 3;
+}
+
+message RenameCollectionResponse {
+  // The name of the collection
+  string name = 1;
+}
+
+message DeleteCollectionRequest {
+  // The database to use
+  string database = 1;
+  // The collection to use
+  string collection = 2;
+}
+
+message DeleteCollectionResponse {}
+
 // MongoRPC
 service MongoRPC {
   // ListCollections lists the collections in a database.
@@ -317,6 +466,26 @@ service MongoRPC {
   rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
   // DeleteDocument deletes a document from a collection.
   rpc DeleteDocument(DeleteDocumentRequest) returns (DeleteDocumentResponse);
+  // Returns the count of documents that match the query for a collection or view.
+  rpc CountDocuments(ListDocumentsRequest) returns (CountDocumentsResponse);
   // Listen listens for changes to a document in a collection.
   rpc Listen(ListenRequest) returns (stream ListenResponse);
+  // Creates indexes on collections.
+  rpc CreateIndex(CreateIndexRequest) returns (CreateIndexResponse);
+  // Lists indexes on collections.
+  rpc GetIndexes(GetIndexesRequest) returns (GetIndexesResponse);
+  // Deletes indexes on collections.
+  rpc DeleteIndex(DeleteIndexRequest) returns (DeleteIndexResponse);
+  // Reindexes indexes on collections.
+  rpc Reindex(ReindexRequest) returns (ReindexResponse);
+  // Ping is used to test the connection to the server.
+  rpc Ping(Empty) returns (Empty);
+  // CollectionStats returns stats about a collection.
+  rpc CollectionStats(ListCollectionsRequest) returns (ListCollectionsResponse);
+  // CreateCollection creates a collection.
+  rpc CreateCollection(CreateCollectionRequest) returns (CreateCollectionResponse);
+  // RenameCollection renames a collection.
+  rpc RenameCollection(RenameCollectionRequest) returns (RenameCollectionResponse);
+  // DeleteCollection drops a collection.
+  rpc DeleteCollection(DeleteCollectionRequest) returns (DeleteCollectionResponse);
 }

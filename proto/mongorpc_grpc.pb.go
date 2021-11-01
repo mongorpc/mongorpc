@@ -30,8 +30,28 @@ type MongoRPCClient interface {
 	UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*UpdateDocumentResponse, error)
 	// DeleteDocument deletes a document from a collection.
 	DeleteDocument(ctx context.Context, in *DeleteDocumentRequest, opts ...grpc.CallOption) (*DeleteDocumentResponse, error)
+	// Returns the count of documents that match the query for a collection or view.
+	CountDocuments(ctx context.Context, in *ListDocumentsRequest, opts ...grpc.CallOption) (*CountDocumentsResponse, error)
 	// Listen listens for changes to a document in a collection.
 	Listen(ctx context.Context, in *ListenRequest, opts ...grpc.CallOption) (MongoRPC_ListenClient, error)
+	// Creates indexes on collections.
+	CreateIndex(ctx context.Context, in *CreateIndexRequest, opts ...grpc.CallOption) (*CreateIndexResponse, error)
+	// Lists indexes on collections.
+	GetIndexes(ctx context.Context, in *GetIndexesRequest, opts ...grpc.CallOption) (*GetIndexesResponse, error)
+	// Deletes indexes on collections.
+	DeleteIndex(ctx context.Context, in *DeleteIndexRequest, opts ...grpc.CallOption) (*DeleteIndexResponse, error)
+	// Reindexes indexes on collections.
+	Reindex(ctx context.Context, in *ReindexRequest, opts ...grpc.CallOption) (*ReindexResponse, error)
+	// Ping is used to test the connection to the server.
+	Ping(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
+	// CollectionStats returns stats about a collection.
+	CollectionStats(ctx context.Context, in *ListCollectionsRequest, opts ...grpc.CallOption) (*ListCollectionsResponse, error)
+	// CreateCollection creates a collection.
+	CreateCollection(ctx context.Context, in *CreateCollectionRequest, opts ...grpc.CallOption) (*CreateCollectionResponse, error)
+	// RenameCollection renames a collection.
+	RenameCollection(ctx context.Context, in *RenameCollectionRequest, opts ...grpc.CallOption) (*RenameCollectionResponse, error)
+	// DeleteCollection drops a collection.
+	DeleteCollection(ctx context.Context, in *DeleteCollectionRequest, opts ...grpc.CallOption) (*DeleteCollectionResponse, error)
 }
 
 type mongoRPCClient struct {
@@ -96,6 +116,15 @@ func (c *mongoRPCClient) DeleteDocument(ctx context.Context, in *DeleteDocumentR
 	return out, nil
 }
 
+func (c *mongoRPCClient) CountDocuments(ctx context.Context, in *ListDocumentsRequest, opts ...grpc.CallOption) (*CountDocumentsResponse, error) {
+	out := new(CountDocumentsResponse)
+	err := c.cc.Invoke(ctx, "/mongorpc.MongoRPC/CountDocuments", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *mongoRPCClient) Listen(ctx context.Context, in *ListenRequest, opts ...grpc.CallOption) (MongoRPC_ListenClient, error) {
 	stream, err := c.cc.NewStream(ctx, &MongoRPC_ServiceDesc.Streams[0], "/mongorpc.MongoRPC/Listen", opts...)
 	if err != nil {
@@ -128,6 +157,87 @@ func (x *mongoRPCListenClient) Recv() (*ListenResponse, error) {
 	return m, nil
 }
 
+func (c *mongoRPCClient) CreateIndex(ctx context.Context, in *CreateIndexRequest, opts ...grpc.CallOption) (*CreateIndexResponse, error) {
+	out := new(CreateIndexResponse)
+	err := c.cc.Invoke(ctx, "/mongorpc.MongoRPC/CreateIndex", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mongoRPCClient) GetIndexes(ctx context.Context, in *GetIndexesRequest, opts ...grpc.CallOption) (*GetIndexesResponse, error) {
+	out := new(GetIndexesResponse)
+	err := c.cc.Invoke(ctx, "/mongorpc.MongoRPC/GetIndexes", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mongoRPCClient) DeleteIndex(ctx context.Context, in *DeleteIndexRequest, opts ...grpc.CallOption) (*DeleteIndexResponse, error) {
+	out := new(DeleteIndexResponse)
+	err := c.cc.Invoke(ctx, "/mongorpc.MongoRPC/DeleteIndex", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mongoRPCClient) Reindex(ctx context.Context, in *ReindexRequest, opts ...grpc.CallOption) (*ReindexResponse, error) {
+	out := new(ReindexResponse)
+	err := c.cc.Invoke(ctx, "/mongorpc.MongoRPC/Reindex", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mongoRPCClient) Ping(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/mongorpc.MongoRPC/Ping", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mongoRPCClient) CollectionStats(ctx context.Context, in *ListCollectionsRequest, opts ...grpc.CallOption) (*ListCollectionsResponse, error) {
+	out := new(ListCollectionsResponse)
+	err := c.cc.Invoke(ctx, "/mongorpc.MongoRPC/CollectionStats", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mongoRPCClient) CreateCollection(ctx context.Context, in *CreateCollectionRequest, opts ...grpc.CallOption) (*CreateCollectionResponse, error) {
+	out := new(CreateCollectionResponse)
+	err := c.cc.Invoke(ctx, "/mongorpc.MongoRPC/CreateCollection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mongoRPCClient) RenameCollection(ctx context.Context, in *RenameCollectionRequest, opts ...grpc.CallOption) (*RenameCollectionResponse, error) {
+	out := new(RenameCollectionResponse)
+	err := c.cc.Invoke(ctx, "/mongorpc.MongoRPC/RenameCollection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mongoRPCClient) DeleteCollection(ctx context.Context, in *DeleteCollectionRequest, opts ...grpc.CallOption) (*DeleteCollectionResponse, error) {
+	out := new(DeleteCollectionResponse)
+	err := c.cc.Invoke(ctx, "/mongorpc.MongoRPC/DeleteCollection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MongoRPCServer is the server API for MongoRPC service.
 // All implementations must embed UnimplementedMongoRPCServer
 // for forward compatibility
@@ -144,8 +254,28 @@ type MongoRPCServer interface {
 	UpdateDocument(context.Context, *UpdateDocumentRequest) (*UpdateDocumentResponse, error)
 	// DeleteDocument deletes a document from a collection.
 	DeleteDocument(context.Context, *DeleteDocumentRequest) (*DeleteDocumentResponse, error)
+	// Returns the count of documents that match the query for a collection or view.
+	CountDocuments(context.Context, *ListDocumentsRequest) (*CountDocumentsResponse, error)
 	// Listen listens for changes to a document in a collection.
 	Listen(*ListenRequest, MongoRPC_ListenServer) error
+	// Creates indexes on collections.
+	CreateIndex(context.Context, *CreateIndexRequest) (*CreateIndexResponse, error)
+	// Lists indexes on collections.
+	GetIndexes(context.Context, *GetIndexesRequest) (*GetIndexesResponse, error)
+	// Deletes indexes on collections.
+	DeleteIndex(context.Context, *DeleteIndexRequest) (*DeleteIndexResponse, error)
+	// Reindexes indexes on collections.
+	Reindex(context.Context, *ReindexRequest) (*ReindexResponse, error)
+	// Ping is used to test the connection to the server.
+	Ping(context.Context, *Empty) (*Empty, error)
+	// CollectionStats returns stats about a collection.
+	CollectionStats(context.Context, *ListCollectionsRequest) (*ListCollectionsResponse, error)
+	// CreateCollection creates a collection.
+	CreateCollection(context.Context, *CreateCollectionRequest) (*CreateCollectionResponse, error)
+	// RenameCollection renames a collection.
+	RenameCollection(context.Context, *RenameCollectionRequest) (*RenameCollectionResponse, error)
+	// DeleteCollection drops a collection.
+	DeleteCollection(context.Context, *DeleteCollectionRequest) (*DeleteCollectionResponse, error)
 	mustEmbedUnimplementedMongoRPCServer()
 }
 
@@ -171,8 +301,38 @@ func (UnimplementedMongoRPCServer) UpdateDocument(context.Context, *UpdateDocume
 func (UnimplementedMongoRPCServer) DeleteDocument(context.Context, *DeleteDocumentRequest) (*DeleteDocumentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteDocument not implemented")
 }
+func (UnimplementedMongoRPCServer) CountDocuments(context.Context, *ListDocumentsRequest) (*CountDocumentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CountDocuments not implemented")
+}
 func (UnimplementedMongoRPCServer) Listen(*ListenRequest, MongoRPC_ListenServer) error {
 	return status.Errorf(codes.Unimplemented, "method Listen not implemented")
+}
+func (UnimplementedMongoRPCServer) CreateIndex(context.Context, *CreateIndexRequest) (*CreateIndexResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateIndex not implemented")
+}
+func (UnimplementedMongoRPCServer) GetIndexes(context.Context, *GetIndexesRequest) (*GetIndexesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetIndexes not implemented")
+}
+func (UnimplementedMongoRPCServer) DeleteIndex(context.Context, *DeleteIndexRequest) (*DeleteIndexResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteIndex not implemented")
+}
+func (UnimplementedMongoRPCServer) Reindex(context.Context, *ReindexRequest) (*ReindexResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Reindex not implemented")
+}
+func (UnimplementedMongoRPCServer) Ping(context.Context, *Empty) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
+}
+func (UnimplementedMongoRPCServer) CollectionStats(context.Context, *ListCollectionsRequest) (*ListCollectionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CollectionStats not implemented")
+}
+func (UnimplementedMongoRPCServer) CreateCollection(context.Context, *CreateCollectionRequest) (*CreateCollectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateCollection not implemented")
+}
+func (UnimplementedMongoRPCServer) RenameCollection(context.Context, *RenameCollectionRequest) (*RenameCollectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RenameCollection not implemented")
+}
+func (UnimplementedMongoRPCServer) DeleteCollection(context.Context, *DeleteCollectionRequest) (*DeleteCollectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteCollection not implemented")
 }
 func (UnimplementedMongoRPCServer) mustEmbedUnimplementedMongoRPCServer() {}
 
@@ -295,6 +455,24 @@ func _MongoRPC_DeleteDocument_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MongoRPC_CountDocuments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListDocumentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MongoRPCServer).CountDocuments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mongorpc.MongoRPC/CountDocuments",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MongoRPCServer).CountDocuments(ctx, req.(*ListDocumentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MongoRPC_Listen_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(ListenRequest)
 	if err := stream.RecvMsg(m); err != nil {
@@ -314,6 +492,168 @@ type mongoRPCListenServer struct {
 
 func (x *mongoRPCListenServer) Send(m *ListenResponse) error {
 	return x.ServerStream.SendMsg(m)
+}
+
+func _MongoRPC_CreateIndex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateIndexRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MongoRPCServer).CreateIndex(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mongorpc.MongoRPC/CreateIndex",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MongoRPCServer).CreateIndex(ctx, req.(*CreateIndexRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MongoRPC_GetIndexes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetIndexesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MongoRPCServer).GetIndexes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mongorpc.MongoRPC/GetIndexes",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MongoRPCServer).GetIndexes(ctx, req.(*GetIndexesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MongoRPC_DeleteIndex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteIndexRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MongoRPCServer).DeleteIndex(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mongorpc.MongoRPC/DeleteIndex",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MongoRPCServer).DeleteIndex(ctx, req.(*DeleteIndexRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MongoRPC_Reindex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReindexRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MongoRPCServer).Reindex(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mongorpc.MongoRPC/Reindex",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MongoRPCServer).Reindex(ctx, req.(*ReindexRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MongoRPC_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MongoRPCServer).Ping(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mongorpc.MongoRPC/Ping",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MongoRPCServer).Ping(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MongoRPC_CollectionStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCollectionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MongoRPCServer).CollectionStats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mongorpc.MongoRPC/CollectionStats",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MongoRPCServer).CollectionStats(ctx, req.(*ListCollectionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MongoRPC_CreateCollection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCollectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MongoRPCServer).CreateCollection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mongorpc.MongoRPC/CreateCollection",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MongoRPCServer).CreateCollection(ctx, req.(*CreateCollectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MongoRPC_RenameCollection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RenameCollectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MongoRPCServer).RenameCollection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mongorpc.MongoRPC/RenameCollection",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MongoRPCServer).RenameCollection(ctx, req.(*RenameCollectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MongoRPC_DeleteCollection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCollectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MongoRPCServer).DeleteCollection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mongorpc.MongoRPC/DeleteCollection",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MongoRPCServer).DeleteCollection(ctx, req.(*DeleteCollectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 // MongoRPC_ServiceDesc is the grpc.ServiceDesc for MongoRPC service.
@@ -346,6 +686,46 @@ var MongoRPC_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteDocument",
 			Handler:    _MongoRPC_DeleteDocument_Handler,
+		},
+		{
+			MethodName: "CountDocuments",
+			Handler:    _MongoRPC_CountDocuments_Handler,
+		},
+		{
+			MethodName: "CreateIndex",
+			Handler:    _MongoRPC_CreateIndex_Handler,
+		},
+		{
+			MethodName: "GetIndexes",
+			Handler:    _MongoRPC_GetIndexes_Handler,
+		},
+		{
+			MethodName: "DeleteIndex",
+			Handler:    _MongoRPC_DeleteIndex_Handler,
+		},
+		{
+			MethodName: "Reindex",
+			Handler:    _MongoRPC_Reindex_Handler,
+		},
+		{
+			MethodName: "Ping",
+			Handler:    _MongoRPC_Ping_Handler,
+		},
+		{
+			MethodName: "CollectionStats",
+			Handler:    _MongoRPC_CollectionStats_Handler,
+		},
+		{
+			MethodName: "CreateCollection",
+			Handler:    _MongoRPC_CreateCollection_Handler,
+		},
+		{
+			MethodName: "RenameCollection",
+			Handler:    _MongoRPC_RenameCollection_Handler,
+		},
+		{
+			MethodName: "DeleteCollection",
+			Handler:    _MongoRPC_DeleteCollection_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
