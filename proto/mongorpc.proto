@@ -319,11 +319,9 @@ message IndexKey {
   IndexDirection direction = 2;
 }
 
-message IndexDirection {
-  // Ascending
-  int32 ascending = 1;
-  // Descending
-  int32 descending = 2;
+enum IndexDirection {
+  ASCENDING = 0;
+  DESCENDING = 1;
 }
 
 message CreateIndexRequest {

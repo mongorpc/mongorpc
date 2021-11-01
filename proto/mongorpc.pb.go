@@ -78,6 +78,52 @@ func (NullValue) EnumDescriptor() ([]byte, []int) {
 	return file_mongorpc_proto_rawDescGZIP(), []int{0}
 }
 
+type IndexDirection int32
+
+const (
+	IndexDirection_ASCENDING  IndexDirection = 0
+	IndexDirection_DESCENDING IndexDirection = 1
+)
+
+// Enum value maps for IndexDirection.
+var (
+	IndexDirection_name = map[int32]string{
+		0: "ASCENDING",
+		1: "DESCENDING",
+	}
+	IndexDirection_value = map[string]int32{
+		"ASCENDING":  0,
+		"DESCENDING": 1,
+	}
+)
+
+func (x IndexDirection) Enum() *IndexDirection {
+	p := new(IndexDirection)
+	*p = x
+	return p
+}
+
+func (x IndexDirection) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (IndexDirection) Descriptor() protoreflect.EnumDescriptor {
+	return file_mongorpc_proto_enumTypes[1].Descriptor()
+}
+
+func (IndexDirection) Type() protoreflect.EnumType {
+	return &file_mongorpc_proto_enumTypes[1]
+}
+
+func (x IndexDirection) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use IndexDirection.Descriptor instead.
+func (IndexDirection) EnumDescriptor() ([]byte, []int) {
+	return file_mongorpc_proto_rawDescGZIP(), []int{1}
+}
+
 type HealthCheckResponse_ServingStatus int32
 
 const (
@@ -114,11 +160,11 @@ func (x HealthCheckResponse_ServingStatus) String() string {
 }
 
 func (HealthCheckResponse_ServingStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_mongorpc_proto_enumTypes[1].Descriptor()
+	return file_mongorpc_proto_enumTypes[2].Descriptor()
 }
 
 func (HealthCheckResponse_ServingStatus) Type() protoreflect.EnumType {
-	return &file_mongorpc_proto_enumTypes[1]
+	return &file_mongorpc_proto_enumTypes[2]
 }
 
 func (x HealthCheckResponse_ServingStatus) Number() protoreflect.EnumNumber {
@@ -127,7 +173,7 @@ func (x HealthCheckResponse_ServingStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use HealthCheckResponse_ServingStatus.Descriptor instead.
 func (HealthCheckResponse_ServingStatus) EnumDescriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{54, 0}
+	return file_mongorpc_proto_rawDescGZIP(), []int{53, 0}
 }
 
 // Array is a special type that is used to represent an array value in a MongoDB
@@ -2309,7 +2355,7 @@ type IndexKey struct {
 	// The field to index
 	Field string `protobuf:"bytes,1,opt,name=field,proto3" json:"field,omitempty"`
 	// The direction to index
-	Direction *IndexDirection `protobuf:"bytes,2,opt,name=direction,proto3" json:"direction,omitempty"`
+	Direction IndexDirection `protobuf:"varint,2,opt,name=direction,proto3,enum=mongorpc.IndexDirection" json:"direction,omitempty"`
 }
 
 func (x *IndexKey) Reset() {
@@ -2351,68 +2397,11 @@ func (x *IndexKey) GetField() string {
 	return ""
 }
 
-func (x *IndexKey) GetDirection() *IndexDirection {
+func (x *IndexKey) GetDirection() IndexDirection {
 	if x != nil {
 		return x.Direction
 	}
-	return nil
-}
-
-type IndexDirection struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	// Ascending
-	Ascending int32 `protobuf:"varint,1,opt,name=ascending,proto3" json:"ascending,omitempty"`
-	// Descending
-	Descending int32 `protobuf:"varint,2,opt,name=descending,proto3" json:"descending,omitempty"`
-}
-
-func (x *IndexDirection) Reset() {
-	*x = IndexDirection{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_mongorpc_proto_msgTypes[33]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *IndexDirection) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*IndexDirection) ProtoMessage() {}
-
-func (x *IndexDirection) ProtoReflect() protoreflect.Message {
-	mi := &file_mongorpc_proto_msgTypes[33]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use IndexDirection.ProtoReflect.Descriptor instead.
-func (*IndexDirection) Descriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{33}
-}
-
-func (x *IndexDirection) GetAscending() int32 {
-	if x != nil {
-		return x.Ascending
-	}
-	return 0
-}
-
-func (x *IndexDirection) GetDescending() int32 {
-	if x != nil {
-		return x.Descending
-	}
-	return 0
+	return IndexDirection_ASCENDING
 }
 
 type CreateIndexRequest struct {
@@ -2431,7 +2420,7 @@ type CreateIndexRequest struct {
 func (x *CreateIndexRequest) Reset() {
 	*x = CreateIndexRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_mongorpc_proto_msgTypes[34]
+		mi := &file_mongorpc_proto_msgTypes[33]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2444,7 +2433,7 @@ func (x *CreateIndexRequest) String() string {
 func (*CreateIndexRequest) ProtoMessage() {}
 
 func (x *CreateIndexRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_mongorpc_proto_msgTypes[34]
+	mi := &file_mongorpc_proto_msgTypes[33]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2457,7 +2446,7 @@ func (x *CreateIndexRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateIndexRequest.ProtoReflect.Descriptor instead.
 func (*CreateIndexRequest) Descriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{34}
+	return file_mongorpc_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *CreateIndexRequest) GetDatabase() string {
@@ -2493,7 +2482,7 @@ type CreateIndexResponse struct {
 func (x *CreateIndexResponse) Reset() {
 	*x = CreateIndexResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_mongorpc_proto_msgTypes[35]
+		mi := &file_mongorpc_proto_msgTypes[34]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2506,7 +2495,7 @@ func (x *CreateIndexResponse) String() string {
 func (*CreateIndexResponse) ProtoMessage() {}
 
 func (x *CreateIndexResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_mongorpc_proto_msgTypes[35]
+	mi := &file_mongorpc_proto_msgTypes[34]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2519,7 +2508,7 @@ func (x *CreateIndexResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateIndexResponse.ProtoReflect.Descriptor instead.
 func (*CreateIndexResponse) Descriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{35}
+	return file_mongorpc_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *CreateIndexResponse) GetName() string {
@@ -2543,7 +2532,7 @@ type GetIndexesRequest struct {
 func (x *GetIndexesRequest) Reset() {
 	*x = GetIndexesRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_mongorpc_proto_msgTypes[36]
+		mi := &file_mongorpc_proto_msgTypes[35]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2556,7 +2545,7 @@ func (x *GetIndexesRequest) String() string {
 func (*GetIndexesRequest) ProtoMessage() {}
 
 func (x *GetIndexesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_mongorpc_proto_msgTypes[36]
+	mi := &file_mongorpc_proto_msgTypes[35]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2569,7 +2558,7 @@ func (x *GetIndexesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetIndexesRequest.ProtoReflect.Descriptor instead.
 func (*GetIndexesRequest) Descriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{36}
+	return file_mongorpc_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *GetIndexesRequest) GetDatabase() string {
@@ -2598,7 +2587,7 @@ type GetIndexesResponse struct {
 func (x *GetIndexesResponse) Reset() {
 	*x = GetIndexesResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_mongorpc_proto_msgTypes[37]
+		mi := &file_mongorpc_proto_msgTypes[36]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2611,7 +2600,7 @@ func (x *GetIndexesResponse) String() string {
 func (*GetIndexesResponse) ProtoMessage() {}
 
 func (x *GetIndexesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_mongorpc_proto_msgTypes[37]
+	mi := &file_mongorpc_proto_msgTypes[36]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2624,7 +2613,7 @@ func (x *GetIndexesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetIndexesResponse.ProtoReflect.Descriptor instead.
 func (*GetIndexesResponse) Descriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{37}
+	return file_mongorpc_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *GetIndexesResponse) GetIndexes() []*Index {
@@ -2650,7 +2639,7 @@ type DeleteIndexRequest struct {
 func (x *DeleteIndexRequest) Reset() {
 	*x = DeleteIndexRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_mongorpc_proto_msgTypes[38]
+		mi := &file_mongorpc_proto_msgTypes[37]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2663,7 +2652,7 @@ func (x *DeleteIndexRequest) String() string {
 func (*DeleteIndexRequest) ProtoMessage() {}
 
 func (x *DeleteIndexRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_mongorpc_proto_msgTypes[38]
+	mi := &file_mongorpc_proto_msgTypes[37]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2676,7 +2665,7 @@ func (x *DeleteIndexRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteIndexRequest.ProtoReflect.Descriptor instead.
 func (*DeleteIndexRequest) Descriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{38}
+	return file_mongorpc_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *DeleteIndexRequest) GetDatabase() string {
@@ -2712,7 +2701,7 @@ type DeleteIndexResponse struct {
 func (x *DeleteIndexResponse) Reset() {
 	*x = DeleteIndexResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_mongorpc_proto_msgTypes[39]
+		mi := &file_mongorpc_proto_msgTypes[38]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2725,7 +2714,7 @@ func (x *DeleteIndexResponse) String() string {
 func (*DeleteIndexResponse) ProtoMessage() {}
 
 func (x *DeleteIndexResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_mongorpc_proto_msgTypes[39]
+	mi := &file_mongorpc_proto_msgTypes[38]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2738,7 +2727,7 @@ func (x *DeleteIndexResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteIndexResponse.ProtoReflect.Descriptor instead.
 func (*DeleteIndexResponse) Descriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{39}
+	return file_mongorpc_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *DeleteIndexResponse) GetName() string {
@@ -2764,7 +2753,7 @@ type ReindexRequest struct {
 func (x *ReindexRequest) Reset() {
 	*x = ReindexRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_mongorpc_proto_msgTypes[40]
+		mi := &file_mongorpc_proto_msgTypes[39]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2777,7 +2766,7 @@ func (x *ReindexRequest) String() string {
 func (*ReindexRequest) ProtoMessage() {}
 
 func (x *ReindexRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_mongorpc_proto_msgTypes[40]
+	mi := &file_mongorpc_proto_msgTypes[39]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2790,7 +2779,7 @@ func (x *ReindexRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReindexRequest.ProtoReflect.Descriptor instead.
 func (*ReindexRequest) Descriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{40}
+	return file_mongorpc_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *ReindexRequest) GetDatabase() string {
@@ -2826,7 +2815,7 @@ type ReindexResponse struct {
 func (x *ReindexResponse) Reset() {
 	*x = ReindexResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_mongorpc_proto_msgTypes[41]
+		mi := &file_mongorpc_proto_msgTypes[40]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2839,7 +2828,7 @@ func (x *ReindexResponse) String() string {
 func (*ReindexResponse) ProtoMessage() {}
 
 func (x *ReindexResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_mongorpc_proto_msgTypes[41]
+	mi := &file_mongorpc_proto_msgTypes[40]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2852,7 +2841,7 @@ func (x *ReindexResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReindexResponse.ProtoReflect.Descriptor instead.
 func (*ReindexResponse) Descriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{41}
+	return file_mongorpc_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *ReindexResponse) GetName() string {
@@ -2888,7 +2877,7 @@ type CountDocumentsRequest struct {
 func (x *CountDocumentsRequest) Reset() {
 	*x = CountDocumentsRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_mongorpc_proto_msgTypes[42]
+		mi := &file_mongorpc_proto_msgTypes[41]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2901,7 +2890,7 @@ func (x *CountDocumentsRequest) String() string {
 func (*CountDocumentsRequest) ProtoMessage() {}
 
 func (x *CountDocumentsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_mongorpc_proto_msgTypes[42]
+	mi := &file_mongorpc_proto_msgTypes[41]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2914,7 +2903,7 @@ func (x *CountDocumentsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CountDocumentsRequest.ProtoReflect.Descriptor instead.
 func (*CountDocumentsRequest) Descriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{42}
+	return file_mongorpc_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *CountDocumentsRequest) GetDatabase() string {
@@ -2978,7 +2967,7 @@ type CountDocumentsResponse struct {
 func (x *CountDocumentsResponse) Reset() {
 	*x = CountDocumentsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_mongorpc_proto_msgTypes[43]
+		mi := &file_mongorpc_proto_msgTypes[42]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2991,7 +2980,7 @@ func (x *CountDocumentsResponse) String() string {
 func (*CountDocumentsResponse) ProtoMessage() {}
 
 func (x *CountDocumentsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_mongorpc_proto_msgTypes[43]
+	mi := &file_mongorpc_proto_msgTypes[42]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3004,7 +2993,7 @@ func (x *CountDocumentsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CountDocumentsResponse.ProtoReflect.Descriptor instead.
 func (*CountDocumentsResponse) Descriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{43}
+	return file_mongorpc_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *CountDocumentsResponse) GetCount() int64 {
@@ -3023,7 +3012,7 @@ type Empty struct {
 func (x *Empty) Reset() {
 	*x = Empty{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_mongorpc_proto_msgTypes[44]
+		mi := &file_mongorpc_proto_msgTypes[43]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3036,7 +3025,7 @@ func (x *Empty) String() string {
 func (*Empty) ProtoMessage() {}
 
 func (x *Empty) ProtoReflect() protoreflect.Message {
-	mi := &file_mongorpc_proto_msgTypes[44]
+	mi := &file_mongorpc_proto_msgTypes[43]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3049,7 +3038,7 @@ func (x *Empty) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Empty.ProtoReflect.Descriptor instead.
 func (*Empty) Descriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{44}
+	return file_mongorpc_proto_rawDescGZIP(), []int{43}
 }
 
 type CollectionStatsRequest struct {
@@ -3066,7 +3055,7 @@ type CollectionStatsRequest struct {
 func (x *CollectionStatsRequest) Reset() {
 	*x = CollectionStatsRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_mongorpc_proto_msgTypes[45]
+		mi := &file_mongorpc_proto_msgTypes[44]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3079,7 +3068,7 @@ func (x *CollectionStatsRequest) String() string {
 func (*CollectionStatsRequest) ProtoMessage() {}
 
 func (x *CollectionStatsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_mongorpc_proto_msgTypes[45]
+	mi := &file_mongorpc_proto_msgTypes[44]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3092,7 +3081,7 @@ func (x *CollectionStatsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CollectionStatsRequest.ProtoReflect.Descriptor instead.
 func (*CollectionStatsRequest) Descriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{45}
+	return file_mongorpc_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *CollectionStatsRequest) GetDatabase() string {
@@ -3137,7 +3126,7 @@ type CollectionStatsResponse struct {
 func (x *CollectionStatsResponse) Reset() {
 	*x = CollectionStatsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_mongorpc_proto_msgTypes[46]
+		mi := &file_mongorpc_proto_msgTypes[45]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3150,7 +3139,7 @@ func (x *CollectionStatsResponse) String() string {
 func (*CollectionStatsResponse) ProtoMessage() {}
 
 func (x *CollectionStatsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_mongorpc_proto_msgTypes[46]
+	mi := &file_mongorpc_proto_msgTypes[45]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3163,7 +3152,7 @@ func (x *CollectionStatsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CollectionStatsResponse.ProtoReflect.Descriptor instead.
 func (*CollectionStatsResponse) Descriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{46}
+	return file_mongorpc_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *CollectionStatsResponse) GetCount() int64 {
@@ -3245,7 +3234,7 @@ type CreateCollectionRequest struct {
 func (x *CreateCollectionRequest) Reset() {
 	*x = CreateCollectionRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_mongorpc_proto_msgTypes[47]
+		mi := &file_mongorpc_proto_msgTypes[46]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3258,7 +3247,7 @@ func (x *CreateCollectionRequest) String() string {
 func (*CreateCollectionRequest) ProtoMessage() {}
 
 func (x *CreateCollectionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_mongorpc_proto_msgTypes[47]
+	mi := &file_mongorpc_proto_msgTypes[46]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3271,7 +3260,7 @@ func (x *CreateCollectionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCollectionRequest.ProtoReflect.Descriptor instead.
 func (*CreateCollectionRequest) Descriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{47}
+	return file_mongorpc_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *CreateCollectionRequest) GetDatabase() string {
@@ -3307,7 +3296,7 @@ type CreateCollectionResponse struct {
 func (x *CreateCollectionResponse) Reset() {
 	*x = CreateCollectionResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_mongorpc_proto_msgTypes[48]
+		mi := &file_mongorpc_proto_msgTypes[47]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3320,7 +3309,7 @@ func (x *CreateCollectionResponse) String() string {
 func (*CreateCollectionResponse) ProtoMessage() {}
 
 func (x *CreateCollectionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_mongorpc_proto_msgTypes[48]
+	mi := &file_mongorpc_proto_msgTypes[47]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3333,7 +3322,7 @@ func (x *CreateCollectionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCollectionResponse.ProtoReflect.Descriptor instead.
 func (*CreateCollectionResponse) Descriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{48}
+	return file_mongorpc_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *CreateCollectionResponse) GetName() string {
@@ -3359,7 +3348,7 @@ type RenameCollectionRequest struct {
 func (x *RenameCollectionRequest) Reset() {
 	*x = RenameCollectionRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_mongorpc_proto_msgTypes[49]
+		mi := &file_mongorpc_proto_msgTypes[48]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3372,7 +3361,7 @@ func (x *RenameCollectionRequest) String() string {
 func (*RenameCollectionRequest) ProtoMessage() {}
 
 func (x *RenameCollectionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_mongorpc_proto_msgTypes[49]
+	mi := &file_mongorpc_proto_msgTypes[48]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3385,7 +3374,7 @@ func (x *RenameCollectionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RenameCollectionRequest.ProtoReflect.Descriptor instead.
 func (*RenameCollectionRequest) Descriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{49}
+	return file_mongorpc_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *RenameCollectionRequest) GetDatabase() string {
@@ -3421,7 +3410,7 @@ type RenameCollectionResponse struct {
 func (x *RenameCollectionResponse) Reset() {
 	*x = RenameCollectionResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_mongorpc_proto_msgTypes[50]
+		mi := &file_mongorpc_proto_msgTypes[49]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3434,7 +3423,7 @@ func (x *RenameCollectionResponse) String() string {
 func (*RenameCollectionResponse) ProtoMessage() {}
 
 func (x *RenameCollectionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_mongorpc_proto_msgTypes[50]
+	mi := &file_mongorpc_proto_msgTypes[49]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3447,7 +3436,7 @@ func (x *RenameCollectionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RenameCollectionResponse.ProtoReflect.Descriptor instead.
 func (*RenameCollectionResponse) Descriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{50}
+	return file_mongorpc_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *RenameCollectionResponse) GetName() string {
@@ -3471,7 +3460,7 @@ type DeleteCollectionRequest struct {
 func (x *DeleteCollectionRequest) Reset() {
 	*x = DeleteCollectionRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_mongorpc_proto_msgTypes[51]
+		mi := &file_mongorpc_proto_msgTypes[50]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3484,7 +3473,7 @@ func (x *DeleteCollectionRequest) String() string {
 func (*DeleteCollectionRequest) ProtoMessage() {}
 
 func (x *DeleteCollectionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_mongorpc_proto_msgTypes[51]
+	mi := &file_mongorpc_proto_msgTypes[50]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3497,7 +3486,7 @@ func (x *DeleteCollectionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteCollectionRequest.ProtoReflect.Descriptor instead.
 func (*DeleteCollectionRequest) Descriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{51}
+	return file_mongorpc_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *DeleteCollectionRequest) GetDatabase() string {
@@ -3523,7 +3512,7 @@ type DeleteCollectionResponse struct {
 func (x *DeleteCollectionResponse) Reset() {
 	*x = DeleteCollectionResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_mongorpc_proto_msgTypes[52]
+		mi := &file_mongorpc_proto_msgTypes[51]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3536,7 +3525,7 @@ func (x *DeleteCollectionResponse) String() string {
 func (*DeleteCollectionResponse) ProtoMessage() {}
 
 func (x *DeleteCollectionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_mongorpc_proto_msgTypes[52]
+	mi := &file_mongorpc_proto_msgTypes[51]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3549,7 +3538,7 @@ func (x *DeleteCollectionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteCollectionResponse.ProtoReflect.Descriptor instead.
 func (*DeleteCollectionResponse) Descriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{52}
+	return file_mongorpc_proto_rawDescGZIP(), []int{51}
 }
 
 type HealthCheckRequest struct {
@@ -3563,7 +3552,7 @@ type HealthCheckRequest struct {
 func (x *HealthCheckRequest) Reset() {
 	*x = HealthCheckRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_mongorpc_proto_msgTypes[53]
+		mi := &file_mongorpc_proto_msgTypes[52]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3576,7 +3565,7 @@ func (x *HealthCheckRequest) String() string {
 func (*HealthCheckRequest) ProtoMessage() {}
 
 func (x *HealthCheckRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_mongorpc_proto_msgTypes[53]
+	mi := &file_mongorpc_proto_msgTypes[52]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3589,7 +3578,7 @@ func (x *HealthCheckRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HealthCheckRequest.ProtoReflect.Descriptor instead.
 func (*HealthCheckRequest) Descriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{53}
+	return file_mongorpc_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *HealthCheckRequest) GetService() string {
@@ -3610,7 +3599,7 @@ type HealthCheckResponse struct {
 func (x *HealthCheckResponse) Reset() {
 	*x = HealthCheckResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_mongorpc_proto_msgTypes[54]
+		mi := &file_mongorpc_proto_msgTypes[53]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3623,7 +3612,7 @@ func (x *HealthCheckResponse) String() string {
 func (*HealthCheckResponse) ProtoMessage() {}
 
 func (x *HealthCheckResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_mongorpc_proto_msgTypes[54]
+	mi := &file_mongorpc_proto_msgTypes[53]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3636,7 +3625,7 @@ func (x *HealthCheckResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HealthCheckResponse.ProtoReflect.Descriptor instead.
 func (*HealthCheckResponse) Descriptor() ([]byte, []int) {
-	return file_mongorpc_proto_rawDescGZIP(), []int{54}
+	return file_mongorpc_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *HealthCheckResponse) GetStatus() HealthCheckResponse_ServingStatus {
@@ -3885,14 +3874,9 @@ var file_mongorpc_proto_rawDesc = []byte{
 	0x58, 0x0a, 0x08, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x4b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x66,
 	0x69, 0x65, 0x6c, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x66, 0x69, 0x65, 0x6c,
 	0x64, 0x12, 0x36, 0x0a, 0x09, 0x64, 0x69, 0x72, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e,
+	0x20, 0x01, 0x28, 0x0e, 0x32, 0x18, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e,
 	0x49, 0x6e, 0x64, 0x65, 0x78, 0x44, 0x69, 0x72, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x09,
-	0x64, 0x69, 0x72, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x4e, 0x0a, 0x0e, 0x49, 0x6e, 0x64,
-	0x65, 0x78, 0x44, 0x69, 0x72, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x1c, 0x0a, 0x09, 0x61,
-	0x73, 0x63, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x09,
-	0x61, 0x73, 0x63, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x12, 0x1e, 0x0a, 0x0a, 0x64, 0x65, 0x73,
-	0x63, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0a, 0x64,
-	0x65, 0x73, 0x63, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x22, 0x77, 0x0a, 0x12, 0x43, 0x72, 0x65,
+	0x64, 0x69, 0x72, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x77, 0x0a, 0x12, 0x43, 0x72, 0x65,
 	0x61, 0x74, 0x65, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
 	0x1a, 0x0a, 0x08, 0x64, 0x61, 0x74, 0x61, 0x62, 0x61, 0x73, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
 	0x09, 0x52, 0x08, 0x64, 0x61, 0x74, 0x61, 0x62, 0x61, 0x73, 0x65, 0x12, 0x1e, 0x0a, 0x0a, 0x63,
@@ -4015,99 +3999,102 @@ var file_mongorpc_proto_rawDesc = []byte{
 	0x47, 0x10, 0x02, 0x12, 0x13, 0x0a, 0x0f, 0x53, 0x45, 0x52, 0x56, 0x49, 0x43, 0x45, 0x5f, 0x55,
 	0x4e, 0x4b, 0x4e, 0x4f, 0x57, 0x4e, 0x10, 0x03, 0x2a, 0x1b, 0x0a, 0x09, 0x4e, 0x75, 0x6c, 0x6c,
 	0x56, 0x61, 0x6c, 0x75, 0x65, 0x12, 0x0e, 0x0a, 0x0a, 0x4e, 0x55, 0x4c, 0x4c, 0x5f, 0x56, 0x41,
-	0x4c, 0x55, 0x45, 0x10, 0x00, 0x32, 0x93, 0x0b, 0x0a, 0x08, 0x4d, 0x6f, 0x6e, 0x67, 0x6f, 0x52,
-	0x50, 0x43, 0x12, 0x56, 0x0a, 0x0f, 0x4c, 0x69, 0x73, 0x74, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63,
-	0x74, 0x69, 0x6f, 0x6e, 0x73, 0x12, 0x20, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63,
-	0x2e, 0x4c, 0x69, 0x73, 0x74, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x21, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72,
-	0x70, 0x63, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f,
-	0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x4a, 0x0a, 0x0b, 0x47, 0x65,
-	0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x12, 0x1c, 0x2e, 0x6d, 0x6f, 0x6e, 0x67,
-	0x6f, 0x72, 0x70, 0x63, 0x2e, 0x47, 0x65, 0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1d, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72,
-	0x70, 0x63, 0x2e, 0x47, 0x65, 0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x50, 0x0a, 0x0d, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x6f,
-	0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x12, 0x1e, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72,
-	0x70, 0x63, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1f, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72,
-	0x70, 0x63, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x53, 0x0a, 0x0e, 0x43, 0x72, 0x65, 0x61,
-	0x74, 0x65, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x12, 0x1f, 0x2e, 0x6d, 0x6f, 0x6e,
-	0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x44, 0x6f, 0x63, 0x75,
-	0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x20, 0x2e, 0x6d, 0x6f,
+	0x4c, 0x55, 0x45, 0x10, 0x00, 0x2a, 0x2f, 0x0a, 0x0e, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x44, 0x69,
+	0x72, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x0d, 0x0a, 0x09, 0x41, 0x53, 0x43, 0x45, 0x4e,
+	0x44, 0x49, 0x4e, 0x47, 0x10, 0x00, 0x12, 0x0e, 0x0a, 0x0a, 0x44, 0x45, 0x53, 0x43, 0x45, 0x4e,
+	0x44, 0x49, 0x4e, 0x47, 0x10, 0x01, 0x32, 0x93, 0x0b, 0x0a, 0x08, 0x4d, 0x6f, 0x6e, 0x67, 0x6f,
+	0x52, 0x50, 0x43, 0x12, 0x56, 0x0a, 0x0f, 0x4c, 0x69, 0x73, 0x74, 0x43, 0x6f, 0x6c, 0x6c, 0x65,
+	0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x12, 0x20, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70,
+	0x63, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e,
+	0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x21, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f,
+	0x72, 0x70, 0x63, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69,
+	0x6f, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x4a, 0x0a, 0x0b, 0x47,
+	0x65, 0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x12, 0x1c, 0x2e, 0x6d, 0x6f, 0x6e,
+	0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x47, 0x65, 0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e,
+	0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1d, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f,
+	0x72, 0x70, 0x63, 0x2e, 0x47, 0x65, 0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x50, 0x0a, 0x0d, 0x4c, 0x69, 0x73, 0x74, 0x44,
+	0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x12, 0x1e, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f,
+	0x72, 0x70, 0x63, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74,
+	0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1f, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f,
+	0x72, 0x70, 0x63, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74,
+	0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x53, 0x0a, 0x0e, 0x43, 0x72, 0x65,
+	0x61, 0x74, 0x65, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x12, 0x1f, 0x2e, 0x6d, 0x6f,
 	0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x44, 0x6f, 0x63,
-	0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x53, 0x0a,
-	0x0e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x12,
-	0x1f, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74,
-	0x65, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x1a, 0x20, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x55, 0x70, 0x64, 0x61,
-	0x74, 0x65, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x12, 0x53, 0x0a, 0x0e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x44, 0x6f, 0x63, 0x75,
-	0x6d, 0x65, 0x6e, 0x74, 0x12, 0x1f, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e,
-	0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x20, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63,
+	0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x20, 0x2e, 0x6d,
+	0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x44, 0x6f,
+	0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x53,
+	0x0a, 0x0e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74,
+	0x12, 0x1f, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x55, 0x70, 0x64, 0x61,
+	0x74, 0x65, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x20, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x55, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x12, 0x53, 0x0a, 0x0e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x44, 0x6f, 0x63,
+	0x75, 0x6d, 0x65, 0x6e, 0x74, 0x12, 0x1f, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63,
 	0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x53, 0x0a, 0x0e, 0x43, 0x6f, 0x75, 0x6e, 0x74,
-	0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x12, 0x1f, 0x2e, 0x6d, 0x6f, 0x6e, 0x67,
-	0x6f, 0x72, 0x70, 0x63, 0x2e, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65,
-	0x6e, 0x74, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x20, 0x2e, 0x6d, 0x6f, 0x6e,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x20, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70,
+	0x63, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x53, 0x0a, 0x0e, 0x43, 0x6f, 0x75, 0x6e,
+	0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x12, 0x1f, 0x2e, 0x6d, 0x6f, 0x6e,
 	0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d,
-	0x65, 0x6e, 0x74, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3d, 0x0a, 0x06,
-	0x4c, 0x69, 0x73, 0x74, 0x65, 0x6e, 0x12, 0x17, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70,
-	0x63, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x65, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
-	0x18, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x65,
-	0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x30, 0x01, 0x12, 0x4a, 0x0a, 0x0b, 0x43,
-	0x72, 0x65, 0x61, 0x74, 0x65, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x12, 0x1c, 0x2e, 0x6d, 0x6f, 0x6e,
-	0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x49, 0x6e, 0x64, 0x65,
-	0x78, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1d, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f,
-	0x72, 0x70, 0x63, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x47, 0x0a, 0x0a, 0x47, 0x65, 0x74, 0x49, 0x6e,
-	0x64, 0x65, 0x78, 0x65, 0x73, 0x12, 0x1b, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63,
-	0x2e, 0x47, 0x65, 0x74, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x1c, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x47, 0x65,
-	0x74, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x12, 0x4a, 0x0a, 0x0b, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x12,
-	0x1c, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74,
-	0x65, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1d, 0x2e,
-	0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x49,
-	0x6e, 0x64, 0x65, 0x78, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3e, 0x0a, 0x07,
-	0x52, 0x65, 0x69, 0x6e, 0x64, 0x65, 0x78, 0x12, 0x18, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72,
-	0x70, 0x63, 0x2e, 0x52, 0x65, 0x69, 0x6e, 0x64, 0x65, 0x78, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
-	0x74, 0x1a, 0x19, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x52, 0x65, 0x69,
-	0x6e, 0x64, 0x65, 0x78, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x28, 0x0a, 0x04,
-	0x50, 0x69, 0x6e, 0x67, 0x12, 0x0f, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e,
-	0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x0f, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63,
-	0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x12, 0x56, 0x0a, 0x0f, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63,
-	0x74, 0x69, 0x6f, 0x6e, 0x53, 0x74, 0x61, 0x74, 0x73, 0x12, 0x20, 0x2e, 0x6d, 0x6f, 0x6e, 0x67,
-	0x6f, 0x72, 0x70, 0x63, 0x2e, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x53,
-	0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x21, 0x2e, 0x6d, 0x6f,
-	0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f,
-	0x6e, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x59,
-	0x0a, 0x10, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69,
-	0x6f, 0x6e, 0x12, 0x21, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x43, 0x72,
-	0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x22, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63,
-	0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f,
-	0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x59, 0x0a, 0x10, 0x52, 0x65, 0x6e,
-	0x61, 0x6d, 0x65, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x21, 0x2e,
-	0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x52, 0x65, 0x6e, 0x61, 0x6d, 0x65, 0x43,
-	0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x1a, 0x22, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x52, 0x65, 0x6e, 0x61,
-	0x6d, 0x65, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x59, 0x0a, 0x10, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x43, 0x6f,
-	0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x21, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f,
-	0x72, 0x70, 0x63, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63,
-	0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x22, 0x2e, 0x6d, 0x6f,
-	0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x43, 0x6f, 0x6c,
-	0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
-	0x4a, 0x0a, 0x0b, 0x48, 0x65, 0x61, 0x6c, 0x74, 0x68, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x12, 0x1c,
-	0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x48, 0x65, 0x61, 0x6c, 0x74, 0x68,
-	0x43, 0x68, 0x65, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1d, 0x2e, 0x6d,
-	0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x48, 0x65, 0x61, 0x6c, 0x74, 0x68, 0x43, 0x68,
-	0x65, 0x63, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x24, 0x5a, 0x22, 0x67,
-	0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72,
-	0x70, 0x63, 0x2f, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2f, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x65, 0x6e, 0x74, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x20, 0x2e, 0x6d, 0x6f,
+	0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x44, 0x6f, 0x63, 0x75,
+	0x6d, 0x65, 0x6e, 0x74, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3d, 0x0a,
+	0x06, 0x4c, 0x69, 0x73, 0x74, 0x65, 0x6e, 0x12, 0x17, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72,
+	0x70, 0x63, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x65, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x1a, 0x18, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x69, 0x73, 0x74,
+	0x65, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x30, 0x01, 0x12, 0x4a, 0x0a, 0x0b,
+	0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x12, 0x1c, 0x2e, 0x6d, 0x6f,
+	0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x49, 0x6e, 0x64,
+	0x65, 0x78, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1d, 0x2e, 0x6d, 0x6f, 0x6e, 0x67,
+	0x6f, 0x72, 0x70, 0x63, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x49, 0x6e, 0x64, 0x65, 0x78,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x47, 0x0a, 0x0a, 0x47, 0x65, 0x74, 0x49,
+	0x6e, 0x64, 0x65, 0x78, 0x65, 0x73, 0x12, 0x1b, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70,
+	0x63, 0x2e, 0x47, 0x65, 0x74, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x1c, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x47,
+	0x65, 0x74, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x12, 0x4a, 0x0a, 0x0b, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x49, 0x6e, 0x64, 0x65, 0x78,
+	0x12, 0x1c, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x44, 0x65, 0x6c, 0x65,
+	0x74, 0x65, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1d,
+	0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
+	0x49, 0x6e, 0x64, 0x65, 0x78, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3e, 0x0a,
+	0x07, 0x52, 0x65, 0x69, 0x6e, 0x64, 0x65, 0x78, 0x12, 0x18, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f,
+	0x72, 0x70, 0x63, 0x2e, 0x52, 0x65, 0x69, 0x6e, 0x64, 0x65, 0x78, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x1a, 0x19, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x52, 0x65,
+	0x69, 0x6e, 0x64, 0x65, 0x78, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x28, 0x0a,
+	0x04, 0x50, 0x69, 0x6e, 0x67, 0x12, 0x0f, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63,
+	0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x0f, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70,
+	0x63, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x12, 0x56, 0x0a, 0x0f, 0x43, 0x6f, 0x6c, 0x6c, 0x65,
+	0x63, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x74, 0x61, 0x74, 0x73, 0x12, 0x20, 0x2e, 0x6d, 0x6f, 0x6e,
+	0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e,
+	0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x21, 0x2e, 0x6d,
+	0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69,
+	0x6f, 0x6e, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x59, 0x0a, 0x10, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74,
+	0x69, 0x6f, 0x6e, 0x12, 0x21, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x43,
+	0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x22, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70,
+	0x63, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69,
+	0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x59, 0x0a, 0x10, 0x52, 0x65,
+	0x6e, 0x61, 0x6d, 0x65, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x21,
+	0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x52, 0x65, 0x6e, 0x61, 0x6d, 0x65,
+	0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x22, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x52, 0x65, 0x6e,
+	0x61, 0x6d, 0x65, 0x43, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x59, 0x0a, 0x10, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x43,
+	0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x21, 0x2e, 0x6d, 0x6f, 0x6e, 0x67,
+	0x6f, 0x72, 0x70, 0x63, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x43, 0x6f, 0x6c, 0x6c, 0x65,
+	0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x22, 0x2e, 0x6d,
+	0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x43, 0x6f,
+	0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x12, 0x4a, 0x0a, 0x0b, 0x48, 0x65, 0x61, 0x6c, 0x74, 0x68, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x12,
+	0x1c, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x48, 0x65, 0x61, 0x6c, 0x74,
+	0x68, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1d, 0x2e,
+	0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x48, 0x65, 0x61, 0x6c, 0x74, 0x68, 0x43,
+	0x68, 0x65, 0x63, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x24, 0x5a, 0x22,
+	0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6d, 0x6f, 0x6e, 0x67, 0x6f,
+	0x72, 0x70, 0x63, 0x2f, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2f, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -4122,45 +4109,45 @@ func file_mongorpc_proto_rawDescGZIP() []byte {
 	return file_mongorpc_proto_rawDescData
 }
 
-var file_mongorpc_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_mongorpc_proto_msgTypes = make([]protoimpl.MessageInfo, 56)
+var file_mongorpc_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_mongorpc_proto_msgTypes = make([]protoimpl.MessageInfo, 55)
 var file_mongorpc_proto_goTypes = []interface{}{
 	(NullValue)(0),                         // 0: mongorpc.NullValue
-	(HealthCheckResponse_ServingStatus)(0), // 1: mongorpc.HealthCheckResponse.ServingStatus
-	(*ArrayValue)(nil),                     // 2: mongorpc.ArrayValue
-	(*MapValue)(nil),                       // 3: mongorpc.MapValue
-	(*Timestamp)(nil),                      // 4: mongorpc.Timestamp
-	(*ObjectID)(nil),                       // 5: mongorpc.ObjectID
-	(*Value)(nil),                          // 6: mongorpc.Value
-	(*Sort)(nil),                           // 7: mongorpc.Sort
-	(*Equal)(nil),                          // 8: mongorpc.Equal
-	(*NotEqual)(nil),                       // 9: mongorpc.NotEqual
-	(*Less)(nil),                           // 10: mongorpc.Less
-	(*LessEqual)(nil),                      // 11: mongorpc.LessEqual
-	(*Greater)(nil),                        // 12: mongorpc.Greater
-	(*GreaterEqual)(nil),                   // 13: mongorpc.GreaterEqual
-	(*In)(nil),                             // 14: mongorpc.In
-	(*NotIn)(nil),                          // 15: mongorpc.NotIn
-	(*Exists)(nil),                         // 16: mongorpc.Exists
-	(*NotExists)(nil),                      // 17: mongorpc.NotExists
-	(*Filter)(nil),                         // 18: mongorpc.Filter
-	(*ListCollectionsRequest)(nil),         // 19: mongorpc.ListCollectionsRequest
-	(*ListCollectionsResponse)(nil),        // 20: mongorpc.ListCollectionsResponse
-	(*GetDocumentRequest)(nil),             // 21: mongorpc.GetDocumentRequest
-	(*GetDocumentResponse)(nil),            // 22: mongorpc.GetDocumentResponse
-	(*ListDocumentsRequest)(nil),           // 23: mongorpc.ListDocumentsRequest
-	(*ListDocumentsResponse)(nil),          // 24: mongorpc.ListDocumentsResponse
-	(*CreateDocumentRequest)(nil),          // 25: mongorpc.CreateDocumentRequest
-	(*CreateDocumentResponse)(nil),         // 26: mongorpc.CreateDocumentResponse
-	(*UpdateDocumentRequest)(nil),          // 27: mongorpc.UpdateDocumentRequest
-	(*UpdateDocumentResponse)(nil),         // 28: mongorpc.UpdateDocumentResponse
-	(*DeleteDocumentRequest)(nil),          // 29: mongorpc.DeleteDocumentRequest
-	(*DeleteDocumentResponse)(nil),         // 30: mongorpc.DeleteDocumentResponse
-	(*ListenRequest)(nil),                  // 31: mongorpc.ListenRequest
-	(*ListenResponse)(nil),                 // 32: mongorpc.ListenResponse
-	(*Index)(nil),                          // 33: mongorpc.Index
-	(*IndexKey)(nil),                       // 34: mongorpc.IndexKey
-	(*IndexDirection)(nil),                 // 35: mongorpc.IndexDirection
+	(IndexDirection)(0),                    // 1: mongorpc.IndexDirection
+	(HealthCheckResponse_ServingStatus)(0), // 2: mongorpc.HealthCheckResponse.ServingStatus
+	(*ArrayValue)(nil),                     // 3: mongorpc.ArrayValue
+	(*MapValue)(nil),                       // 4: mongorpc.MapValue
+	(*Timestamp)(nil),                      // 5: mongorpc.Timestamp
+	(*ObjectID)(nil),                       // 6: mongorpc.ObjectID
+	(*Value)(nil),                          // 7: mongorpc.Value
+	(*Sort)(nil),                           // 8: mongorpc.Sort
+	(*Equal)(nil),                          // 9: mongorpc.Equal
+	(*NotEqual)(nil),                       // 10: mongorpc.NotEqual
+	(*Less)(nil),                           // 11: mongorpc.Less
+	(*LessEqual)(nil),                      // 12: mongorpc.LessEqual
+	(*Greater)(nil),                        // 13: mongorpc.Greater
+	(*GreaterEqual)(nil),                   // 14: mongorpc.GreaterEqual
+	(*In)(nil),                             // 15: mongorpc.In
+	(*NotIn)(nil),                          // 16: mongorpc.NotIn
+	(*Exists)(nil),                         // 17: mongorpc.Exists
+	(*NotExists)(nil),                      // 18: mongorpc.NotExists
+	(*Filter)(nil),                         // 19: mongorpc.Filter
+	(*ListCollectionsRequest)(nil),         // 20: mongorpc.ListCollectionsRequest
+	(*ListCollectionsResponse)(nil),        // 21: mongorpc.ListCollectionsResponse
+	(*GetDocumentRequest)(nil),             // 22: mongorpc.GetDocumentRequest
+	(*GetDocumentResponse)(nil),            // 23: mongorpc.GetDocumentResponse
+	(*ListDocumentsRequest)(nil),           // 24: mongorpc.ListDocumentsRequest
+	(*ListDocumentsResponse)(nil),          // 25: mongorpc.ListDocumentsResponse
+	(*CreateDocumentRequest)(nil),          // 26: mongorpc.CreateDocumentRequest
+	(*CreateDocumentResponse)(nil),         // 27: mongorpc.CreateDocumentResponse
+	(*UpdateDocumentRequest)(nil),          // 28: mongorpc.UpdateDocumentRequest
+	(*UpdateDocumentResponse)(nil),         // 29: mongorpc.UpdateDocumentResponse
+	(*DeleteDocumentRequest)(nil),          // 30: mongorpc.DeleteDocumentRequest
+	(*DeleteDocumentResponse)(nil),         // 31: mongorpc.DeleteDocumentResponse
+	(*ListenRequest)(nil),                  // 32: mongorpc.ListenRequest
+	(*ListenResponse)(nil),                 // 33: mongorpc.ListenResponse
+	(*Index)(nil),                          // 34: mongorpc.Index
+	(*IndexKey)(nil),                       // 35: mongorpc.IndexKey
 	(*CreateIndexRequest)(nil),             // 36: mongorpc.CreateIndexRequest
 	(*CreateIndexResponse)(nil),            // 37: mongorpc.CreateIndexResponse
 	(*GetIndexesRequest)(nil),              // 38: mongorpc.GetIndexesRequest
@@ -4185,58 +4172,58 @@ var file_mongorpc_proto_goTypes = []interface{}{
 	nil,                                    // 57: mongorpc.MapValue.FieldsEntry
 }
 var file_mongorpc_proto_depIdxs = []int32{
-	6,  // 0: mongorpc.ArrayValue.values:type_name -> mongorpc.Value
+	7,  // 0: mongorpc.ArrayValue.values:type_name -> mongorpc.Value
 	57, // 1: mongorpc.MapValue.fields:type_name -> mongorpc.MapValue.FieldsEntry
-	3,  // 2: mongorpc.Value.map_value:type_name -> mongorpc.MapValue
-	2,  // 3: mongorpc.Value.array_value:type_name -> mongorpc.ArrayValue
-	4,  // 4: mongorpc.Value.date_value:type_name -> mongorpc.Timestamp
+	4,  // 2: mongorpc.Value.map_value:type_name -> mongorpc.MapValue
+	3,  // 3: mongorpc.Value.array_value:type_name -> mongorpc.ArrayValue
+	5,  // 4: mongorpc.Value.date_value:type_name -> mongorpc.Timestamp
 	0,  // 5: mongorpc.Value.null_value:type_name -> mongorpc.NullValue
-	5,  // 6: mongorpc.Value.object_id_value:type_name -> mongorpc.ObjectID
-	6,  // 7: mongorpc.Equal.value:type_name -> mongorpc.Value
-	6,  // 8: mongorpc.NotEqual.value:type_name -> mongorpc.Value
-	6,  // 9: mongorpc.Less.value:type_name -> mongorpc.Value
-	6,  // 10: mongorpc.LessEqual.value:type_name -> mongorpc.Value
-	6,  // 11: mongorpc.Greater.value:type_name -> mongorpc.Value
-	6,  // 12: mongorpc.GreaterEqual.value:type_name -> mongorpc.Value
-	6,  // 13: mongorpc.In.values:type_name -> mongorpc.Value
-	6,  // 14: mongorpc.NotIn.values:type_name -> mongorpc.Value
-	8,  // 15: mongorpc.Filter.equal:type_name -> mongorpc.Equal
-	9,  // 16: mongorpc.Filter.not_equal:type_name -> mongorpc.NotEqual
-	10, // 17: mongorpc.Filter.less:type_name -> mongorpc.Less
-	11, // 18: mongorpc.Filter.less_equal:type_name -> mongorpc.LessEqual
-	12, // 19: mongorpc.Filter.greater:type_name -> mongorpc.Greater
-	13, // 20: mongorpc.Filter.greater_equal:type_name -> mongorpc.GreaterEqual
-	14, // 21: mongorpc.Filter.in:type_name -> mongorpc.In
-	15, // 22: mongorpc.Filter.not_in:type_name -> mongorpc.NotIn
-	16, // 23: mongorpc.Filter.exists:type_name -> mongorpc.Exists
-	17, // 24: mongorpc.Filter.not_exists:type_name -> mongorpc.NotExists
-	2,  // 25: mongorpc.ListCollectionsResponse.collections:type_name -> mongorpc.ArrayValue
-	6,  // 26: mongorpc.GetDocumentResponse.document:type_name -> mongorpc.Value
-	18, // 27: mongorpc.ListDocumentsRequest.filter:type_name -> mongorpc.Filter
-	7,  // 28: mongorpc.ListDocumentsRequest.sort:type_name -> mongorpc.Sort
-	2,  // 29: mongorpc.ListDocumentsResponse.documents:type_name -> mongorpc.ArrayValue
-	6,  // 30: mongorpc.CreateDocumentRequest.document:type_name -> mongorpc.Value
-	6,  // 31: mongorpc.UpdateDocumentRequest.document:type_name -> mongorpc.Value
-	6,  // 32: mongorpc.UpdateDocumentResponse.upserted_id:type_name -> mongorpc.Value
-	18, // 33: mongorpc.ListenRequest.filter:type_name -> mongorpc.Filter
-	7,  // 34: mongorpc.ListenRequest.sort:type_name -> mongorpc.Sort
-	6,  // 35: mongorpc.ListenResponse.document:type_name -> mongorpc.Value
-	34, // 36: mongorpc.Index.keys:type_name -> mongorpc.IndexKey
-	35, // 37: mongorpc.IndexKey.direction:type_name -> mongorpc.IndexDirection
-	33, // 38: mongorpc.CreateIndexRequest.index:type_name -> mongorpc.Index
-	33, // 39: mongorpc.GetIndexesResponse.indexes:type_name -> mongorpc.Index
-	18, // 40: mongorpc.CountDocumentsRequest.filter:type_name -> mongorpc.Filter
-	7,  // 41: mongorpc.CountDocumentsRequest.sort:type_name -> mongorpc.Sort
-	1,  // 42: mongorpc.HealthCheckResponse.status:type_name -> mongorpc.HealthCheckResponse.ServingStatus
-	6,  // 43: mongorpc.MapValue.FieldsEntry.value:type_name -> mongorpc.Value
-	19, // 44: mongorpc.MongoRPC.ListCollections:input_type -> mongorpc.ListCollectionsRequest
-	21, // 45: mongorpc.MongoRPC.GetDocument:input_type -> mongorpc.GetDocumentRequest
-	23, // 46: mongorpc.MongoRPC.ListDocuments:input_type -> mongorpc.ListDocumentsRequest
-	25, // 47: mongorpc.MongoRPC.CreateDocument:input_type -> mongorpc.CreateDocumentRequest
-	27, // 48: mongorpc.MongoRPC.UpdateDocument:input_type -> mongorpc.UpdateDocumentRequest
-	29, // 49: mongorpc.MongoRPC.DeleteDocument:input_type -> mongorpc.DeleteDocumentRequest
+	6,  // 6: mongorpc.Value.object_id_value:type_name -> mongorpc.ObjectID
+	7,  // 7: mongorpc.Equal.value:type_name -> mongorpc.Value
+	7,  // 8: mongorpc.NotEqual.value:type_name -> mongorpc.Value
+	7,  // 9: mongorpc.Less.value:type_name -> mongorpc.Value
+	7,  // 10: mongorpc.LessEqual.value:type_name -> mongorpc.Value
+	7,  // 11: mongorpc.Greater.value:type_name -> mongorpc.Value
+	7,  // 12: mongorpc.GreaterEqual.value:type_name -> mongorpc.Value
+	7,  // 13: mongorpc.In.values:type_name -> mongorpc.Value
+	7,  // 14: mongorpc.NotIn.values:type_name -> mongorpc.Value
+	9,  // 15: mongorpc.Filter.equal:type_name -> mongorpc.Equal
+	10, // 16: mongorpc.Filter.not_equal:type_name -> mongorpc.NotEqual
+	11, // 17: mongorpc.Filter.less:type_name -> mongorpc.Less
+	12, // 18: mongorpc.Filter.less_equal:type_name -> mongorpc.LessEqual
+	13, // 19: mongorpc.Filter.greater:type_name -> mongorpc.Greater
+	14, // 20: mongorpc.Filter.greater_equal:type_name -> mongorpc.GreaterEqual
+	15, // 21: mongorpc.Filter.in:type_name -> mongorpc.In
+	16, // 22: mongorpc.Filter.not_in:type_name -> mongorpc.NotIn
+	17, // 23: mongorpc.Filter.exists:type_name -> mongorpc.Exists
+	18, // 24: mongorpc.Filter.not_exists:type_name -> mongorpc.NotExists
+	3,  // 25: mongorpc.ListCollectionsResponse.collections:type_name -> mongorpc.ArrayValue
+	7,  // 26: mongorpc.GetDocumentResponse.document:type_name -> mongorpc.Value
+	19, // 27: mongorpc.ListDocumentsRequest.filter:type_name -> mongorpc.Filter
+	8,  // 28: mongorpc.ListDocumentsRequest.sort:type_name -> mongorpc.Sort
+	3,  // 29: mongorpc.ListDocumentsResponse.documents:type_name -> mongorpc.ArrayValue
+	7,  // 30: mongorpc.CreateDocumentRequest.document:type_name -> mongorpc.Value
+	7,  // 31: mongorpc.UpdateDocumentRequest.document:type_name -> mongorpc.Value
+	7,  // 32: mongorpc.UpdateDocumentResponse.upserted_id:type_name -> mongorpc.Value
+	19, // 33: mongorpc.ListenRequest.filter:type_name -> mongorpc.Filter
+	8,  // 34: mongorpc.ListenRequest.sort:type_name -> mongorpc.Sort
+	7,  // 35: mongorpc.ListenResponse.document:type_name -> mongorpc.Value
+	35, // 36: mongorpc.Index.keys:type_name -> mongorpc.IndexKey
+	1,  // 37: mongorpc.IndexKey.direction:type_name -> mongorpc.IndexDirection
+	34, // 38: mongorpc.CreateIndexRequest.index:type_name -> mongorpc.Index
+	34, // 39: mongorpc.GetIndexesResponse.indexes:type_name -> mongorpc.Index
+	19, // 40: mongorpc.CountDocumentsRequest.filter:type_name -> mongorpc.Filter
+	8,  // 41: mongorpc.CountDocumentsRequest.sort:type_name -> mongorpc.Sort
+	2,  // 42: mongorpc.HealthCheckResponse.status:type_name -> mongorpc.HealthCheckResponse.ServingStatus
+	7,  // 43: mongorpc.MapValue.FieldsEntry.value:type_name -> mongorpc.Value
+	20, // 44: mongorpc.MongoRPC.ListCollections:input_type -> mongorpc.ListCollectionsRequest
+	22, // 45: mongorpc.MongoRPC.GetDocument:input_type -> mongorpc.GetDocumentRequest
+	24, // 46: mongorpc.MongoRPC.ListDocuments:input_type -> mongorpc.ListDocumentsRequest
+	26, // 47: mongorpc.MongoRPC.CreateDocument:input_type -> mongorpc.CreateDocumentRequest
+	28, // 48: mongorpc.MongoRPC.UpdateDocument:input_type -> mongorpc.UpdateDocumentRequest
+	30, // 49: mongorpc.MongoRPC.DeleteDocument:input_type -> mongorpc.DeleteDocumentRequest
 	44, // 50: mongorpc.MongoRPC.CountDocuments:input_type -> mongorpc.CountDocumentsRequest
-	31, // 51: mongorpc.MongoRPC.Listen:input_type -> mongorpc.ListenRequest
+	32, // 51: mongorpc.MongoRPC.Listen:input_type -> mongorpc.ListenRequest
 	36, // 52: mongorpc.MongoRPC.CreateIndex:input_type -> mongorpc.CreateIndexRequest
 	38, // 53: mongorpc.MongoRPC.GetIndexes:input_type -> mongorpc.GetIndexesRequest
 	40, // 54: mongorpc.MongoRPC.DeleteIndex:input_type -> mongorpc.DeleteIndexRequest
@@ -4247,14 +4234,14 @@ var file_mongorpc_proto_depIdxs = []int32{
 	51, // 59: mongorpc.MongoRPC.RenameCollection:input_type -> mongorpc.RenameCollectionRequest
 	53, // 60: mongorpc.MongoRPC.DeleteCollection:input_type -> mongorpc.DeleteCollectionRequest
 	55, // 61: mongorpc.MongoRPC.HealthCheck:input_type -> mongorpc.HealthCheckRequest
-	20, // 62: mongorpc.MongoRPC.ListCollections:output_type -> mongorpc.ListCollectionsResponse
-	22, // 63: mongorpc.MongoRPC.GetDocument:output_type -> mongorpc.GetDocumentResponse
-	24, // 64: mongorpc.MongoRPC.ListDocuments:output_type -> mongorpc.ListDocumentsResponse
-	26, // 65: mongorpc.MongoRPC.CreateDocument:output_type -> mongorpc.CreateDocumentResponse
-	28, // 66: mongorpc.MongoRPC.UpdateDocument:output_type -> mongorpc.UpdateDocumentResponse
-	30, // 67: mongorpc.MongoRPC.DeleteDocument:output_type -> mongorpc.DeleteDocumentResponse
+	21, // 62: mongorpc.MongoRPC.ListCollections:output_type -> mongorpc.ListCollectionsResponse
+	23, // 63: mongorpc.MongoRPC.GetDocument:output_type -> mongorpc.GetDocumentResponse
+	25, // 64: mongorpc.MongoRPC.ListDocuments:output_type -> mongorpc.ListDocumentsResponse
+	27, // 65: mongorpc.MongoRPC.CreateDocument:output_type -> mongorpc.CreateDocumentResponse
+	29, // 66: mongorpc.MongoRPC.UpdateDocument:output_type -> mongorpc.UpdateDocumentResponse
+	31, // 67: mongorpc.MongoRPC.DeleteDocument:output_type -> mongorpc.DeleteDocumentResponse
 	45, // 68: mongorpc.MongoRPC.CountDocuments:output_type -> mongorpc.CountDocumentsResponse
-	32, // 69: mongorpc.MongoRPC.Listen:output_type -> mongorpc.ListenResponse
+	33, // 69: mongorpc.MongoRPC.Listen:output_type -> mongorpc.ListenResponse
 	37, // 70: mongorpc.MongoRPC.CreateIndex:output_type -> mongorpc.CreateIndexResponse
 	39, // 71: mongorpc.MongoRPC.GetIndexes:output_type -> mongorpc.GetIndexesResponse
 	41, // 72: mongorpc.MongoRPC.DeleteIndex:output_type -> mongorpc.DeleteIndexResponse
@@ -4675,18 +4662,6 @@ func file_mongorpc_proto_init() {
 			}
 		}
 		file_mongorpc_proto_msgTypes[33].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*IndexDirection); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_mongorpc_proto_msgTypes[34].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CreateIndexRequest); i {
 			case 0:
 				return &v.state
@@ -4698,7 +4673,7 @@ func file_mongorpc_proto_init() {
 				return nil
 			}
 		}
-		file_mongorpc_proto_msgTypes[35].Exporter = func(v interface{}, i int) interface{} {
+		file_mongorpc_proto_msgTypes[34].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CreateIndexResponse); i {
 			case 0:
 				return &v.state
@@ -4710,7 +4685,7 @@ func file_mongorpc_proto_init() {
 				return nil
 			}
 		}
-		file_mongorpc_proto_msgTypes[36].Exporter = func(v interface{}, i int) interface{} {
+		file_mongorpc_proto_msgTypes[35].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetIndexesRequest); i {
 			case 0:
 				return &v.state
@@ -4722,7 +4697,7 @@ func file_mongorpc_proto_init() {
 				return nil
 			}
 		}
-		file_mongorpc_proto_msgTypes[37].Exporter = func(v interface{}, i int) interface{} {
+		file_mongorpc_proto_msgTypes[36].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetIndexesResponse); i {
 			case 0:
 				return &v.state
@@ -4734,7 +4709,7 @@ func file_mongorpc_proto_init() {
 				return nil
 			}
 		}
-		file_mongorpc_proto_msgTypes[38].Exporter = func(v interface{}, i int) interface{} {
+		file_mongorpc_proto_msgTypes[37].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteIndexRequest); i {
 			case 0:
 				return &v.state
@@ -4746,7 +4721,7 @@ func file_mongorpc_proto_init() {
 				return nil
 			}
 		}
-		file_mongorpc_proto_msgTypes[39].Exporter = func(v interface{}, i int) interface{} {
+		file_mongorpc_proto_msgTypes[38].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteIndexResponse); i {
 			case 0:
 				return &v.state
@@ -4758,7 +4733,7 @@ func file_mongorpc_proto_init() {
 				return nil
 			}
 		}
-		file_mongorpc_proto_msgTypes[40].Exporter = func(v interface{}, i int) interface{} {
+		file_mongorpc_proto_msgTypes[39].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ReindexRequest); i {
 			case 0:
 				return &v.state
@@ -4770,7 +4745,7 @@ func file_mongorpc_proto_init() {
 				return nil
 			}
 		}
-		file_mongorpc_proto_msgTypes[41].Exporter = func(v interface{}, i int) interface{} {
+		file_mongorpc_proto_msgTypes[40].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ReindexResponse); i {
 			case 0:
 				return &v.state
@@ -4782,7 +4757,7 @@ func file_mongorpc_proto_init() {
 				return nil
 			}
 		}
-		file_mongorpc_proto_msgTypes[42].Exporter = func(v interface{}, i int) interface{} {
+		file_mongorpc_proto_msgTypes[41].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CountDocumentsRequest); i {
 			case 0:
 				return &v.state
@@ -4794,7 +4769,7 @@ func file_mongorpc_proto_init() {
 				return nil
 			}
 		}
-		file_mongorpc_proto_msgTypes[43].Exporter = func(v interface{}, i int) interface{} {
+		file_mongorpc_proto_msgTypes[42].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CountDocumentsResponse); i {
 			case 0:
 				return &v.state
@@ -4806,7 +4781,7 @@ func file_mongorpc_proto_init() {
 				return nil
 			}
 		}
-		file_mongorpc_proto_msgTypes[44].Exporter = func(v interface{}, i int) interface{} {
+		file_mongorpc_proto_msgTypes[43].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Empty); i {
 			case 0:
 				return &v.state
@@ -4818,7 +4793,7 @@ func file_mongorpc_proto_init() {
 				return nil
 			}
 		}
-		file_mongorpc_proto_msgTypes[45].Exporter = func(v interface{}, i int) interface{} {
+		file_mongorpc_proto_msgTypes[44].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CollectionStatsRequest); i {
 			case 0:
 				return &v.state
@@ -4830,7 +4805,7 @@ func file_mongorpc_proto_init() {
 				return nil
 			}
 		}
-		file_mongorpc_proto_msgTypes[46].Exporter = func(v interface{}, i int) interface{} {
+		file_mongorpc_proto_msgTypes[45].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CollectionStatsResponse); i {
 			case 0:
 				return &v.state
@@ -4842,7 +4817,7 @@ func file_mongorpc_proto_init() {
 				return nil
 			}
 		}
-		file_mongorpc_proto_msgTypes[47].Exporter = func(v interface{}, i int) interface{} {
+		file_mongorpc_proto_msgTypes[46].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CreateCollectionRequest); i {
 			case 0:
 				return &v.state
@@ -4854,7 +4829,7 @@ func file_mongorpc_proto_init() {
 				return nil
 			}
 		}
-		file_mongorpc_proto_msgTypes[48].Exporter = func(v interface{}, i int) interface{} {
+		file_mongorpc_proto_msgTypes[47].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CreateCollectionResponse); i {
 			case 0:
 				return &v.state
@@ -4866,7 +4841,7 @@ func file_mongorpc_proto_init() {
 				return nil
 			}
 		}
-		file_mongorpc_proto_msgTypes[49].Exporter = func(v interface{}, i int) interface{} {
+		file_mongorpc_proto_msgTypes[48].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*RenameCollectionRequest); i {
 			case 0:
 				return &v.state
@@ -4878,7 +4853,7 @@ func file_mongorpc_proto_init() {
 				return nil
 			}
 		}
-		file_mongorpc_proto_msgTypes[50].Exporter = func(v interface{}, i int) interface{} {
+		file_mongorpc_proto_msgTypes[49].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*RenameCollectionResponse); i {
 			case 0:
 				return &v.state
@@ -4890,7 +4865,7 @@ func file_mongorpc_proto_init() {
 				return nil
 			}
 		}
-		file_mongorpc_proto_msgTypes[51].Exporter = func(v interface{}, i int) interface{} {
+		file_mongorpc_proto_msgTypes[50].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteCollectionRequest); i {
 			case 0:
 				return &v.state
@@ -4902,7 +4877,7 @@ func file_mongorpc_proto_init() {
 				return nil
 			}
 		}
-		file_mongorpc_proto_msgTypes[52].Exporter = func(v interface{}, i int) interface{} {
+		file_mongorpc_proto_msgTypes[51].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteCollectionResponse); i {
 			case 0:
 				return &v.state
@@ -4914,7 +4889,7 @@ func file_mongorpc_proto_init() {
 				return nil
 			}
 		}
-		file_mongorpc_proto_msgTypes[53].Exporter = func(v interface{}, i int) interface{} {
+		file_mongorpc_proto_msgTypes[52].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*HealthCheckRequest); i {
 			case 0:
 				return &v.state
@@ -4926,7 +4901,7 @@ func file_mongorpc_proto_init() {
 				return nil
 			}
 		}
-		file_mongorpc_proto_msgTypes[54].Exporter = func(v interface{}, i int) interface{} {
+		file_mongorpc_proto_msgTypes[53].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*HealthCheckResponse); i {
 			case 0:
 				return &v.state
@@ -4968,8 +4943,8 @@ func file_mongorpc_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_mongorpc_proto_rawDesc,
-			NumEnums:      2,
-			NumMessages:   56,
+			NumEnums:      3,
+			NumMessages:   55,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

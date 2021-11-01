@@ -48,6 +48,8 @@ func main() {
 	e.DocumentByID()
 	e.CreateDocument()
 
+	e.CreateIndex()
+
 	// var waitGroup sync.WaitGroup
 
 	// // listen document changes
@@ -72,6 +74,26 @@ func main() {
 	// }()
 
 	// waitGroup.Wait()
+}
+
+func (c *ExampleClient) CreateIndex() {
+	keys := []*proto.IndexKey{}
+	keys = append(keys, &proto.IndexKey{
+		Field: "title",
+	})
+
+	result, err := c.mongorpc.CreateIndex(c.ctx, &proto.CreateIndexRequest{
+		Database:   "sample_mflix",
+		Collection: "movies",
+		Index: &proto.Index{
+			Name: "title_index",
+			Keys: keys,
+		},
+	})
+	if err != nil {
+		logrus.Fatalf("could not create index: %v", err)
+	}
+	logrus.Printf("Index: %s", result)
 }
 
 // list all collections
