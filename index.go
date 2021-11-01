@@ -2,7 +2,6 @@ package mongorpc
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/mongorpc/mongorpc/proto"
 	"go.mongodb.org/mongo-driver/bson"
@@ -108,8 +107,4 @@ func (srv *MongoRPCServer) DeleteIndex(ctx context.Context, in *proto.DeleteInde
 	return &proto.DeleteIndexResponse{
 		Name: in.Name,
 	}, nil
-}
-
-func (srv *MongoRPCServer) Reindex(ctx context.Context, in *proto.ReindexRequest) (*proto.ReindexResponse, error) {
-	return nil, fmt.Errorf("not implemented")
 }

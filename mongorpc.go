@@ -16,5 +16,5 @@ type MongoRPCServer struct {
 // Ping MongoDB server
 func (srv *MongoRPCServer) Ping(ctx context.Context, in *proto.Empty) (*proto.Empty, error) {
 	err := srv.DB.Ping(ctx, nil)
-	return &proto.Empty{}, err
+	return in, err
 }
