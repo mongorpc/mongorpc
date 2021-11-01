@@ -1,8 +1,10 @@
 # mongorpc
 
-### Roadmap
+MongoDB + gRPC = mongorpc
 
-##### mongorpc
+## 🚧 **Roadmap** 🚧
+
+**mongorpc**
 
 - [x] List Collections
 - [x] Get Document
@@ -32,7 +34,7 @@
     - [ ] Roles Compiler
     - [ ] Roles Validator and Enforcer
 
-##### mongorpc client's
+**mongorpc client's**
 
 - [ ] Web (mongorpc-js)
 - [ ] iOS (mongorpc-swift)
@@ -41,7 +43,7 @@
 - [ ] Node.js (mongorpc-node)
 - [ ] Go (mongorpc-go)
 
-##### mongorpc client's offline capability concept
+**mongorpc client's offline capability concept**
 - [ ] Use Key/Value storage to store DocumentID as Key and Document as Value.
 - [ ] Store Collection Name as Key and Document ID's Array as Value.
 - [ ] Store Last Updated Cursor, When Last Cursor changed, do some sync operations.
