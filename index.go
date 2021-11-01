@@ -48,6 +48,7 @@ func (srv *MongoRPCServer) CreateIndex(ctx context.Context, in *proto.CreateInde
 		Keys: keys,
 		Options: &options.IndexOptions{
 			Unique: &in.Index.Unique,
+			Name:   &in.Index.Name,
 		},
 	}
 
@@ -93,5 +94,17 @@ func (srv *MongoRPCServer) ListIndexes(ctx context.Context, in *proto.ListIndexe
 
 	return &proto.ListIndexesResponse{
 		Indexes: indexes,
+	}, nil
+}
+
+// delete index
+func (srv *MongoRPCServer) DeleteIndex(ctx context.Context, in *proto.DeleteIndexRequest) (*proto.DeleteIndexResponse, error) {
+	_, err := srv.DB.Database(in.Database).Collection(in.Collection).Indexes().DropOne(ctx, in.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	return &proto.DeleteIndexResponse{
+		Name: in.Name,
 	}, nil
 }

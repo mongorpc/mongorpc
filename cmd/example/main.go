@@ -47,17 +47,17 @@ func main() {
 	// e.ListDocuments()
 	e.DocumentByID()
 	// e.CreateDocument()
+	e.CreateIndex()
 
-	res, err := c.ListIndexes(ctx, &proto.ListIndexesRequest{
+	res, err := c.DeleteIndex(ctx, &proto.DeleteIndexRequest{
 		Database:   "sample_mflix",
 		Collection: "movies",
+		Name:       "title_index",
 	})
-
 	if err != nil {
-		logrus.Fatalf("could not get indexes: %v", err)
+		logrus.Fatalf("could not delete index: %v", err)
 	}
-
-	logrus.Printf("Indexes: %s", res.Indexes)
+	logrus.Printf("Index: %s", res)
 
 	// e.CreateIndex()
 
@@ -85,6 +85,19 @@ func main() {
 	// }()
 
 	// waitGroup.Wait()
+}
+
+func (c *ExampleClient) ListIndexes() {
+	res, err := c.mongorpc.ListIndexes(c.ctx, &proto.ListIndexesRequest{
+		Database:   "sample_mflix",
+		Collection: "movies",
+	})
+
+	if err != nil {
+		logrus.Fatalf("could not get indexes: %v", err)
+	}
+
+	logrus.Printf("Indexes: %s", res.Indexes)
 }
 
 func (c *ExampleClient) CreateIndex() {

@@ -16,9 +16,9 @@ MongoDB + gRPC = mongorpc
 - [x] Listen Collection Changes
     - [x] Return Changed Documents
     - [ ] Return Whole Collection when some change has been done
-- [ ] Create Index
-- [ ] Get Indexes
-- [ ] Delete Index
+- [x] Create Index
+- [x] Get Indexes
+- [x] Delete Index
 - [ ] Reindex
 - [x] Ping
 - [ ] Collection Stats
