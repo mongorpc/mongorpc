@@ -31,7 +31,7 @@ type MongoRPCClient interface {
 	// DeleteDocument deletes a document from a collection.
 	DeleteDocument(ctx context.Context, in *DeleteDocumentRequest, opts ...grpc.CallOption) (*DeleteDocumentResponse, error)
 	// Returns the count of documents that match the query for a collection or view.
-	CountDocuments(ctx context.Context, in *ListDocumentsRequest, opts ...grpc.CallOption) (*CountDocumentsResponse, error)
+	CountDocuments(ctx context.Context, in *CountDocumentsRequest, opts ...grpc.CallOption) (*CountDocumentsResponse, error)
 	// Listen listens for changes to a document in a collection.
 	Listen(ctx context.Context, in *ListenRequest, opts ...grpc.CallOption) (MongoRPC_ListenClient, error)
 	// Creates indexes on collections.
@@ -45,13 +45,15 @@ type MongoRPCClient interface {
 	// Ping is used to test the connection to the server.
 	Ping(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
 	// CollectionStats returns stats about a collection.
-	CollectionStats(ctx context.Context, in *ListCollectionsRequest, opts ...grpc.CallOption) (*ListCollectionsResponse, error)
+	CollectionStats(ctx context.Context, in *CollectionStatsRequest, opts ...grpc.CallOption) (*CollectionStatsResponse, error)
 	// CreateCollection creates a collection.
 	CreateCollection(ctx context.Context, in *CreateCollectionRequest, opts ...grpc.CallOption) (*CreateCollectionResponse, error)
 	// RenameCollection renames a collection.
 	RenameCollection(ctx context.Context, in *RenameCollectionRequest, opts ...grpc.CallOption) (*RenameCollectionResponse, error)
 	// DeleteCollection drops a collection.
 	DeleteCollection(ctx context.Context, in *DeleteCollectionRequest, opts ...grpc.CallOption) (*DeleteCollectionResponse, error)
+	// HealthCheck checks the health of the server.
+	HealthCheck(ctx context.Context, in *HealthCheckRequest, opts ...grpc.CallOption) (*HealthCheckResponse, error)
 }
 
 type mongoRPCClient struct {
@@ -116,7 +118,7 @@ func (c *mongoRPCClient) DeleteDocument(ctx context.Context, in *DeleteDocumentR
 	return out, nil
 }
 
-func (c *mongoRPCClient) CountDocuments(ctx context.Context, in *ListDocumentsRequest, opts ...grpc.CallOption) (*CountDocumentsResponse, error) {
+func (c *mongoRPCClient) CountDocuments(ctx context.Context, in *CountDocumentsRequest, opts ...grpc.CallOption) (*CountDocumentsResponse, error) {
 	out := new(CountDocumentsResponse)
 	err := c.cc.Invoke(ctx, "/mongorpc.MongoRPC/CountDocuments", in, out, opts...)
 	if err != nil {
@@ -202,8 +204,8 @@ func (c *mongoRPCClient) Ping(ctx context.Context, in *Empty, opts ...grpc.CallO
 	return out, nil
 }
 
-func (c *mongoRPCClient) CollectionStats(ctx context.Context, in *ListCollectionsRequest, opts ...grpc.CallOption) (*ListCollectionsResponse, error) {
-	out := new(ListCollectionsResponse)
+func (c *mongoRPCClient) CollectionStats(ctx context.Context, in *CollectionStatsRequest, opts ...grpc.CallOption) (*CollectionStatsResponse, error) {
+	out := new(CollectionStatsResponse)
 	err := c.cc.Invoke(ctx, "/mongorpc.MongoRPC/CollectionStats", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -238,6 +240,15 @@ func (c *mongoRPCClient) DeleteCollection(ctx context.Context, in *DeleteCollect
 	return out, nil
 }
 
+func (c *mongoRPCClient) HealthCheck(ctx context.Context, in *HealthCheckRequest, opts ...grpc.CallOption) (*HealthCheckResponse, error) {
+	out := new(HealthCheckResponse)
+	err := c.cc.Invoke(ctx, "/mongorpc.MongoRPC/HealthCheck", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MongoRPCServer is the server API for MongoRPC service.
 // All implementations must embed UnimplementedMongoRPCServer
 // for forward compatibility
@@ -255,7 +266,7 @@ type MongoRPCServer interface {
 	// DeleteDocument deletes a document from a collection.
 	DeleteDocument(context.Context, *DeleteDocumentRequest) (*DeleteDocumentResponse, error)
 	// Returns the count of documents that match the query for a collection or view.
-	CountDocuments(context.Context, *ListDocumentsRequest) (*CountDocumentsResponse, error)
+	CountDocuments(context.Context, *CountDocumentsRequest) (*CountDocumentsResponse, error)
 	// Listen listens for changes to a document in a collection.
 	Listen(*ListenRequest, MongoRPC_ListenServer) error
 	// Creates indexes on collections.
@@ -269,13 +280,15 @@ type MongoRPCServer interface {
 	// Ping is used to test the connection to the server.
 	Ping(context.Context, *Empty) (*Empty, error)
 	// CollectionStats returns stats about a collection.
-	CollectionStats(context.Context, *ListCollectionsRequest) (*ListCollectionsResponse, error)
+	CollectionStats(context.Context, *CollectionStatsRequest) (*CollectionStatsResponse, error)
 	// CreateCollection creates a collection.
 	CreateCollection(context.Context, *CreateCollectionRequest) (*CreateCollectionResponse, error)
 	// RenameCollection renames a collection.
 	RenameCollection(context.Context, *RenameCollectionRequest) (*RenameCollectionResponse, error)
 	// DeleteCollection drops a collection.
 	DeleteCollection(context.Context, *DeleteCollectionRequest) (*DeleteCollectionResponse, error)
+	// HealthCheck checks the health of the server.
+	HealthCheck(context.Context, *HealthCheckRequest) (*HealthCheckResponse, error)
 	mustEmbedUnimplementedMongoRPCServer()
 }
 
@@ -301,7 +314,7 @@ func (UnimplementedMongoRPCServer) UpdateDocument(context.Context, *UpdateDocume
 func (UnimplementedMongoRPCServer) DeleteDocument(context.Context, *DeleteDocumentRequest) (*DeleteDocumentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteDocument not implemented")
 }
-func (UnimplementedMongoRPCServer) CountDocuments(context.Context, *ListDocumentsRequest) (*CountDocumentsResponse, error) {
+func (UnimplementedMongoRPCServer) CountDocuments(context.Context, *CountDocumentsRequest) (*CountDocumentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CountDocuments not implemented")
 }
 func (UnimplementedMongoRPCServer) Listen(*ListenRequest, MongoRPC_ListenServer) error {
@@ -322,7 +335,7 @@ func (UnimplementedMongoRPCServer) Reindex(context.Context, *ReindexRequest) (*R
 func (UnimplementedMongoRPCServer) Ping(context.Context, *Empty) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
 }
-func (UnimplementedMongoRPCServer) CollectionStats(context.Context, *ListCollectionsRequest) (*ListCollectionsResponse, error) {
+func (UnimplementedMongoRPCServer) CollectionStats(context.Context, *CollectionStatsRequest) (*CollectionStatsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CollectionStats not implemented")
 }
 func (UnimplementedMongoRPCServer) CreateCollection(context.Context, *CreateCollectionRequest) (*CreateCollectionResponse, error) {
@@ -333,6 +346,9 @@ func (UnimplementedMongoRPCServer) RenameCollection(context.Context, *RenameColl
 }
 func (UnimplementedMongoRPCServer) DeleteCollection(context.Context, *DeleteCollectionRequest) (*DeleteCollectionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteCollection not implemented")
+}
+func (UnimplementedMongoRPCServer) HealthCheck(context.Context, *HealthCheckRequest) (*HealthCheckResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HealthCheck not implemented")
 }
 func (UnimplementedMongoRPCServer) mustEmbedUnimplementedMongoRPCServer() {}
 
@@ -456,7 +472,7 @@ func _MongoRPC_DeleteDocument_Handler(srv interface{}, ctx context.Context, dec 
 }
 
 func _MongoRPC_CountDocuments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListDocumentsRequest)
+	in := new(CountDocumentsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -468,7 +484,7 @@ func _MongoRPC_CountDocuments_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: "/mongorpc.MongoRPC/CountDocuments",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MongoRPCServer).CountDocuments(ctx, req.(*ListDocumentsRequest))
+		return srv.(MongoRPCServer).CountDocuments(ctx, req.(*CountDocumentsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -585,7 +601,7 @@ func _MongoRPC_Ping_Handler(srv interface{}, ctx context.Context, dec func(inter
 }
 
 func _MongoRPC_CollectionStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListCollectionsRequest)
+	in := new(CollectionStatsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -597,7 +613,7 @@ func _MongoRPC_CollectionStats_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: "/mongorpc.MongoRPC/CollectionStats",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MongoRPCServer).CollectionStats(ctx, req.(*ListCollectionsRequest))
+		return srv.(MongoRPCServer).CollectionStats(ctx, req.(*CollectionStatsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -652,6 +668,24 @@ func _MongoRPC_DeleteCollection_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MongoRPCServer).DeleteCollection(ctx, req.(*DeleteCollectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MongoRPC_HealthCheck_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HealthCheckRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MongoRPCServer).HealthCheck(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mongorpc.MongoRPC/HealthCheck",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MongoRPCServer).HealthCheck(ctx, req.(*HealthCheckRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -726,6 +760,10 @@ var MongoRPC_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteCollection",
 			Handler:    _MongoRPC_DeleteCollection_Handler,
+		},
+		{
+			MethodName: "HealthCheck",
+			Handler:    _MongoRPC_HealthCheck_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

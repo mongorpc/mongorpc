@@ -321,9 +321,9 @@ message IndexKey {
 
 message IndexDirection {
   // Ascending
-  int32 ASCENDING = 1;
+  int32 ascending = 1;
   // Descending
-  int32 DESCENDING = 2;
+  int32 descending = 2;
 }
 
 message CreateIndexRequest {
@@ -378,6 +378,25 @@ message ReindexRequest {
 message ReindexResponse {
   // The name of the index that was reindexed
   string name = 1;
+}
+
+message CountDocumentsRequest {
+  // The database to listen to
+  string database = 1;
+  // The collection to listen to
+  string collection = 2;
+  // The document to listen to
+  // string document_id = 3;
+  // The operation to listen to
+  string operation = 4;
+  // The filter to apply to the query
+  repeated Filter filter = 5;
+  // The sort to apply to the query
+  repeated Sort sort = 6;
+  // The limit to apply to the query
+  int32 limit = 7;
+  // The skip to apply to the query
+  int32 skip = 8;
 }
 
 message CountDocumentsResponse {
@@ -452,6 +471,20 @@ message DeleteCollectionRequest {
 
 message DeleteCollectionResponse {}
 
+message HealthCheckRequest {
+  string service = 1;
+}
+
+message HealthCheckResponse {
+  enum ServingStatus {
+    UNKNOWN = 0;
+    SERVING = 1;
+    NOT_SERVING = 2;
+    SERVICE_UNKNOWN = 3; // Used only by the Watch method.
+  }
+  ServingStatus status = 1;
+}
+
 // MongoRPC
 service MongoRPC {
   // ListCollections lists the collections in a database.
@@ -467,7 +500,7 @@ service MongoRPC {
   // DeleteDocument deletes a document from a collection.
   rpc DeleteDocument(DeleteDocumentRequest) returns (DeleteDocumentResponse);
   // Returns the count of documents that match the query for a collection or view.
-  rpc CountDocuments(ListDocumentsRequest) returns (CountDocumentsResponse);
+  rpc CountDocuments(CountDocumentsRequest) returns (CountDocumentsResponse);
   // Listen listens for changes to a document in a collection.
   rpc Listen(ListenRequest) returns (stream ListenResponse);
   // Creates indexes on collections.
@@ -481,11 +514,13 @@ service MongoRPC {
   // Ping is used to test the connection to the server.
   rpc Ping(Empty) returns (Empty);
   // CollectionStats returns stats about a collection.
-  rpc CollectionStats(ListCollectionsRequest) returns (ListCollectionsResponse);
+  rpc CollectionStats(CollectionStatsRequest) returns (CollectionStatsResponse);
   // CreateCollection creates a collection.
   rpc CreateCollection(CreateCollectionRequest) returns (CreateCollectionResponse);
   // RenameCollection renames a collection.
   rpc RenameCollection(RenameCollectionRequest) returns (RenameCollectionResponse);
   // DeleteCollection drops a collection.
   rpc DeleteCollection(DeleteCollectionRequest) returns (DeleteCollectionResponse);
+  // HealthCheck checks the health of the server.
+  rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse);
 }

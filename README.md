@@ -20,7 +20,7 @@ MongoDB + gRPC = mongorpc
 - [ ] Get Indexes
 - [ ] Delete Index
 - [ ] Reindex
-- [ ] Ping
+- [x] Ping
 - [ ] Collection Stats
 - [ ] Create Collection
 - [ ] Rename Collection
