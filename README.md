@@ -21,10 +21,11 @@ MongoDB + gRPC = mongorpc
 - [x] Delete Index
 - [ ] Reindex
 - [x] Ping
-- [ ] Collection Stats
-- [ ] Create Collection
-- [ ] Rename Collection
-- [ ] Delete Collection
+- [x] Health Check
+- [x] Collection Stats
+- [x] Create Collection
+- [x] Rename Collection
+- [x] Delete Collection
 - [ ] Bulk Insert
 - [ ] Bulk Update
 - [ ] Bulk Delete

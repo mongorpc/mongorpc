@@ -47,19 +47,11 @@ func main() {
 	// e.ListDocuments()
 	e.DocumentByID()
 	// e.CreateDocument()
-	e.CreateIndex()
-
-	res, err := c.DeleteIndex(ctx, &proto.DeleteIndexRequest{
-		Database:   "sample_mflix",
-		Collection: "movies",
-		Name:       "title_index",
-	})
-	if err != nil {
-		logrus.Fatalf("could not delete index: %v", err)
-	}
-	logrus.Printf("Index: %s", res)
-
 	// e.CreateIndex()
+	// e.DeleteIndex()
+	// e.ListIndexes()
+
+	e.CollectionStats()
 
 	// var waitGroup sync.WaitGroup
 
@@ -85,6 +77,30 @@ func main() {
 	// }()
 
 	// waitGroup.Wait()
+}
+
+func (c *ExampleClient) CollectionStats() {
+
+	res, err := c.mongorpc.CollectionStats(c.ctx, &proto.CollectionStatsRequest{
+		Database:   "sample_mflix",
+		Collection: "movies",
+	})
+	if err != nil {
+		logrus.Fatalf("could not get collection stats: %v", err)
+	}
+	logrus.Printf("Collection Stats: %s", res)
+}
+
+func (c *ExampleClient) DeleteIndex() {
+	res, err := c.mongorpc.DeleteIndex(c.ctx, &proto.DeleteIndexRequest{
+		Database:   "sample_mflix",
+		Collection: "movies",
+		Name:       "title_index",
+	})
+	if err != nil {
+		logrus.Fatalf("could not delete index: %v", err)
+	}
+	logrus.Printf("Index: %s", res)
 }
 
 func (c *ExampleClient) ListIndexes() {
