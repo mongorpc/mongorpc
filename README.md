@@ -15,6 +15,7 @@ MongoDB + gRPC = mongorpc
 - [x] Count Documents
 - [x] Listen Collection Changes
     - [x] Return Changed Documents
+    - [ ] Add Filter, Sort and Limit in Listen Requests
     - [ ] Return Whole Collection when some change has been done
 - [x] Create Index
 - [x] Get Indexes

@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/x/bsonx"
 )
 
+// Index Direction helper function
 func IndexDirection(direction proto.IndexDirection) bsonx.Val {
 	if direction == proto.IndexDirection_ASCENDING {
 		return bsonx.Int32(1)
@@ -18,6 +19,7 @@ func IndexDirection(direction proto.IndexDirection) bsonx.Val {
 	}
 }
 
+// Encode proto.IndexDirection to int32
 func EncodeIndexDirection(direction proto.IndexDirection) int32 {
 	if direction == proto.IndexDirection_ASCENDING {
 		return 1
@@ -26,6 +28,7 @@ func EncodeIndexDirection(direction proto.IndexDirection) int32 {
 	}
 }
 
+// Decode int32 to proto.IndexDirection
 func DecodeIndexDirection(direction int32) proto.IndexDirection {
 	if direction == 1 {
 		return proto.IndexDirection_ASCENDING
@@ -34,6 +37,7 @@ func DecodeIndexDirection(direction int32) proto.IndexDirection {
 	}
 }
 
+// Create Index in Collection
 func (srv *MongoRPCServer) CreateIndex(ctx context.Context, in *proto.CreateIndexRequest) (*proto.CreateIndexResponse, error) {
 
 	keys := bsonx.Doc{}
@@ -62,6 +66,7 @@ func (srv *MongoRPCServer) CreateIndex(ctx context.Context, in *proto.CreateInde
 	}, nil
 }
 
+// List all indexes in collection
 func (srv *MongoRPCServer) ListIndexes(ctx context.Context, in *proto.ListIndexesRequest) (*proto.ListIndexesResponse, error) {
 
 	cursor, err := srv.DB.Database(in.Database).Collection(in.Collection).Indexes().List(ctx)
@@ -97,7 +102,7 @@ func (srv *MongoRPCServer) ListIndexes(ctx context.Context, in *proto.ListIndexe
 	}, nil
 }
 
-// delete index
+// delete index in collection
 func (srv *MongoRPCServer) DeleteIndex(ctx context.Context, in *proto.DeleteIndexRequest) (*proto.DeleteIndexResponse, error) {
 	_, err := srv.DB.Database(in.Database).Collection(in.Collection).Indexes().DropOne(ctx, in.Name)
 	if err != nil {

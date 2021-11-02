@@ -45,7 +45,7 @@ func main() {
 
 	// e.ListCollections()
 	// e.ListDocuments()
-	e.DocumentByID()
+	// e.DocumentByID()
 	// e.CreateDocument()
 	// e.CreateIndex()
 	// e.DeleteIndex()

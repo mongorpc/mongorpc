@@ -31,6 +31,7 @@ func (srv *MongoRPCServer) ListCollections(ctx context.Context, in *proto.ListCo
 	}, nil
 }
 
+// Create Collection in a database.
 func (srv *MongoRPCServer) CreateCollection(ctx context.Context, in *proto.CreateCollectionRequest) (*proto.CreateCollectionResponse, error) {
 
 	// Create Collection
@@ -43,6 +44,7 @@ func (srv *MongoRPCServer) CreateCollection(ctx context.Context, in *proto.Creat
 	return &proto.CreateCollectionResponse{}, nil
 }
 
+// Rename Collection in a database.
 func (srv *MongoRPCServer) RenameCollection(ctx context.Context, in *proto.RenameCollectionRequest) (*proto.RenameCollectionResponse, error) {
 
 	// Rename Collection
@@ -68,6 +70,7 @@ func (srv *MongoRPCServer) RenameCollection(ctx context.Context, in *proto.Renam
 	return &proto.RenameCollectionResponse{}, nil
 }
 
+// Delete Collection in a database.
 func (srv *MongoRPCServer) DeleteCollection(ctx context.Context, in *proto.DeleteCollectionRequest) (*proto.DeleteCollectionResponse, error) {
 
 	// Delete Collection
@@ -80,6 +83,7 @@ func (srv *MongoRPCServer) DeleteCollection(ctx context.Context, in *proto.Delet
 	return &proto.DeleteCollectionResponse{}, nil
 }
 
+// Collection statistics
 func (srv *MongoRPCServer) CollectionStats(ctx context.Context, in *proto.CollectionStatsRequest) (*proto.CollectionStatsResponse, error) {
 
 	// Get Collection Stats

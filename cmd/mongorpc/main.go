@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/mongorpc/mongorpc"
-	pb "github.com/mongorpc/mongorpc/proto"
+	"github.com/mongorpc/mongorpc/proto"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -50,7 +50,7 @@ func main() {
 	)
 
 	// register the service
-	pb.RegisterMongoRPCServer(s, &mongorpc.MongoRPCServer{
+	proto.RegisterMongoRPCServer(s, &mongorpc.MongoRPCServer{
 		DB: database,
 	})
 
