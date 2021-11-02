@@ -13,7 +13,7 @@ import (
 
 const (
 	// gRPC server address
-	address = "localhost:50051"
+	address = "localhost:27051"
 )
 
 // Example MongoRPC Client
@@ -23,8 +23,16 @@ type ExampleClient struct {
 }
 
 func main() {
+	interceptor := &ClientInterceptor{
+		accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJ1aWQiOiI1YjEwODcxZS0zYmMwLTExZWMtOGQzZC0wMjQyYWMxMzAwMDMifQ.PlVY78uCmkzzKVG3tOvQu9aeXnMOImUzG6b_lygHH2U",
+	}
+
 	// Set up a connection to the server.
-	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(address,
+		grpc.WithInsecure(),
+		grpc.WithBlock(),
+		grpc.WithUnaryInterceptor(interceptor.UnaryClientInterceptor),
+	)
 	if err != nil {
 		logrus.Fatalf("did not connect: %v", err)
 	}
@@ -45,7 +53,7 @@ func main() {
 
 	// e.ListCollections()
 	// e.ListDocuments()
-	// e.DocumentByID()
+	e.DocumentByID()
 	// e.CreateDocument()
 	// e.CreateIndex()
 	// e.DeleteIndex()
@@ -79,6 +87,7 @@ func main() {
 	// waitGroup.Wait()
 }
 
+// collection stats
 func (c *ExampleClient) CollectionStats() {
 
 	res, err := c.mongorpc.CollectionStats(c.ctx, &proto.CollectionStatsRequest{
@@ -91,6 +100,7 @@ func (c *ExampleClient) CollectionStats() {
 	logrus.Printf("Collection Stats: %s", res)
 }
 
+// delete index by name in collection
 func (c *ExampleClient) DeleteIndex() {
 	res, err := c.mongorpc.DeleteIndex(c.ctx, &proto.DeleteIndexRequest{
 		Database:   "sample_mflix",
@@ -103,6 +113,7 @@ func (c *ExampleClient) DeleteIndex() {
 	logrus.Printf("Index: %s", res)
 }
 
+// list all indexes for a collection
 func (c *ExampleClient) ListIndexes() {
 	res, err := c.mongorpc.ListIndexes(c.ctx, &proto.ListIndexesRequest{
 		Database:   "sample_mflix",
@@ -116,6 +127,7 @@ func (c *ExampleClient) ListIndexes() {
 	logrus.Printf("Indexes: %s", res.Indexes)
 }
 
+// create index
 func (c *ExampleClient) CreateIndex() {
 	keys := []*proto.IndexKey{}
 	keys = append(keys, &proto.IndexKey{

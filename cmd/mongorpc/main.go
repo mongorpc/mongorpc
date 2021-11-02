@@ -1,52 +1,93 @@
 package main
 
 import (
-	"context"
+	"crypto/tls"
+	"fmt"
 	"net"
 	"os"
-	"time"
 
 	"github.com/mongorpc/mongorpc"
 	"github.com/mongorpc/mongorpc/proto"
 	"github.com/sirupsen/logrus"
+	"github.com/urfave/cli/v2"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/x/mongo/driver/connstring"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
-const (
-	// port on which the server will listen.
-	port = ":50051"
-)
+type MongoRPC struct {
+	mongoURI  string
+	port      int
+	jwtSecret string
+}
 
 func main() {
+	srv := &MongoRPC{}
 
-	// parse mongodb uri
-	mongoURI, err := connstring.ParseAndValidate(os.Args[1])
-	if err != nil {
-		logrus.Fatalf("failed to parse mongodb uri %v", err)
+	app := &cli.App{
+		Name:  "mongorpc",
+		Usage: "mongorpc is a gRPC server that can be used to call mongodb directly",
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:        "mongodb",
+				Value:       "mongodb://localhost:27017",
+				Usage:       "the mongodb uri",
+				Destination: &srv.mongoURI,
+			},
+			&cli.IntFlag{
+				Name:        "port",
+				Value:       27051,
+				Usage:       "the port on which the server will listen",
+				Destination: &srv.port,
+			},
+			&cli.StringFlag{
+				Name:        "jwt-secret",
+				Value:       "secret",
+				Usage:       "the secret used to validate the jwt token",
+				Destination: &srv.jwtSecret,
+			},
+		},
+		Action: srv.serve,
 	}
 
-	// create a new mongodb client
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+	err := app.Run(os.Args)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+}
+
+func (srv *MongoRPC) serve(c *cli.Context) error {
+
+	port := fmt.Sprintf(":%d", srv.port)
 
 	// connect to mongodb
-	database, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoURI.String()))
+	database, err := mongo.Connect(c.Context, options.Client().ApplyURI(srv.mongoURI))
 	if err != nil {
-		logrus.Fatalf("failed to Connect: %v", err)
+		return err
 	}
 
 	// listen on the port
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
-		logrus.Fatalf("failed to listen: %v", err)
+		return err
 	}
+
+	// initilize interceptors
+	interceptor := mongorpc.Interceptor{
+		JWTSecret: srv.jwtSecret,
+	}
+
+	// tlsCredentials, err := loadTLSCredentials()
+	// if err != nil {
+	// 	return err
+	// }
 
 	// create a new grpc server
 	s := grpc.NewServer(
-		grpc.UnaryInterceptor(LoggingUnaryInterceptor),
+		// grpc.Creds(tlsCredentials),
+		grpc.UnaryInterceptor(interceptor.UnaryInterceptor),
+		grpc.StreamInterceptor(interceptor.StreamInterceptor),
 	)
 
 	// register the service
@@ -58,12 +99,24 @@ func main() {
 
 	// start the server
 	if err := s.Serve(lis); err != nil {
-		logrus.Fatalf("failed to serve: %v", err)
+		return err
 	}
+
+	return nil
 }
 
-// LoggingUnaryInterceptor is a unary interceptor that logs the request and response.
-func LoggingUnaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-	logrus.Infoln(info.FullMethod)
-	return handler(ctx, req)
+func loadTLSCredentials() (credentials.TransportCredentials, error) {
+	// Load server's certificate and private key
+	serverCert, err := tls.LoadX509KeyPair("tls/ca.pem", "tls/ca.pem")
+	if err != nil {
+		return nil, err
+	}
+
+	// Create the credentials and return it
+	config := &tls.Config{
+		Certificates: []tls.Certificate{serverCert},
+		ClientAuth:   tls.RequireAndVerifyClientCert,
+	}
+
+	return credentials.NewTLS(config), nil
 }
