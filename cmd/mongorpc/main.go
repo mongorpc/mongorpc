@@ -66,7 +66,7 @@ func (srv *MongoRPC) serve(c *cli.Context) error {
 	}
 
 	// listen on the port
-	lis, err := net.Listen("tcp", port)
+	listener, err := net.Listen("tcp", port)
 	if err != nil {
 		return err
 	}
@@ -77,23 +77,20 @@ func (srv *MongoRPC) serve(c *cli.Context) error {
 	}
 
 	// create a new grpc server
-	s := grpc.NewServer(
+	server := grpc.NewServer(
 		// grpc.Creds(tlsCredentials),
 		grpc.UnaryInterceptor(interceptor.UnaryInterceptor),
 		grpc.StreamInterceptor(interceptor.StreamInterceptor),
 	)
 
 	// register the service
-	proto.RegisterMongoRPCServer(s, &mongorpc.MongoRPCServer{
+	proto.RegisterMongoRPCServer(server, &mongorpc.MongoRPCServer{
 		DB: database,
 	})
 
-	logrus.Printf("mongorpc server is listening at %v", lis.Addr())
+	logrus.Printf("mongorpc server is listening at %v", listener.Addr())
 
 	// start the server
-	if err := s.Serve(lis); err != nil {
-		return err
-	}
-
-	return nil
+	err = server.Serve(listener)
+	return err
 }
