@@ -32,6 +32,7 @@ func main() {
 		grpc.WithInsecure(),
 		grpc.WithBlock(),
 		grpc.WithUnaryInterceptor(interceptor.UnaryClientInterceptor),
+		grpc.WithStreamInterceptor(interceptor.StreamClientInterceptor),
 	)
 	if err != nil {
 		logrus.Fatalf("did not connect: %v", err)
