@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/tls"
 	"fmt"
 	"net"
 	"os"
@@ -13,7 +12,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 )
 
 type MongoRPC struct {
@@ -78,11 +76,6 @@ func (srv *MongoRPC) serve(c *cli.Context) error {
 		JWTSecret: srv.jwtSecret,
 	}
 
-	// tlsCredentials, err := loadTLSCredentials()
-	// if err != nil {
-	// 	return err
-	// }
-
 	// create a new grpc server
 	s := grpc.NewServer(
 		// grpc.Creds(tlsCredentials),
@@ -103,20 +96,4 @@ func (srv *MongoRPC) serve(c *cli.Context) error {
 	}
 
 	return nil
-}
-
-func loadTLSCredentials() (credentials.TransportCredentials, error) {
-	// Load server's certificate and private key
-	serverCert, err := tls.LoadX509KeyPair("tls/ca.pem", "tls/ca.pem")
-	if err != nil {
-		return nil, err
-	}
-
-	// Create the credentials and return it
-	config := &tls.Config{
-		Certificates: []tls.Certificate{serverCert},
-		ClientAuth:   tls.RequireAndVerifyClientCert,
-	}
-
-	return credentials.NewTLS(config), nil
 }
