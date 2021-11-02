@@ -17,7 +17,7 @@ type Interceptor struct {
 
 // Auth interceptor for validating JWT token
 func (interceptor *Interceptor) UnaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-	interceptor.log(info.FullMethod)
+	logrus.Infoln("method: ", info.FullMethod)
 	err := interceptor.authorize(ctx, info.FullMethod)
 	if err != nil {
 		return nil, err
@@ -27,17 +27,12 @@ func (interceptor *Interceptor) UnaryInterceptor(ctx context.Context, req interf
 
 // Auth interceptor for validating JWT token for streams
 func (interceptor *Interceptor) StreamInterceptor(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
-	interceptor.log(info.FullMethod)
+	logrus.Infoln("method: ", info.FullMethod)
 	err := interceptor.authorize(stream.Context(), info.FullMethod)
 	if err != nil {
 		return err
 	}
 	return handler(srv, stream)
-}
-
-// Logging interceptor
-func (interceptor *Interceptor) log(method string) {
-	logrus.Infoln("method: ", method)
 }
 
 // Authorize validates JWT token
