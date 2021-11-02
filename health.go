@@ -7,7 +7,7 @@ import (
 )
 
 // Health Check MongoDB and rpc server
-func (srv *MongoRPCServer) HealthCheck(ctx context.Context, in *proto.HealthCheckRequest) (*proto.HealthCheckResponse, error) {
+func (srv *MongoRPCServer) HealthCheck(ctx context.Context, _ *proto.HealthCheckRequest) (*proto.HealthCheckResponse, error) {
 
 	// check mongodb health
 	err := srv.DB.Ping(ctx, nil)

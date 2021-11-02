@@ -59,8 +59,9 @@ func (interceptor *Interceptor) authorize(ctx context.Context, method string) er
 	token, err := jwt.Parse(accessToken, interceptor.keyFunc)
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		logrus.Println(claims)
+		logrus.Println(claims, method)
 
+		// TODO: check if user has access to the method and return permission denied if not
 		// return status.Error(codes.PermissionDenied, "permission denied")
 
 		return nil
