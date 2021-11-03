@@ -31,11 +31,13 @@ MongoDB + gRPC = mongorpc
 - [ ] Bulk Update
 - [ ] Bulk Delete
 - [ ] Bulk Replace
-- [ ] Authendication (~jwt rpc middleware)
-- [ ] Permission Based Collection Read & Write (~permission middleware) (~firestore roles)
-    - [ ] Roles Compiler
-    - [ ] Roles Validator and Enforcer
-
+- [x] Authendication & Permission
+    - [x] JWT Verification Interceptor
+    - [x] Casbin Enforcer
+    - [ ] Add Casbin Policy RPC Routes
+    - [ ] Custom JWT Generation
+    - [ ] Admin Authendication Using api keys
+    
 **mongorpc client's**
 
 - [ ] Web (mongorpc-js)
