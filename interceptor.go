@@ -20,6 +20,7 @@ type Interceptor struct {
 	Casbin    *casbin.Enforcer
 }
 
+// RouteInfoPayload is the payload of the route info
 type RouteInfoPayload struct {
 	Database   string  `json:"database"`
 	Collection *string `json:"collection"`
@@ -68,7 +69,7 @@ func (interceptor *Interceptor) authorize(ctx context.Context, method string, pa
 			fullMethod := fmt.Sprintf("/%s/%s", proto.MongoRPC_ServiceDesc.ServiceName, m.MethodName)
 
 			if fullMethod == method {
-				return interceptor.CheckPermission(ctx, method, claims, payload)
+				return interceptor.CheckPermission(method, claims, payload)
 			}
 		}
 		return status.Error(codes.PermissionDenied, "permission denied")
@@ -78,7 +79,8 @@ func (interceptor *Interceptor) authorize(ctx context.Context, method string, pa
 
 }
 
-func (interceptor *Interceptor) CheckPermission(ctx context.Context, method string, claims jwt.MapClaims, payload interface{}) error {
+// CheckPermission checks if the user has permission to access the route
+func (interceptor *Interceptor) CheckPermission(method string, claims jwt.MapClaims, payload interface{}) error {
 
 	v := RouteInfoPayload{
 		UID: claims["uid"].(string),
