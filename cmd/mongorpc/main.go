@@ -5,8 +5,6 @@ import (
 	"net"
 	"os"
 
-	"github.com/casbin/casbin/v2"
-	mongodbadapter "github.com/casbin/mongodb-adapter/v3"
 	"github.com/mongorpc/mongorpc"
 	"github.com/mongorpc/mongorpc/proto"
 	"github.com/mongorpc/mongorpc/rules"
@@ -18,11 +16,10 @@ import (
 )
 
 type MongoRPC struct {
-	mongoURI        string
-	port            int
-	jwtSecret       string
-	casbinModelPath string
-	rulesPath       string
+	mongoURI  string
+	port      int
+	jwtSecret string
+	rulesPath string
 }
 
 func main() {
@@ -51,12 +48,6 @@ func main() {
 				Destination: &srv.jwtSecret,
 			},
 			&cli.StringFlag{
-				Name:        "casbin-model-path",
-				Value:       "rbac_model.conf",
-				Usage:       "the path to the casbin model file",
-				Destination: &srv.casbinModelPath,
-			},
-			&cli.StringFlag{
 				Name:        "rules",
 				Value:       "default.rules",
 				Usage:       "the path to the rules file",
@@ -75,21 +66,16 @@ func main() {
 func (srv *MongoRPC) serve(c *cli.Context) error {
 	port := fmt.Sprintf(":%d", srv.port)
 
+	// start mongorpc rules validation unix sock server
+	rules := rules.RulesValidationServer{}
+
+	err := rules.Start()
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
 	// connect to mongodb
 	database, err := mongo.Connect(c.Context, options.Client().ApplyURI(srv.mongoURI))
-	if err != nil {
-		return err
-	}
-
-	// Initialize a MongoDB adapter and use it in a Casbin enforcer:
-	// The adapter will use the database named "casbin".
-	// If it doesn't exist, the adapter will create it automatically.
-	adapter, err := mongodbadapter.NewAdapter(srv.mongoURI) // Your MongoDB URL.
-	if err != nil {
-		return err
-	}
-
-	enforcer, err := casbin.NewEnforcer(srv.casbinModelPath, adapter)
 	if err != nil {
 		return err
 	}
@@ -103,7 +89,6 @@ func (srv *MongoRPC) serve(c *cli.Context) error {
 	// initilize interceptors
 	interceptor := mongorpc.Interceptor{
 		JWTSecret: srv.jwtSecret,
-		Casbin:    enforcer,
 	}
 
 	// create a new grpc server
@@ -118,28 +103,9 @@ func (srv *MongoRPC) serve(c *cli.Context) error {
 		DB: database,
 	})
 
-	// Load casbin policy
-	err = interceptor.LoadPolicy()
-	if err != nil {
-		return err
-	}
-
 	logrus.Printf("mongorpc server is listening at %v", listener.Addr())
 
 	// start the server
 	err = server.Serve(listener)
 	return err
-}
-
-func (srv *MongoRPC) LoadRules() error {
-	r := rules.MongoRPCRules{
-		FilePath: srv.rulesPath,
-	}
-
-	err := r.LoadRules()
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
