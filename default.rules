@@ -1,5 +1,0 @@
-service mongorpc {
-  match /sample_mflix/movies {
-    allow read, write;
-  }
-}

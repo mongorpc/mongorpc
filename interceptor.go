@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/casbin/casbin/v2"
 	"github.com/golang-jwt/jwt"
 	"github.com/mongorpc/mongorpc/proto"
 	"github.com/sirupsen/logrus"
@@ -16,6 +17,7 @@ import (
 
 type Interceptor struct {
 	JWTSecret string
+	Casbin    *casbin.Enforcer
 }
 
 // RouteInfoPayload is the payload of the route info
@@ -124,9 +126,7 @@ func (interceptor *Interceptor) CheckPermission(method string, claims jwt.MapCla
 		action = "write"
 	}
 
-	logrus.Println(action, route)
-
-	permission, err := true, nil
+	permission, err := interceptor.Casbin.Enforce(route, v.UID, action)
 	if err != nil {
 		return status.Errorf(codes.PermissionDenied, "permission denied")
 	}
@@ -143,4 +143,27 @@ func (interceptor *Interceptor) keyFunc(token *jwt.Token) (interface{}, error) {
 		return nil, status.Errorf(codes.Unauthenticated, "unexpected signing method: %v", token.Header["alg"])
 	}
 	return []byte(interceptor.JWTSecret), nil
+}
+
+// Load Casbin policy from database and save default policy
+func (interceptor *Interceptor) LoadPolicy() error {
+
+	// Load policy from file
+	err := interceptor.Casbin.LoadPolicy()
+	if err != nil {
+		return err
+	}
+
+	// Load policy from file
+	// interceptor.Casbin.EnableLog(true)
+	interceptor.Casbin.EnableAutoSave(true)
+
+	// TODO: add add default policy route to rpc
+	interceptor.Casbin.AddPolicy("/mongorpc/*", "*", "read")
+	interceptor.Casbin.AddPolicy("/mongorpc/*", "*", "write")
+
+	// save policy to db
+	interceptor.Casbin.SavePolicy()
+
+	return interceptor.Casbin.LoadPolicy()
 }

@@ -5,6 +5,8 @@ import (
 	"net"
 	"os"
 
+	"github.com/casbin/casbin/v2"
+	mongodbadapter "github.com/casbin/mongodb-adapter/v3"
 	"github.com/mongorpc/mongorpc"
 	"github.com/mongorpc/mongorpc/proto"
 	"github.com/sirupsen/logrus"
@@ -15,10 +17,10 @@ import (
 )
 
 type MongoRPC struct {
-	mongoURI  string
-	port      int
-	jwtSecret string
-	rulesPath string
+	mongoURI        string
+	port            int
+	jwtSecret       string
+	casbinModelPath string
 }
 
 func main() {
@@ -47,10 +49,10 @@ func main() {
 				Destination: &srv.jwtSecret,
 			},
 			&cli.StringFlag{
-				Name:        "rules",
-				Value:       "default.rules",
-				Usage:       "the path to the rules file",
-				Destination: &srv.rulesPath,
+				Name:        "casbin-model-path",
+				Value:       "rbac_model.conf",
+				Usage:       "the path to the casbin model file",
+				Destination: &srv.casbinModelPath,
 			},
 		},
 		Action: srv.serve,
@@ -71,6 +73,19 @@ func (srv *MongoRPC) serve(c *cli.Context) error {
 		return err
 	}
 
+	// Initialize a MongoDB adapter and use it in a Casbin enforcer:
+	// The adapter will use the database named "casbin".
+	// If it doesn't exist, the adapter will create it automatically.
+	adapter, err := mongodbadapter.NewAdapter(srv.mongoURI) // Your MongoDB URL.
+	if err != nil {
+		return err
+	}
+
+	enforcer, err := casbin.NewEnforcer(srv.casbinModelPath, adapter)
+	if err != nil {
+		return err
+	}
+
 	// listen on the port
 	listener, err := net.Listen("tcp", port)
 	if err != nil {
@@ -80,6 +95,7 @@ func (srv *MongoRPC) serve(c *cli.Context) error {
 	// initilize interceptors
 	interceptor := mongorpc.Interceptor{
 		JWTSecret: srv.jwtSecret,
+		Casbin:    enforcer,
 	}
 
 	// create a new grpc server
@@ -93,6 +109,12 @@ func (srv *MongoRPC) serve(c *cli.Context) error {
 	proto.RegisterMongoRPCServer(server, &mongorpc.MongoRPCServer{
 		DB: database,
 	})
+
+	// Load casbin policy
+	err = interceptor.LoadPolicy()
+	if err != nil {
+		return err
+	}
 
 	logrus.Printf("mongorpc server is listening at %v", listener.Addr())
 
