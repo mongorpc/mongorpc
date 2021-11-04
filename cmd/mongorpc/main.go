@@ -7,7 +7,6 @@ import (
 
 	"github.com/mongorpc/mongorpc"
 	"github.com/mongorpc/mongorpc/proto"
-	"github.com/mongorpc/mongorpc/rules"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -65,14 +64,6 @@ func main() {
 
 func (srv *MongoRPC) serve(c *cli.Context) error {
 	port := fmt.Sprintf(":%d", srv.port)
-
-	// start mongorpc rules validation unix sock server
-	rules := rules.RulesValidationServer{}
-
-	err := rules.Start()
-	if err != nil {
-		logrus.Fatal(err)
-	}
 
 	// connect to mongodb
 	database, err := mongo.Connect(c.Context, options.Client().ApplyURI(srv.mongoURI))
