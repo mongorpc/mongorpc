@@ -1,8 +1,8 @@
 package rules
 
-type RulesValidationServer struct {
-}
+// type RulesValidationServer struct {
+// }
 
-func (r *RulesValidationServer) Start() error {
-	return nil
-}
+// func (r *RulesValidationServer) Start() error {
+// 	return nil
+// }
