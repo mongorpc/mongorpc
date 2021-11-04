@@ -9,6 +9,7 @@ import (
 	mongodbadapter "github.com/casbin/mongodb-adapter/v3"
 	"github.com/mongorpc/mongorpc"
 	"github.com/mongorpc/mongorpc/proto"
+	"github.com/mongorpc/mongorpc/rules"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -21,6 +22,7 @@ type MongoRPC struct {
 	port            int
 	jwtSecret       string
 	casbinModelPath string
+	rulesPath       string
 }
 
 func main() {
@@ -53,6 +55,12 @@ func main() {
 				Value:       "rbac_model.conf",
 				Usage:       "the path to the casbin model file",
 				Destination: &srv.casbinModelPath,
+			},
+			&cli.StringFlag{
+				Name:        "rules",
+				Value:       "default.rules",
+				Usage:       "the path to the rules file",
+				Destination: &srv.rulesPath,
 			},
 		},
 		Action: srv.serve,
@@ -121,4 +129,17 @@ func (srv *MongoRPC) serve(c *cli.Context) error {
 	// start the server
 	err = server.Serve(listener)
 	return err
+}
+
+func (srv *MongoRPC) LoadRules() error {
+	r := rules.MongoRPCRules{
+		FilePath: srv.rulesPath,
+	}
+
+	err := r.LoadRules()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
