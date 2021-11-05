@@ -12,14 +12,16 @@ builds:
     main: ./cmd/mongorpc/main.go
     goos:
       - linux
-      - windows
-      - darwin
+      # - windows
+      # - darwin
+    goarch:
+      - amd64
 archives:
   - replacements:
-      darwin: Darwin
+      # darwin: Darwin
       linux: Linux
-      windows: Windows
-      386: i386
+      # windows: Windows
+      # 386: i386
       amd64: x86_64
 checksum:
   name_template: 'checksums.txt'
