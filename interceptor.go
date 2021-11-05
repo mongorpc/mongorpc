@@ -5,10 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/fsnotify/fsnotify"
+	"github.com/casbin/casbin/v2"
 	"github.com/golang-jwt/jwt"
 	"github.com/mongorpc/mongorpc/proto"
-	"github.com/osohq/go-oso"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -17,9 +16,8 @@ import (
 )
 
 type Interceptor struct {
-	JWTSecret   string
-	Oso         oso.Oso
-	PolicyFiles []string
+	JWTSecret string
+	Casbin    *casbin.Enforcer
 }
 
 // RouteInfoPayload is the payload of the route info
@@ -27,7 +25,7 @@ type RouteInfoPayload struct {
 	Database   string  `json:"database"`
 	Collection *string `json:"collection"`
 	DocumentID *string `json:"document_id"`
-	UID        string  `json:"uid"`
+	UID        string  `json:"-"`
 }
 
 // Auth interceptor for validating JWT token
@@ -104,7 +102,7 @@ func (interceptor *Interceptor) CheckPermission(method string, claims jwt.MapCla
 		return status.Errorf(codes.PermissionDenied, "invalid database")
 	}
 
-	route := fmt.Sprintf("/%s", v.Database)
+	route := fmt.Sprintf("/mongorpc/%s", v.Database)
 	if v.Collection != nil {
 		route = fmt.Sprintf("%s/%s", route, *v.Collection)
 	}
@@ -128,23 +126,14 @@ func (interceptor *Interceptor) CheckPermission(method string, claims jwt.MapCla
 		action = "write"
 	}
 
-	type AuthorizePayload struct {
-		Actor    jwt.MapClaims `json:"actor"`
-		Action   string        `json:"action"`
-		Resource string        `json:"resource"`
-	}
-
-	logrus.Println("Checking permission for:", AuthorizePayload{
-		Actor:    claims,
-		Action:   action,
-		Resource: route,
-	})
-
-	err = interceptor.Oso.Authorize(claims, action, route)
+	permission, err := interceptor.Casbin.Enforce(route, v.UID, action)
 	if err != nil {
 		return status.Errorf(codes.PermissionDenied, "permission denied")
 	}
 
+	if !permission {
+		return status.Errorf(codes.PermissionDenied, "permission denied")
+	}
 	return nil
 }
 
@@ -156,27 +145,25 @@ func (interceptor *Interceptor) keyFunc(token *jwt.Token) (interface{}, error) {
 	return []byte(interceptor.JWTSecret), nil
 }
 
-func (interceptor *Interceptor) LoadOSOPolicy() error {
-	err := interceptor.Oso.ClearRules()
-	if err != nil {
-		return err
-	}
-	err = interceptor.Oso.LoadFiles(interceptor.PolicyFiles)
+// Load Casbin policy from database and save default policy
+func (interceptor *Interceptor) LoadPolicy() error {
+
+	// Load policy from file
+	err := interceptor.Casbin.LoadPolicy()
 	if err != nil {
 		return err
 	}
 
-	logrus.Println("Loaded Oso policy files:", interceptor.PolicyFiles)
-	return nil
-}
+	// Load policy from file
+	// interceptor.Casbin.EnableLog(true)
+	interceptor.Casbin.EnableAutoSave(true)
 
-func (interceptor *Interceptor) WatchFile(err error, event *fsnotify.Event) {
-	if err != nil {
-		logrus.Errorf("error watching file: %v", err)
-		return
-	}
-	err = interceptor.LoadOSOPolicy()
-	if err != nil {
-		logrus.Errorf("Failed to reload policy: %v", err)
-	}
+	// TODO: add add default policy route to rpc
+	interceptor.Casbin.AddPolicy("/mongorpc/*", "*", "read")
+	interceptor.Casbin.AddPolicy("/mongorpc/*", "*", "write")
+
+	// save policy to db
+	interceptor.Casbin.SavePolicy()
+
+	return interceptor.Casbin.LoadPolicy()
 }

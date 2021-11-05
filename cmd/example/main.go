@@ -91,13 +91,13 @@ func main() {
 		mongorpc: c,
 	}
 
-	// e.ListCollections()
-	// e.ListDocuments()
+	e.ListCollections()
+	e.ListDocuments()
 	e.DocumentByID()
-	// e.CreateDocument()
-	// e.CreateIndex()
-	// e.DeleteIndex()
-	// e.ListIndexes()
+	e.CreateDocument()
+	e.CreateIndex()
+	e.DeleteIndex()
+	e.ListIndexes()
 
 	e.CollectionStats()
 
