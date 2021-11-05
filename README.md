@@ -33,8 +33,8 @@ MongoDB + gRPC = mongorpc
 - [ ] Bulk Replace
 - [x] Authendication & Permission
     - [x] JWT Verification Interceptor
-    - [x] Casbin Enforcer
-    - [ ] Add Casbin Policy RPC Routes
+    - [x] OSO Permission Middleware [https://www.osohq.com/](https://www.osohq.com/)
+    - [x] Auto reload oso when policy file updated
     - [ ] Custom JWT Generation
     - [ ] Admin Authendication Using api keys
     
