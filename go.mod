@@ -3,8 +3,7 @@ module github.com/mongorpc/mongorpc
 go 1.17
 
 require (
-	github.com/casbin/casbin/v2 v2.39.0
-	github.com/casbin/mongodb-adapter/v3 v3.2.1
+	github.com/fsnotify/fsnotify v1.5.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/osohq/go-oso v0.22.1
 	github.com/sirupsen/logrus v1.4.2
@@ -15,9 +14,7 @@ require (
 )
 
 require (
-	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d // indirect
-	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
