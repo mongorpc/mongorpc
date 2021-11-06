@@ -49,6 +49,12 @@ func main() {
 				return err
 			}
 
+			// ping mongodb to check if it's up
+			err = database.Ping(c.Context, nil)
+			if err != nil {
+				return err
+			}
+
 			mongorpc := &mongorpc.MongoRPC{
 				DB: database,
 			}
