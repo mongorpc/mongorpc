@@ -50,12 +50,13 @@ func main() {
 			}
 
 			mongorpc := &mongorpc.MongoRPC{
-				DB:                      database,
-				UnaryServerInterceptor:  UnaryInterceptor,
-				StreamServerInterceptor: StreamInterceptor,
+				DB: database,
 			}
 
-			srv := mongorpc.NewServer()
+			srv := mongorpc.NewServer(
+				grpc.UnaryInterceptor(UnaryInterceptor),
+				grpc.StreamInterceptor(StreamInterceptor),
+			)
 
 			// listen on the port
 			listener, err := net.Listen("tcp", port)

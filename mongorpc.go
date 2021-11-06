@@ -10,17 +10,10 @@ import (
 type MongoRPC struct {
 	proto.UnimplementedMongoRPCServer
 	DB *mongo.Client
-
-	UnaryServerInterceptor  grpc.UnaryServerInterceptor
-	StreamServerInterceptor grpc.StreamServerInterceptor
 }
 
-func (srv *MongoRPC) NewServer() *grpc.Server {
-	server := grpc.NewServer(
-		grpc.UnaryInterceptor(srv.UnaryServerInterceptor),
-		grpc.StreamInterceptor(srv.StreamServerInterceptor),
-	)
-
+func (srv *MongoRPC) NewServer(opt ...grpc.ServerOption) *grpc.Server {
+	server := grpc.NewServer(opt...)
 	proto.RegisterMongoRPCServer(server, srv)
 	return server
 }
