@@ -7,7 +7,7 @@ import (
 )
 
 // MongoDB change events rpc stream handler
-func (srv *MongoRPCServer) Listen(in *proto.ListenRequest, stream proto.MongoRPC_ListenServer) error {
+func (srv *MongoRPC) Listen(in *proto.ListenRequest, stream proto.MongoRPC_ListenServer) error {
 
 	// TODO: pass operation type and filter in mongo pipeline
 	// pipeline := bson.D{

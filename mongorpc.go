@@ -1,30 +1,26 @@
 package mongorpc
 
 import (
-	"context"
-
 	"github.com/mongorpc/mongorpc/proto"
 	"go.mongodb.org/mongo-driver/mongo"
+	"google.golang.org/grpc"
 )
 
 // MongoRPC Server
-type MongoRPCServer struct {
+type MongoRPC struct {
 	proto.UnimplementedMongoRPCServer
 	DB *mongo.Client
+
+	UnaryServerInterceptor  grpc.UnaryServerInterceptor
+	StreamServerInterceptor grpc.StreamServerInterceptor
 }
 
-// Ping MongoDB server
-func (srv *MongoRPCServer) Ping(ctx context.Context, in *proto.Empty) (*proto.Empty, error) {
-	err := srv.DB.Ping(ctx, nil)
-	return in, err
-}
+func (srv *MongoRPC) NewServer() *grpc.Server {
+	server := grpc.NewServer(
+		grpc.UnaryInterceptor(srv.UnaryServerInterceptor),
+		grpc.StreamInterceptor(srv.StreamServerInterceptor),
+	)
 
-// RunCommand executes the given command against the database.
-func (srv *MongoRPCServer) RunDatabaseCommand(ctx context.Context, database string, command interface{}) (*mongo.SingleResult, error) {
-	result := srv.DB.Database(database).RunCommand(ctx, command)
-	if result.Err() != nil {
-		return nil, result.Err()
-	}
-
-	return result, nil
+	proto.RegisterMongoRPCServer(server, srv)
+	return server
 }
