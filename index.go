@@ -38,7 +38,7 @@ func DecodeIndexDirection(direction int32) proto.IndexDirection {
 }
 
 // Create Index in Collection
-func (srv *MongoRPCServer) CreateIndex(ctx context.Context, in *proto.CreateIndexRequest) (*proto.CreateIndexResponse, error) {
+func (srv *MongoRPC) CreateIndex(ctx context.Context, in *proto.CreateIndexRequest) (*proto.CreateIndexResponse, error) {
 
 	keys := bsonx.Doc{}
 	for _, k := range in.Index.Keys {
@@ -67,7 +67,7 @@ func (srv *MongoRPCServer) CreateIndex(ctx context.Context, in *proto.CreateInde
 }
 
 // List all indexes in collection
-func (srv *MongoRPCServer) ListIndexes(ctx context.Context, in *proto.ListIndexesRequest) (*proto.ListIndexesResponse, error) {
+func (srv *MongoRPC) ListIndexes(ctx context.Context, in *proto.ListIndexesRequest) (*proto.ListIndexesResponse, error) {
 
 	cursor, err := srv.DB.Database(in.Database).Collection(in.Collection).Indexes().List(ctx)
 	if err != nil {
@@ -103,7 +103,7 @@ func (srv *MongoRPCServer) ListIndexes(ctx context.Context, in *proto.ListIndexe
 }
 
 // delete index in collection
-func (srv *MongoRPCServer) DeleteIndex(ctx context.Context, in *proto.DeleteIndexRequest) (*proto.DeleteIndexResponse, error) {
+func (srv *MongoRPC) DeleteIndex(ctx context.Context, in *proto.DeleteIndexRequest) (*proto.DeleteIndexResponse, error) {
 	_, err := srv.DB.Database(in.Database).Collection(in.Collection).Indexes().DropOne(ctx, in.Name)
 	if err != nil {
 		return nil, err

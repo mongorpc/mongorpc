@@ -11,7 +11,7 @@ import (
 )
 
 // Get document by id from collection in database
-func (srv *MongoRPCServer) GetDocument(ctx context.Context, in *proto.GetDocumentRequest) (*proto.GetDocumentResponse, error) {
+func (srv *MongoRPC) GetDocument(ctx context.Context, in *proto.GetDocumentRequest) (*proto.GetDocumentResponse, error) {
 
 	// Convert id to primitive.ObjectID
 	docID, err := primitive.ObjectIDFromHex(in.DocumentId)
@@ -54,7 +54,7 @@ func (srv *MongoRPCServer) GetDocument(ctx context.Context, in *proto.GetDocumen
 }
 
 // List documents from collection in database
-func (srv *MongoRPCServer) ListDocuments(ctx context.Context, in *proto.ListDocumentsRequest) (*proto.ListDocumentsResponse, error) {
+func (srv *MongoRPC) ListDocuments(ctx context.Context, in *proto.ListDocumentsRequest) (*proto.ListDocumentsResponse, error) {
 
 	findOptions := options.Find()
 	findOptions.SetLimit(int64(in.Limit))
@@ -95,7 +95,7 @@ func (srv *MongoRPCServer) ListDocuments(ctx context.Context, in *proto.ListDocu
 }
 
 // Create document in collection in database
-func (srv *MongoRPCServer) CreateDocument(ctx context.Context, in *proto.CreateDocumentRequest) (*proto.CreateDocumentResponse, error) {
+func (srv *MongoRPC) CreateDocument(ctx context.Context, in *proto.CreateDocumentRequest) (*proto.CreateDocumentResponse, error) {
 
 	// decode proto document to generic interface
 	doc := DecodeValue(in.Document)
@@ -113,7 +113,7 @@ func (srv *MongoRPCServer) CreateDocument(ctx context.Context, in *proto.CreateD
 }
 
 // Update document in collection in database
-func (srv *MongoRPCServer) UpdateDocument(ctx context.Context, in *proto.UpdateDocumentRequest) (*proto.UpdateDocumentResponse, error) {
+func (srv *MongoRPC) UpdateDocument(ctx context.Context, in *proto.UpdateDocumentRequest) (*proto.UpdateDocumentResponse, error) {
 
 	// decode proto document to generic interface
 	doc := DecodeValue(in.Document)
@@ -157,7 +157,7 @@ func (srv *MongoRPCServer) UpdateDocument(ctx context.Context, in *proto.UpdateD
 }
 
 // Delete document from collection in database
-func (srv *MongoRPCServer) DeleteDocument(ctx context.Context, in *proto.DeleteDocumentRequest) (*proto.DeleteDocumentResponse, error) {
+func (srv *MongoRPC) DeleteDocument(ctx context.Context, in *proto.DeleteDocumentRequest) (*proto.DeleteDocumentResponse, error) {
 
 	// Delete document
 	res, err := srv.DB.Database(in.Database).Collection(in.Collection).DeleteOne(ctx, in.DocumentId)

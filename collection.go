@@ -9,7 +9,7 @@ import (
 )
 
 // Get List of collections in a database.
-func (srv *MongoRPCServer) ListCollections(ctx context.Context, in *proto.ListCollectionsRequest) (*proto.ListCollectionsResponse, error) {
+func (srv *MongoRPC) ListCollections(ctx context.Context, in *proto.ListCollectionsRequest) (*proto.ListCollectionsResponse, error) {
 
 	// Get Collections
 	collections, err := srv.DB.Database(in.Database).ListCollectionNames(ctx, bson.D{})
@@ -32,7 +32,7 @@ func (srv *MongoRPCServer) ListCollections(ctx context.Context, in *proto.ListCo
 }
 
 // Create Collection in a database.
-func (srv *MongoRPCServer) CreateCollection(ctx context.Context, in *proto.CreateCollectionRequest) (*proto.CreateCollectionResponse, error) {
+func (srv *MongoRPC) CreateCollection(ctx context.Context, in *proto.CreateCollectionRequest) (*proto.CreateCollectionResponse, error) {
 
 	// Create Collection
 	err := srv.DB.Database(in.Database).CreateCollection(ctx, in.Collection)
@@ -45,7 +45,7 @@ func (srv *MongoRPCServer) CreateCollection(ctx context.Context, in *proto.Creat
 }
 
 // Rename Collection in a database.
-func (srv *MongoRPCServer) RenameCollection(ctx context.Context, in *proto.RenameCollectionRequest) (*proto.RenameCollectionResponse, error) {
+func (srv *MongoRPC) RenameCollection(ctx context.Context, in *proto.RenameCollectionRequest) (*proto.RenameCollectionResponse, error) {
 
 	// Rename Collection
 
@@ -71,7 +71,7 @@ func (srv *MongoRPCServer) RenameCollection(ctx context.Context, in *proto.Renam
 }
 
 // Delete Collection in a database.
-func (srv *MongoRPCServer) DeleteCollection(ctx context.Context, in *proto.DeleteCollectionRequest) (*proto.DeleteCollectionResponse, error) {
+func (srv *MongoRPC) DeleteCollection(ctx context.Context, in *proto.DeleteCollectionRequest) (*proto.DeleteCollectionResponse, error) {
 
 	// Delete Collection
 	err := srv.DB.Database(in.Database).Collection(in.Collection).Drop(ctx)
@@ -84,7 +84,7 @@ func (srv *MongoRPCServer) DeleteCollection(ctx context.Context, in *proto.Delet
 }
 
 // Collection statistics
-func (srv *MongoRPCServer) CollectionStats(ctx context.Context, in *proto.CollectionStatsRequest) (*proto.CollectionStatsResponse, error) {
+func (srv *MongoRPC) CollectionStats(ctx context.Context, in *proto.CollectionStatsRequest) (*proto.CollectionStatsResponse, error) {
 
 	// Get Collection Stats
 	result, err := srv.RunDatabaseCommand(ctx, in.Database, bson.D{
