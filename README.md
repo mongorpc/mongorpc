@@ -31,12 +31,9 @@ MongoDB + gRPC = mongorpc
 - [ ] Bulk Update
 - [ ] Bulk Delete
 - [ ] Bulk Replace
-- [x] Authendication & Permission
-    - [x] JWT Verification Interceptor
-    - [x] Casbin Enforcer
-    - [ ] Add Casbin Policy RPC Routes
-    - [ ] Custom JWT Generation
-    - [ ] Admin Authendication Using api keys
+- [ ] Middlewares (All Interceptor moved to it's seprate libraries)
+    - [ ] JWT/Auth Interceptor
+    - [ ] Casbin Interceptor
     
 **mongorpc client's**
 
