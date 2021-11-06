@@ -2,9 +2,9 @@
 
 MongoDB + gRPC = mongorpc
 
-mongorpc is a server that can be used to communicate with MongoDB using gRPC. mongorpc can be used with microservices, or from any mobile or web applications. you can extend mongorpc with custom interceptors to add authentication, logging, casbin, permission, etc.
+mongorpc is a server that can be used to communicate with **MongoDB** using **gRPC**. mongorpc can be used with **microservices**, or from any **mobile** or **web** applications. you can extend mongorpc with custom interceptors to add **authentication**, **logging**, **casbin**, **tracing**, etc.
 
-mongorpc has many client libraries for different langauges and platforms. that provides a ORM like interface to interact with MongoDB.
+mongorpc has many client libraries for different langauges and platforms. that provides a **ORM** **like** **interface** to interact with MongoDB.
 
 
 Clients
