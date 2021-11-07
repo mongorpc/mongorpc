@@ -10,6 +10,23 @@ mongorpc has many client libraries for different langauges and platforms. that p
 Clients
 ------
 
+
+
+- **Web** https://github.com/mongorpc/mongorpc-js
+
+```ts
+const client = new MongoRPC("localhost:27051");
+
+const document = await client
+  .database("sample_mflix")
+  .collection("movies")
+  .document("573a13b0f29313caabd35231")
+  .get();
+
+console.log(document);
+```
+
+
 - **Golang** https://github.com/mongorpc/mongorpc-go
 ```go
 // Initilize database
@@ -51,21 +68,6 @@ client.database("sample_mflix").collection("movies").document(id: "573a13b0f2931
 }
 
 ```
-
-- **Web** https://github.com/mongorpc/mongorpc-js
-
-```ts
-const client = new MongoRPC("localhost:27051");
-
-const document = await client
-  .database("sample_mflix")
-  .collection("movies")
-  .document("573a13b0f29313caabd35231")
-  .get();
-
-console.log(document);
-```
-
 
 
 ## 🚧 **Roadmap** 🚧
