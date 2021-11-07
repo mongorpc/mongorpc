@@ -31,17 +31,18 @@ func main() {
 				Value:       "mongodb://localhost:27017",
 				Usage:       "the mongodb uri",
 				Destination: &config.mongoURI,
+				EnvVars:     []string{"MONGO_URI"},
 			},
 			&cli.IntFlag{
 				Name:        "port",
-				Value:       27051,
+				Value:       9090,
 				Usage:       "the port on which the server will listen",
 				Destination: &config.port,
+				EnvVars:     []string{"PORT"},
 			},
 		},
 		Action: func(c *cli.Context) error {
-
-			port := fmt.Sprintf(":%d", config.port)
+			port := fmt.Sprintf("0.0.0.0:%d", config.port)
 
 			// connect to mongodb
 			database, err := mongo.Connect(c.Context, options.Client().ApplyURI(config.mongoURI))
