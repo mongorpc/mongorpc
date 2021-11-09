@@ -2,7 +2,6 @@ package mongorpc
 
 import (
 	"github.com/mongorpc/mongorpc/proto"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -32,7 +31,7 @@ func (srv *MongoRPC) Listen(in *proto.ListenRequest, stream proto.MongoRPC_Liste
 	for changes.Next(stream.Context()) {
 
 		// Get change document
-		var change bson.M
+		var change map[string]interface{}
 		err := changes.Decode(&change)
 		if err != nil {
 			return err
@@ -42,7 +41,7 @@ func (srv *MongoRPC) Listen(in *proto.ListenRequest, stream proto.MongoRPC_Liste
 		operationType := change["operationType"].(string)
 
 		// Get full document
-		fullDocument := change["fullDocument"].(bson.M)
+		// fullDocument := change["fullDocument"].(bson.M)
 
 		// TODO: return change document type from value to map
 
@@ -51,7 +50,7 @@ func (srv *MongoRPC) Listen(in *proto.ListenRequest, stream proto.MongoRPC_Liste
 			Operation: operationType,
 			Document: &proto.Value{
 				Type: &proto.Value_MapValue{
-					MapValue: EncodeMap(fullDocument),
+					MapValue: EncodeMap(change),
 				},
 			},
 		})
