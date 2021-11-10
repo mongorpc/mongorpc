@@ -3,6 +3,7 @@ package mongorpc
 import (
 	"github.com/mongorpc/mongorpc/proto"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // MongoDB change events rpc stream handler
@@ -21,7 +22,7 @@ func (srv *MongoRPC) Listen(in *proto.ListenRequest, stream proto.MongoRPC_Liste
 	// }
 
 	// MongoDB Change Streams
-	changes, err := srv.DB.Database(in.Database).Collection(in.Collection).Watch(stream.Context(), mongo.Pipeline{})
+	changes, err := srv.DB.Database(in.Database).Collection(in.Collection).Watch(stream.Context(), mongo.Pipeline{}, options.ChangeStream().SetFullDocument(options.UpdateLookup))
 	if err != nil {
 		return err
 	}
@@ -41,14 +42,12 @@ func (srv *MongoRPC) Listen(in *proto.ListenRequest, stream proto.MongoRPC_Liste
 		operationType := change["operationType"].(string)
 
 		// Get full document
-		// fullDocument := change["fullDocument"].(bson.M)
-
-		// TODO: return change document type from value to map
+		fullDocument := change["fullDocument"]
 
 		// send change to client
 		stream.Send(&proto.ListenResponse{
 			Operation: operationType,
-			Document:  Encode(change),
+			Document:  Encode(fullDocument),
 		})
 
 	}
