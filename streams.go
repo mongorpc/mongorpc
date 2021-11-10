@@ -48,11 +48,7 @@ func (srv *MongoRPC) Listen(in *proto.ListenRequest, stream proto.MongoRPC_Liste
 		// send change to client
 		stream.Send(&proto.ListenResponse{
 			Operation: operationType,
-			Document: &proto.Value{
-				Type: &proto.Value_MapValue{
-					MapValue: EncodeMap(change),
-				},
-			},
+			Document:  Encode(change),
 		})
 
 	}

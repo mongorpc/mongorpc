@@ -8,10 +8,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type Encoder struct {
-}
-
-func (e *Encoder) Encode(in interface{}) *proto.Value {
+// Encode input type to mongorpc proto value
+func Encode(in interface{}) *proto.Value {
 	result := &proto.Value{}
 	switch value := in.(type) {
 
@@ -67,7 +65,7 @@ func (e *Encoder) Encode(in interface{}) *proto.Value {
 	case []interface{}:
 		arr := proto.ArrayValue{}
 		for _, v := range value {
-			arr.Values = append(arr.Values, e.Encode(v))
+			arr.Values = append(arr.Values, Encode(v))
 		}
 
 		result = &proto.Value{
@@ -79,7 +77,7 @@ func (e *Encoder) Encode(in interface{}) *proto.Value {
 	case map[string]interface{}:
 		fields := map[string]*proto.Value{}
 		for k, v := range value {
-			fields[k] = e.Encode(v)
+			fields[k] = Encode(v)
 		}
 
 		result = &proto.Value{
@@ -121,7 +119,7 @@ func (e *Encoder) Encode(in interface{}) *proto.Value {
 	case primitive.D:
 		arr := proto.ArrayValue{}
 		for _, v := range value {
-			arr.Values = append(arr.Values, e.Encode(v))
+			arr.Values = append(arr.Values, Encode(v))
 		}
 
 		result = &proto.Value{
@@ -132,7 +130,7 @@ func (e *Encoder) Encode(in interface{}) *proto.Value {
 
 	case primitive.E:
 		fields := map[string]*proto.Value{}
-		fields[value.Key] = e.Encode(value.Value)
+		fields[value.Key] = Encode(value.Value)
 
 		result = &proto.Value{
 			Type: &proto.Value_MapValue{
@@ -145,7 +143,7 @@ func (e *Encoder) Encode(in interface{}) *proto.Value {
 	case primitive.A:
 		arr := proto.ArrayValue{}
 		for _, v := range value {
-			arr.Values = append(arr.Values, e.Encode(v))
+			arr.Values = append(arr.Values, Encode(v))
 		}
 
 		result = &proto.Value{
@@ -157,7 +155,7 @@ func (e *Encoder) Encode(in interface{}) *proto.Value {
 	case primitive.M:
 		fields := map[string]*proto.Value{}
 		for k, v := range value {
-			fields[k] = e.Encode(v)
+			fields[k] = Encode(v)
 		}
 
 		result = &proto.Value{

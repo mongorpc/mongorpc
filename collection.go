@@ -25,9 +25,7 @@ func (srv *MongoRPC) ListCollections(ctx context.Context, in *proto.ListCollecti
 
 	// Return Response Object
 	return &proto.ListCollectionsResponse{
-		Collections: &proto.ArrayValue{
-			Values: EncodeArray(arr).Values,
-		},
+		Collections: Encode(arr).GetArrayValue(),
 	}, nil
 }
 

@@ -45,11 +45,7 @@ func (srv *MongoRPC) GetDocument(ctx context.Context, in *proto.GetDocumentReque
 
 	// Return document
 	return &proto.GetDocumentResponse{
-		Document: &proto.Value{
-			Type: &proto.Value_MapValue{
-				MapValue: EncodeMap(doc),
-			},
-		},
+		Document: Encode(doc),
 	}, nil
 }
 
@@ -81,11 +77,7 @@ func (srv *MongoRPC) ListDocuments(ctx context.Context, in *proto.ListDocumentsR
 	// convert []map[string]interface{} to proto.arrary
 	docs := proto.ArrayValue{}
 	for _, doc := range arrDocuments {
-		docs.Values = append(docs.Values, &proto.Value{
-			Type: &proto.Value_MapValue{
-				MapValue: EncodeMap(doc),
-			},
-		})
+		docs.Values = append(docs.Values, Encode(doc))
 	}
 
 	// Return documents
@@ -98,7 +90,7 @@ func (srv *MongoRPC) ListDocuments(ctx context.Context, in *proto.ListDocumentsR
 func (srv *MongoRPC) CreateDocument(ctx context.Context, in *proto.CreateDocumentRequest) (*proto.CreateDocumentResponse, error) {
 
 	// decode proto document to generic interface
-	doc := DecodeValue(in.Document)
+	doc := Decode(in.Document)
 
 	// Create document
 	result, err := srv.DB.Database(in.Database).Collection(in.Collection).InsertOne(ctx, doc)
@@ -116,7 +108,7 @@ func (srv *MongoRPC) CreateDocument(ctx context.Context, in *proto.CreateDocumen
 func (srv *MongoRPC) UpdateDocument(ctx context.Context, in *proto.UpdateDocumentRequest) (*proto.UpdateDocumentResponse, error) {
 
 	// decode proto document to generic interface
-	doc := DecodeValue(in.Document)
+	doc := Decode(in.Document)
 
 	// Convert id to primitive.ObjectID
 	docID, err := primitive.ObjectIDFromHex(in.DocumentId)

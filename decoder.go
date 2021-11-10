@@ -1,326 +1,53 @@
 package mongorpc
 
 import (
-	"reflect"
-
 	"github.com/mongorpc/mongorpc/proto"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// Encoder encodes a values to a mongorpc proto types
-type MongoRPCEncoder interface {
-	EncodeArray([]interface{}) proto.ArrayValue
-}
-
-// Decoder decodes a mongorpc proto types to a values
-type MongoRPCDecoder interface {
-	DecodeArray(proto.ArrayValue) []interface{}
-}
-
-// Decode Value to a map
-func DecodeValue(v *proto.Value) interface{} {
-
-	switch v.Type.(type) {
+// Decode proto value to value
+func Decode(value *proto.Value) interface{} {
+	switch value.Type.(type) {
 	case *proto.Value_NullValue:
 		return nil
+
 	case *proto.Value_IntegerValue:
-		return v.GetIntegerValue()
-	case *proto.Value_StringValue:
-		return v.GetStringValue()
-	case *proto.Value_BoolValue:
-		return v.GetBoolValue()
+		return value.GetIntegerValue()
+
 	case *proto.Value_DoubleValue:
-		return v.GetDoubleValue()
+		return value.GetDoubleValue()
+
+	case *proto.Value_StringValue:
+		return value.GetStringValue()
+
+	case *proto.Value_BoolValue:
+		return value.GetBoolValue()
+
 	case *proto.Value_ArrayValue:
-		return DecodeArray(v.GetArrayValue())
+		arr := []interface{}{}
+		for _, v := range value.GetArrayValue().Values {
+			arr = append(arr, Decode(v))
+		}
+		return arr
+
 	case *proto.Value_MapValue:
-		return DecodeMap(v.GetMapValue())
-	default:
-		logrus.Error("Unsupported type: ", reflect.TypeOf(v.Type))
+		m := map[string]interface{}{}
+		for k, v := range value.GetMapValue().Fields {
+			m[k] = Decode(v)
+		}
+		return m
+
+	case *proto.Value_ObjectIdValue:
+		return value.GetObjectIdValue().Id
+
+	case *proto.Value_DateValue:
+		return primitive.DateTime(value.GetDateValue().Seconds)
+
 	}
 
 	return nil
-}
-
-// DecodeMap decodes a mongorpc proto types to a map
-func DecodeMap(m *proto.MapValue) map[string]interface{} {
-	result := map[string]interface{}{}
-
-	// iterate over the map
-	for k, v := range m.Fields {
-
-		switch v.Type.(type) {
-		case *proto.Value_NullValue:
-			result[k] = nil
-		case *proto.Value_IntegerValue:
-			result[k] = v.GetIntegerValue()
-		case *proto.Value_StringValue:
-			result[k] = v.GetStringValue()
-		case *proto.Value_BoolValue:
-			result[k] = v.GetBoolValue()
-		case *proto.Value_DoubleValue:
-			result[k] = v.GetDoubleValue()
-		case *proto.Value_ArrayValue:
-			result[k] = DecodeArray(v.GetArrayValue())
-		case *proto.Value_MapValue:
-			result[k] = DecodeMap(v.GetMapValue())
-		default:
-			logrus.Error("Unsupported type: ", reflect.TypeOf(v.Type))
-		}
-	}
-
-	// return the map
-	return result
-}
-
-func DecodeArray(a *proto.ArrayValue) []interface{} {
-	result := []interface{}{}
-
-	// iterate over the array
-	for _, v := range a.Values {
-		switch v.Type.(type) {
-		case *proto.Value_NullValue:
-			result = append(result, nil)
-		case *proto.Value_IntegerValue:
-			result = append(result, v.GetIntegerValue())
-		case *proto.Value_StringValue:
-			result = append(result, v.GetStringValue())
-		case *proto.Value_BoolValue:
-			result = append(result, v.GetBoolValue())
-		case *proto.Value_DoubleValue:
-			result = append(result, v.GetDoubleValue())
-		case *proto.Value_ArrayValue:
-			result = append(result, DecodeArray(v.GetArrayValue()))
-		case *proto.Value_MapValue:
-			result = append(result, DecodeMap(v.GetMapValue()))
-		default:
-			logrus.Error("Unsupported type: ", reflect.TypeOf(v.Type))
-		}
-	}
-
-	// return the array
-	return result
-}
-
-// EncodeMap encodes a map to a mongorpc proto types
-func EncodeMap(m map[string]interface{}) *proto.MapValue {
-	result := map[string]*proto.Value{}
-
-	// iterate over the map
-	for k, v := range m {
-
-		// check if the value is nil then return proto null
-		if v == nil {
-			result[k] = &proto.Value{
-				Type: &proto.Value_NullValue{
-					NullValue: proto.NullValue_NULL_VALUE,
-				},
-			}
-		} else {
-
-			// check value type and encode to mongorpc proto types
-			switch value := v.(type) {
-			case int:
-				result[k] = &proto.Value{
-					Type: &proto.Value_IntegerValue{
-						IntegerValue: int64(value),
-					},
-				}
-			case int32:
-				result[k] = &proto.Value{
-					Type: &proto.Value_IntegerValue{
-						IntegerValue: int64(value),
-					},
-				}
-			case int64:
-				result[k] = &proto.Value{
-					Type: &proto.Value_IntegerValue{
-						IntegerValue: int64(value),
-					},
-				}
-			case string:
-				result[k] = &proto.Value{
-					Type: &proto.Value_StringValue{
-						StringValue: value,
-					},
-				}
-			case bool:
-				result[k] = &proto.Value{
-					Type: &proto.Value_BoolValue{
-						BoolValue: value,
-					},
-				}
-			case float64:
-				result[k] = &proto.Value{
-					Type: &proto.Value_DoubleValue{
-						DoubleValue: value,
-					},
-				}
-			case []interface{}:
-				result[k] = &proto.Value{
-					Type: &proto.Value_ArrayValue{
-						ArrayValue: EncodeArray(value),
-					},
-				}
-			case map[string]interface{}:
-				result[k] = &proto.Value{
-					Type: &proto.Value_MapValue{
-						MapValue: EncodeMap(value),
-					},
-				}
-
-			// Mongo Types
-			case primitive.ObjectID:
-				result[k] = &proto.Value{
-					Type: &proto.Value_ObjectIdValue{
-						ObjectIdValue: &proto.ObjectID{
-							Id: value.Hex(),
-						},
-					},
-				}
-
-			case primitive.DateTime:
-				result[k] = &proto.Value{
-					Type: &proto.Value_DateValue{
-						DateValue: &proto.Timestamp{
-							Seconds: int64(value) / 1000,
-							Nanos:   int32(int64(value) % 1000 * 1000000),
-						},
-					},
-				}
-			case primitive.Timestamp:
-				result[k] = &proto.Value{
-					Type: &proto.Value_DateValue{
-						DateValue: &proto.Timestamp{
-							Seconds: int64(value.T),
-							Nanos:   int32(value.I),
-						},
-					},
-				}
-
-			case primitive.A:
-				result[k] = &proto.Value{
-					Type: &proto.Value_ArrayValue{
-						ArrayValue: EncodeArray(value),
-					},
-				}
-			default:
-				logrus.Error("Unsupported type: ", reflect.TypeOf(value))
-
-			}
-		}
-	}
-
-	// return the proto map
-	return &proto.MapValue{
-		Fields: result,
-	}
-}
-
-// DecodeMap decodes a mongorpc proto types to a map
-func EncodeArray(arr []interface{}) *proto.ArrayValue {
-	result := []*proto.Value{}
-
-	// iterate over the array
-	for _, v := range arr {
-
-		// check if the value is nil then return proto null
-		if v == nil {
-			result = append(result, &proto.Value{
-				Type: &proto.Value_NullValue{
-					NullValue: proto.NullValue_NULL_VALUE,
-				},
-			})
-		} else {
-
-			// check value type and encode to mongorpc proto types
-			switch value := v.(type) {
-			case int:
-				result = append(result, &proto.Value{
-					Type: &proto.Value_IntegerValue{
-						IntegerValue: int64(value),
-					},
-				})
-			case int32:
-				result = append(result, &proto.Value{
-					Type: &proto.Value_IntegerValue{
-						IntegerValue: int64(value),
-					},
-				})
-			case int64:
-				result = append(result, &proto.Value{
-					Type: &proto.Value_IntegerValue{
-						IntegerValue: int64(value),
-					},
-				})
-			case string:
-				result = append(result, &proto.Value{
-					Type: &proto.Value_StringValue{
-						StringValue: value,
-					},
-				})
-			case bool:
-				result = append(result, &proto.Value{
-					Type: &proto.Value_BoolValue{
-						BoolValue: value,
-					},
-				})
-			case float64:
-				result = append(result, &proto.Value{
-					Type: &proto.Value_DoubleValue{
-						DoubleValue: value,
-					},
-				})
-			case []interface{}:
-				result = append(result, &proto.Value{
-					Type: &proto.Value_ArrayValue{
-						ArrayValue: EncodeArray(value),
-					},
-				})
-			case map[string]interface{}:
-				result = append(result, &proto.Value{
-					Type: &proto.Value_MapValue{
-						MapValue: EncodeMap(value),
-					},
-				})
-
-			// Mongo Types
-			case primitive.ObjectID:
-				result = append(result, &proto.Value{
-					Type: &proto.Value_ObjectIdValue{
-						ObjectIdValue: &proto.ObjectID{
-							Id: value.Hex(),
-						},
-					},
-				})
-
-			case primitive.DateTime:
-				result = append(result, &proto.Value{
-					Type: &proto.Value_DateValue{
-						DateValue: &proto.Timestamp{
-							Seconds: int64(value) / 1000,
-							Nanos:   int32(int64(value) % 1000 * 1000000),
-						},
-					},
-				})
-			case primitive.A:
-				result = append(result, &proto.Value{
-					Type: &proto.Value_ArrayValue{
-						ArrayValue: EncodeArray(value),
-					},
-				})
-			default:
-				logrus.Error("Unsupported type: ", reflect.TypeOf(value))
-			}
-		}
-	}
-
-	// return the proto array
-	return &proto.ArrayValue{
-		Values: result,
-	}
 }
 
 // proto ascending bool to mongodb sort order
