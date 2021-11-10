@@ -190,6 +190,16 @@ func EncodeMap(m map[string]interface{}) *proto.MapValue {
 						},
 					},
 				}
+			case primitive.Timestamp:
+				result[k] = &proto.Value{
+					Type: &proto.Value_DateValue{
+						DateValue: &proto.Timestamp{
+							Seconds: int64(value.T),
+							Nanos:   int32(value.I),
+						},
+					},
+				}
+
 			case primitive.A:
 				result[k] = &proto.Value{
 					Type: &proto.Value_ArrayValue{
@@ -198,6 +208,7 @@ func EncodeMap(m map[string]interface{}) *proto.MapValue {
 				}
 			default:
 				logrus.Error("Unsupported type: ", reflect.TypeOf(value))
+
 			}
 		}
 	}
