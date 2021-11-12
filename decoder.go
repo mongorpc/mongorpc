@@ -73,6 +73,18 @@ func DecodeSort(fields []*proto.Sort) bson.D {
 	return sort
 }
 
+func DecodeSortToInterface(fields []*proto.Sort) []map[string]map[string]interface{} {
+	sort := []map[string]map[string]interface{}{}
+	for _, s := range fields {
+		sort = append(sort, map[string]map[string]interface{}{
+			s.Field: {
+				"ascending": DecodeSortOrder(s.Ascending),
+			},
+		})
+	}
+	return sort
+}
+
 // Decode a mongorpc proto filter to a bson filter
 func DecodeFilter(filters []*proto.Filter) map[string]map[string]interface{} {
 	filter := Filter()
