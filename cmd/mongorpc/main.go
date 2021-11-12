@@ -45,7 +45,7 @@ func main() {
 				Name:        "secret",
 				Usage:       "the jwt secret",
 				Destination: &config.jwtSecret,
-				Value:       "secret",
+				Required:    true,
 				EnvVars:     []string{"JWT_SECRET"},
 			},
 		},
