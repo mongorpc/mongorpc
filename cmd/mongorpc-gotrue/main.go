@@ -1,12 +1,12 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"net"
 	"os"
 
 	"github.com/mongorpc/mongorpc"
+	"github.com/mongorpc/mongorpc/cmd/mongorpc-gotrue/interceptor"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -15,8 +15,9 @@ import (
 )
 
 type MongoRPCConfig struct {
-	mongoURI string
-	port     int
+	mongoURI  string
+	port      int
+	jwtSecret string
 }
 
 func main() {
@@ -40,6 +41,13 @@ func main() {
 				Destination: &config.port,
 				EnvVars:     []string{"PORT"},
 			},
+			&cli.StringFlag{
+				Name:        "secret",
+				Usage:       "the jwt secret",
+				Destination: &config.jwtSecret,
+				Required:    true,
+				EnvVars:     []string{"JWT_SECRET"},
+			},
 		},
 		Action: func(c *cli.Context) error {
 			port := fmt.Sprintf("0.0.0.0:%d", config.port)
@@ -60,9 +68,13 @@ func main() {
 				DB: database,
 			}
 
+			i := interceptor.Interceptor{
+				JWTSecret: config.jwtSecret,
+			}
+
 			srv := mongorpc.NewServer(
-				grpc.UnaryInterceptor(UnaryInterceptor),
-				grpc.StreamInterceptor(StreamInterceptor),
+				grpc.UnaryInterceptor(i.UnaryInterceptor),
+				grpc.StreamInterceptor(i.StreamInterceptor),
 			)
 
 			// listen on the port
@@ -83,14 +95,4 @@ func main() {
 	if err != nil {
 		logrus.Fatal(err)
 	}
-}
-
-func UnaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-	logrus.Infoln("method: ", info.FullMethod)
-	return handler(ctx, req)
-}
-
-func StreamInterceptor(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
-	logrus.Infoln("method: ", info.FullMethod)
-	return handler(srv, stream)
 }

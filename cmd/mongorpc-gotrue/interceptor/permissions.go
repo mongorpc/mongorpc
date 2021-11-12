@@ -1,5 +1,16 @@
 package interceptor
 
+import (
+	"context"
+
+	gotrue "github.com/netlify/gotrue/api"
+)
+
+func (i *Interceptor) Permissions(ctx context.Context, claims *gotrue.GoTrueClaims, req interface{}) error {
+
+	return nil
+}
+
 // func NewPermissionValidator() error {
 // 	oso, err := oso.NewOso()
 // 	if err != nil {

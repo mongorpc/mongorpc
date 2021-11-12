@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/golang-jwt/jwt/v4"
+	gotrue "github.com/netlify/gotrue/api"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -20,54 +21,37 @@ type Interceptor struct {
 func (i *Interceptor) UnaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 	logrus.Infoln("method: ", info.FullMethod)
 
-	// md, ok := metadata.FromIncomingContext(ctx)
-	// if !ok {
-	// 	return nil, status.Errorf(codes.Unauthenticated, "metadata is not provided")
-	// }
-	// logrus.Println(md)
-
-	logrus.Println("JWT Secret: ", i)
-	// if i.JWTSecret != nil {
-	err := i.Authorize(ctx)
+	err := i.Authorize(ctx, req)
 	if err != nil {
 		return nil, err
 	}
-	// }
 	return handler(ctx, req)
 }
 
 func (i *Interceptor) StreamInterceptor(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 	logrus.Infoln("method: ", info.FullMethod)
 
-	// if i.JWTSecret != nil {
-	err := i.Authorize(stream.Context())
+	err := i.Authorize(stream.Context(), srv)
 	if err != nil {
 		return err
 	}
-	// }
 	return handler(srv, stream)
 }
 
-func (interceptor *Interceptor) Authorize(ctx context.Context) error {
-
-	claims, err := interceptor.ValidateJWT(ctx)
-	if err != nil {
-		return err
-	}
-	logrus.Debug("claims: ", claims)
-
-	return nil
-}
-
-// Authorize validates JWT token
-func (interceptor *Interceptor) ValidateJWT(ctx context.Context) (*jwt.Claims, error) {
+func (interceptor *Interceptor) Authorize(ctx context.Context, req interface{}) error {
 
 	token, err := interceptor.ExtractToken(ctx)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &token.Claims, nil
+	claims := token.Claims.(*gotrue.GoTrueClaims)
+	err = interceptor.Permissions(ctx, claims, req)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (interceptor *Interceptor) ExtractToken(ctx context.Context) (*jwt.Token, error) {
@@ -88,7 +72,7 @@ func (interceptor *Interceptor) ExtractToken(ctx context.Context) (*jwt.Token, e
 		return nil, status.Errorf(codes.Unauthenticated, "authorization token is not provided")
 	}
 
-	token, err := jwt.Parse(accessToken, interceptor.keyFunc)
+	token, err := jwt.ParseWithClaims(accessToken, &gotrue.GoTrueClaims{}, interceptor.keyFunc)
 
 	return token, err
 }
