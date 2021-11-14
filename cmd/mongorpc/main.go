@@ -2,25 +2,16 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"net"
 	"os"
 
 	"github.com/mongorpc/mongorpc"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"google.golang.org/grpc"
 )
 
-type MongoRPCConfig struct {
-	mongoURI string
-	port     int
-}
-
 func main() {
-	config := &MongoRPCConfig{}
+	config := &mongorpc.Config{}
 
 	app := &cli.App{
 		Name:  "mongorpc",
@@ -30,51 +21,22 @@ func main() {
 				Name:        "mongodb",
 				Value:       "mongodb://localhost:27017",
 				Usage:       "the mongodb uri",
-				Destination: &config.mongoURI,
+				Destination: &config.MongodbURI,
 				EnvVars:     []string{"MONGO_URI"},
 			},
 			&cli.IntFlag{
 				Name:        "port",
 				Value:       9090,
 				Usage:       "the port on which the server will listen",
-				Destination: &config.port,
+				Destination: &config.Port,
 				EnvVars:     []string{"PORT"},
 			},
 		},
 		Action: func(c *cli.Context) error {
-			port := fmt.Sprintf("0.0.0.0:%d", config.port)
+			config.UnaryServerInterceptors = append(config.UnaryServerInterceptors, UnaryInterceptor)
+			config.StreamServerInterceptors = append(config.StreamServerInterceptors, StreamInterceptor)
 
-			// connect to mongodb
-			database, err := mongo.Connect(c.Context, options.Client().ApplyURI(config.mongoURI))
-			if err != nil {
-				return err
-			}
-
-			// ping mongodb to check if it's up
-			err = database.Ping(c.Context, nil)
-			if err != nil {
-				return err
-			}
-
-			mongorpc := &mongorpc.MongoRPC{
-				DB: database,
-			}
-
-			srv := mongorpc.NewServer(
-				grpc.UnaryInterceptor(UnaryInterceptor),
-				grpc.StreamInterceptor(StreamInterceptor),
-			)
-
-			// listen on the port
-			listener, err := net.Listen("tcp", port)
-			if err != nil {
-				return err
-			}
-
-			logrus.Printf("mongorpc server is listening at %v", listener.Addr())
-
-			// start the server
-			err = srv.Serve(listener)
+			err := mongorpc.Serve(c.Context, config)
 			return err
 		},
 	}
