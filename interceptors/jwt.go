@@ -13,13 +13,11 @@ import (
 
 type JWTInterceptor struct {
 	secret string
-	claims *jwt.Claims
 }
 
-func NewJWTInterceptor(secret string, claims *jwt.Claims) *JWTInterceptor {
+func NewJWTInterceptor(secret string) *JWTInterceptor {
 	return &JWTInterceptor{
 		secret: secret,
-		claims: claims,
 	}
 }
 
@@ -72,7 +70,7 @@ func (interceptor *JWTInterceptor) ExtractToken(ctx context.Context) (*jwt.Token
 		return nil, status.Errorf(codes.Unauthenticated, "authorization token is not provided")
 	}
 
-	token, err := jwt.ParseWithClaims(accessToken, *interceptor.claims, interceptor.keyFunc)
+	token, err := jwt.Parse(accessToken, interceptor.keyFunc)
 
 	return token, err
 }
