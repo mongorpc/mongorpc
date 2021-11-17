@@ -207,3 +207,18 @@ func DecodeFilter(filters []*proto.Filter) map[string]map[string]interface{} {
 	}
 	return filter.Build()
 }
+
+func DecodeOperationType(opType proto.OperationType) string {
+	switch opType {
+	case proto.OperationType_INSERT:
+		return "insert"
+	case proto.OperationType_UPDATE:
+		return "update"
+	case proto.OperationType_DELETE:
+		return "delete"
+	case proto.OperationType_REPLACE:
+		return "replace"
+	default:
+		return "unknown"
+	}
+}

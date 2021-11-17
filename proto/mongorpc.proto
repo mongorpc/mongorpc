@@ -294,7 +294,21 @@ message ListenRequest {
   int32 limit = 7;
   // The skip to apply to the query
   int32 skip = 8;
+  // The operation to listen to
+  optional OperationType operation_type = 9;
 }
+
+  // operation types
+  enum OperationType {
+    // Insert
+    INSERT = 0;
+    // Update
+    UPDATE = 1;
+    // Delete
+    DELETE = 2;
+    // Replace
+    REPLACE = 3;
+  }
 
 message ListenResponse {
   // The operation that was performed
