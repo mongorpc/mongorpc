@@ -282,18 +282,6 @@ message ListenRequest {
   string database = 1;
   // The collection to listen to
   string collection = 2;
-  // The document to listen to
-  // string document_id = 3;
-  // The operation to listen to
-  string operation = 4;
-  // The filter to apply to the query
-  repeated Filter filter = 5;
-  // The sort to apply to the query
-  repeated Sort sort = 6;
-  // The limit to apply to the query
-  int32 limit = 7;
-  // The skip to apply to the query
-  int32 skip = 8;
   // The operation to listen to
   optional OperationType operation_type = 9;
 }
