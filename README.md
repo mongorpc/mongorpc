@@ -6,6 +6,7 @@ mongorpc is a server that can be used to communicate with **MongoDB** using **gR
 
 mongorpc has many client libraries for different langauges and platforms. that provides a **ORM** **like** **interface** to interact with MongoDB.
 
+in future there will be support for `Text Search`, `Geospatial Queries` and `Bulk Operations`
 
 Clients
 ------
@@ -100,13 +101,15 @@ client.database("sample_mflix").collection("movies").document(id: "573a13b0f2931
 - [ ] Bulk Update
 - [ ] Bulk Delete
 - [ ] Bulk Replace
-- [ ] Middlewares (All Interceptor moved to it's seprate libraries)
-    - [ ] JWT/Auth Interceptor
-    - [ ] Casbin Interceptor
+- [ ] **Text Search**
+- [ ] **Geospatial Queries**
+- [x] Middlewares (All Interceptor moved to it's seprate libraries)
+    - [x] JWT/Auth Interceptor
+    - [x] Oso Interceptor
     
 **mongorpc client's**
 
-- [ ] Web (mongorpc-js)
+- [x] Web (mongorpc-js)
 - [ ] iOS (mongorpc-swift)
 - [ ] Flutter (mongorpc-dart)
 - [ ] Android (mongorpc-kotlin)
