@@ -151,8 +151,22 @@ func (srv *MongoRPC) UpdateDocument(ctx context.Context, in *proto.UpdateDocumen
 // Delete document from collection in database
 func (srv *MongoRPC) DeleteDocument(ctx context.Context, in *proto.DeleteDocumentRequest) (*proto.DeleteDocumentResponse, error) {
 
+	// Convert id to primitive.ObjectID
+	docID, err := primitive.ObjectIDFromHex(in.DocumentId)
+	if err != nil {
+		return nil, err
+	}
+
+	// filter document by id
+	filter := bson.D{
+		primitive.E{
+			Key:   "_id",
+			Value: docID,
+		},
+	}
+
 	// Delete document
-	res, err := srv.DB.Database(in.Database).Collection(in.Collection).DeleteOne(ctx, in.DocumentId)
+	res, err := srv.DB.Database(in.Database).Collection(in.Collection).DeleteOne(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
