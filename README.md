@@ -8,6 +8,8 @@ mongorpc has many client libraries for different langauges and platforms. that p
 
 in future there will be support for `Text Search`, `Geospatial Queries` and `Bulk Operations`
 
+mongorpc is in really early development, and things may change before we release version 1.0.
+
 Clients
 ------
 
