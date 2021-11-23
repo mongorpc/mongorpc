@@ -19,6 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MongoRPCClient interface {
 	GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*Value, error)
+	CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*ObjectId, error)
 }
 
 type mongoRPCClient struct {
@@ -38,11 +39,21 @@ func (c *mongoRPCClient) GetDocument(ctx context.Context, in *GetDocumentRequest
 	return out, nil
 }
 
+func (c *mongoRPCClient) CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*ObjectId, error) {
+	out := new(ObjectId)
+	err := c.cc.Invoke(ctx, "/mongorpc.MongoRPC/CreateDocument", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MongoRPCServer is the server API for MongoRPC service.
 // All implementations must embed UnimplementedMongoRPCServer
 // for forward compatibility
 type MongoRPCServer interface {
 	GetDocument(context.Context, *GetDocumentRequest) (*Value, error)
+	CreateDocument(context.Context, *CreateDocumentRequest) (*ObjectId, error)
 	mustEmbedUnimplementedMongoRPCServer()
 }
 
@@ -52,6 +63,9 @@ type UnimplementedMongoRPCServer struct {
 
 func (UnimplementedMongoRPCServer) GetDocument(context.Context, *GetDocumentRequest) (*Value, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDocument not implemented")
+}
+func (UnimplementedMongoRPCServer) CreateDocument(context.Context, *CreateDocumentRequest) (*ObjectId, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateDocument not implemented")
 }
 func (UnimplementedMongoRPCServer) mustEmbedUnimplementedMongoRPCServer() {}
 
@@ -84,6 +98,24 @@ func _MongoRPC_GetDocument_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MongoRPC_CreateDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateDocumentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MongoRPCServer).CreateDocument(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mongorpc.MongoRPC/CreateDocument",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MongoRPCServer).CreateDocument(ctx, req.(*CreateDocumentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MongoRPC_ServiceDesc is the grpc.ServiceDesc for MongoRPC service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -94,6 +126,10 @@ var MongoRPC_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDocument",
 			Handler:    _MongoRPC_GetDocument_Handler,
+		},
+		{
+			MethodName: "CreateDocument",
+			Handler:    _MongoRPC_CreateDocument_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
