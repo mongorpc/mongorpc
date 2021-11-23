@@ -19,7 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MongoRPCClient interface {
 	GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*Value, error)
-	CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*ObjectId, error)
+	InsertDocument(ctx context.Context, in *InsertDocumentRequest, opts ...grpc.CallOption) (*ObjectId, error)
 }
 
 type mongoRPCClient struct {
@@ -39,9 +39,9 @@ func (c *mongoRPCClient) GetDocument(ctx context.Context, in *GetDocumentRequest
 	return out, nil
 }
 
-func (c *mongoRPCClient) CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*ObjectId, error) {
+func (c *mongoRPCClient) InsertDocument(ctx context.Context, in *InsertDocumentRequest, opts ...grpc.CallOption) (*ObjectId, error) {
 	out := new(ObjectId)
-	err := c.cc.Invoke(ctx, "/mongorpc.MongoRPC/CreateDocument", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/mongorpc.MongoRPC/InsertDocument", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func (c *mongoRPCClient) CreateDocument(ctx context.Context, in *CreateDocumentR
 // for forward compatibility
 type MongoRPCServer interface {
 	GetDocument(context.Context, *GetDocumentRequest) (*Value, error)
-	CreateDocument(context.Context, *CreateDocumentRequest) (*ObjectId, error)
+	InsertDocument(context.Context, *InsertDocumentRequest) (*ObjectId, error)
 	mustEmbedUnimplementedMongoRPCServer()
 }
 
@@ -64,8 +64,8 @@ type UnimplementedMongoRPCServer struct {
 func (UnimplementedMongoRPCServer) GetDocument(context.Context, *GetDocumentRequest) (*Value, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDocument not implemented")
 }
-func (UnimplementedMongoRPCServer) CreateDocument(context.Context, *CreateDocumentRequest) (*ObjectId, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateDocument not implemented")
+func (UnimplementedMongoRPCServer) InsertDocument(context.Context, *InsertDocumentRequest) (*ObjectId, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InsertDocument not implemented")
 }
 func (UnimplementedMongoRPCServer) mustEmbedUnimplementedMongoRPCServer() {}
 
@@ -98,20 +98,20 @@ func _MongoRPC_GetDocument_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MongoRPC_CreateDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateDocumentRequest)
+func _MongoRPC_InsertDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InsertDocumentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MongoRPCServer).CreateDocument(ctx, in)
+		return srv.(MongoRPCServer).InsertDocument(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/mongorpc.MongoRPC/CreateDocument",
+		FullMethod: "/mongorpc.MongoRPC/InsertDocument",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MongoRPCServer).CreateDocument(ctx, req.(*CreateDocumentRequest))
+		return srv.(MongoRPCServer).InsertDocument(ctx, req.(*InsertDocumentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -128,8 +128,8 @@ var MongoRPC_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MongoRPC_GetDocument_Handler,
 		},
 		{
-			MethodName: "CreateDocument",
-			Handler:    _MongoRPC_CreateDocument_Handler,
+			MethodName: "InsertDocument",
+			Handler:    _MongoRPC_InsertDocument_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

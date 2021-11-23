@@ -3,6 +3,7 @@ package lib
 import (
 	"context"
 
+	"github.com/mongorpc/mongorpc/lib/decoder"
 	"github.com/mongorpc/mongorpc/lib/mongorpc"
 
 	"github.com/mongorpc/mongorpc/lib/encoder"
@@ -46,4 +47,20 @@ func (srv *MongoRPCServer) GetDocument(ctx context.Context, in *mongorpc.GetDocu
 
 	// Return document
 	return encoder.Encode(doc), nil
+}
+
+func (srv *MongoRPCServer) InsertDocument(ctx context.Context, in *mongorpc.InsertDocumentRequest) (*mongorpc.ObjectId, error) {
+	// decode proto document to generic interface
+	doc := decoder.Decode(in.Document)
+
+	// Insert document
+	result, err := srv.DB.Database(in.Database).Collection(in.Collection).InsertOne(ctx, doc)
+	if err != nil {
+		return nil, err
+	}
+
+	// Return document
+	return &mongorpc.ObjectId{
+		Id: result.InsertedID.(primitive.ObjectID).Hex(),
+	}, nil
 }

@@ -102,7 +102,7 @@ func (x *GetDocumentRequest) GetDocumentId() *ObjectId {
 }
 
 // InsertDocumentRequest is a special type that is used to represent a insert document request in a MongoDB
-type CreateDocumentRequest struct {
+type InsertDocumentRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -115,8 +115,8 @@ type CreateDocumentRequest struct {
 	Document *Value `protobuf:"bytes,3,opt,name=document,proto3" json:"document,omitempty"`
 }
 
-func (x *CreateDocumentRequest) Reset() {
-	*x = CreateDocumentRequest{}
+func (x *InsertDocumentRequest) Reset() {
+	*x = InsertDocumentRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_mongorpc_mongorpc_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -124,13 +124,13 @@ func (x *CreateDocumentRequest) Reset() {
 	}
 }
 
-func (x *CreateDocumentRequest) String() string {
+func (x *InsertDocumentRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CreateDocumentRequest) ProtoMessage() {}
+func (*InsertDocumentRequest) ProtoMessage() {}
 
-func (x *CreateDocumentRequest) ProtoReflect() protoreflect.Message {
+func (x *InsertDocumentRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_mongorpc_mongorpc_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -142,26 +142,26 @@ func (x *CreateDocumentRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateDocumentRequest.ProtoReflect.Descriptor instead.
-func (*CreateDocumentRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use InsertDocumentRequest.ProtoReflect.Descriptor instead.
+func (*InsertDocumentRequest) Descriptor() ([]byte, []int) {
 	return file_mongorpc_mongorpc_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *CreateDocumentRequest) GetDatabase() string {
+func (x *InsertDocumentRequest) GetDatabase() string {
 	if x != nil {
 		return x.Database
 	}
 	return ""
 }
 
-func (x *CreateDocumentRequest) GetCollection() string {
+func (x *InsertDocumentRequest) GetCollection() string {
 	if x != nil {
 		return x.Collection
 	}
 	return ""
 }
 
-func (x *CreateDocumentRequest) GetDocument() *Value {
+func (x *InsertDocumentRequest) GetDocument() *Value {
 	if x != nil {
 		return x.Document
 	}
@@ -185,7 +185,7 @@ var file_mongorpc_mongorpc_proto_rawDesc = []byte{
 	0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32,
 	0x12, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x4f, 0x62, 0x6a, 0x65, 0x63,
 	0x74, 0x49, 0x64, 0x52, 0x0a, 0x64, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x49, 0x64, 0x22,
-	0x80, 0x01, 0x0a, 0x15, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65,
+	0x80, 0x01, 0x0a, 0x15, 0x49, 0x6e, 0x73, 0x65, 0x72, 0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65,
 	0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1a, 0x0a, 0x08, 0x64, 0x61, 0x74,
 	0x61, 0x62, 0x61, 0x73, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x64, 0x61, 0x74,
 	0x61, 0x62, 0x61, 0x73, 0x65, 0x12, 0x1e, 0x0a, 0x0a, 0x63, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74,
@@ -201,9 +201,9 @@ var file_mongorpc_mongorpc_proto_rawDesc = []byte{
 	0xd3, 0xe4, 0x93, 0x02, 0x2e, 0x12, 0x29, 0x2f, 0x76, 0x31, 0x2f, 0x7b, 0x64, 0x61, 0x74, 0x61,
 	0x62, 0x61, 0x73, 0x65, 0x7d, 0x2f, 0x7b, 0x63, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f,
 	0x6e, 0x7d, 0x2f, 0x7b, 0x64, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x5f, 0x69, 0x64, 0x7d,
-	0x3a, 0x01, 0x2a, 0x12, 0x6d, 0x0a, 0x0e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x44, 0x6f, 0x63,
+	0x3a, 0x01, 0x2a, 0x12, 0x6d, 0x0a, 0x0e, 0x49, 0x6e, 0x73, 0x65, 0x72, 0x74, 0x44, 0x6f, 0x63,
 	0x75, 0x6d, 0x65, 0x6e, 0x74, 0x12, 0x1f, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63,
-	0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52,
+	0x2e, 0x49, 0x6e, 0x73, 0x65, 0x72, 0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52,
 	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x12, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70,
 	0x63, 0x2e, 0x4f, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x49, 0x64, 0x22, 0x26, 0x82, 0xd3, 0xe4, 0x93,
 	0x02, 0x20, 0x22, 0x1b, 0x2f, 0x76, 0x31, 0x2f, 0x7b, 0x64, 0x61, 0x74, 0x61, 0x62, 0x61, 0x73,
@@ -229,17 +229,17 @@ func file_mongorpc_mongorpc_proto_rawDescGZIP() []byte {
 var file_mongorpc_mongorpc_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_mongorpc_mongorpc_proto_goTypes = []interface{}{
 	(*GetDocumentRequest)(nil),    // 0: mongorpc.GetDocumentRequest
-	(*CreateDocumentRequest)(nil), // 1: mongorpc.CreateDocumentRequest
+	(*InsertDocumentRequest)(nil), // 1: mongorpc.InsertDocumentRequest
 	(*ObjectId)(nil),              // 2: mongorpc.ObjectId
 	(*Value)(nil),                 // 3: mongorpc.Value
 }
 var file_mongorpc_mongorpc_proto_depIdxs = []int32{
 	2, // 0: mongorpc.GetDocumentRequest.document_id:type_name -> mongorpc.ObjectId
-	3, // 1: mongorpc.CreateDocumentRequest.document:type_name -> mongorpc.Value
+	3, // 1: mongorpc.InsertDocumentRequest.document:type_name -> mongorpc.Value
 	0, // 2: mongorpc.MongoRPC.GetDocument:input_type -> mongorpc.GetDocumentRequest
-	1, // 3: mongorpc.MongoRPC.CreateDocument:input_type -> mongorpc.CreateDocumentRequest
+	1, // 3: mongorpc.MongoRPC.InsertDocument:input_type -> mongorpc.InsertDocumentRequest
 	3, // 4: mongorpc.MongoRPC.GetDocument:output_type -> mongorpc.Value
-	2, // 5: mongorpc.MongoRPC.CreateDocument:output_type -> mongorpc.ObjectId
+	2, // 5: mongorpc.MongoRPC.InsertDocument:output_type -> mongorpc.ObjectId
 	4, // [4:6] is the sub-list for method output_type
 	2, // [2:4] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
@@ -267,7 +267,7 @@ func file_mongorpc_mongorpc_proto_init() {
 			}
 		}
 		file_mongorpc_mongorpc_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateDocumentRequest); i {
+			switch v := v.(*InsertDocumentRequest); i {
 			case 0:
 				return &v.state
 			case 1:
