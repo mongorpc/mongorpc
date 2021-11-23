@@ -1,8 +1,9 @@
 
    
 #!/bin/sh
-set -e
+git submodule foreach git pull origin main
 
+set -e
 # remove lib/mongorpc directory if it exists
 if [ -d lib/mongorpc ]; then
     rm -rf lib/mongorpc
