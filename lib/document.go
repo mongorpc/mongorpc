@@ -65,6 +65,32 @@ func (srv *MongoRPCServer) InsertDocument(ctx context.Context, in *mongorpc.Inse
 	}, nil
 }
 
+func (srv *MongoRPCServer) BulkInsertDocuments(ctx context.Context, in *mongorpc.BulkInsertDocumentsRequest) (*mongorpc.Value, error) {
+	// decode proto document to generic interface
+	docs := []interface{}{}
+	for _, doc := range in.Documents {
+		docs = append(docs, decoder.Decode(doc))
+	}
+
+	// Insert document
+	result, err := srv.DB.Database(in.Database).Collection(in.Collection).InsertMany(ctx, docs)
+	if err != nil {
+		return nil, err
+	}
+
+	arr := &mongorpc.ArrayValue{}
+	for _, id := range result.InsertedIDs {
+		arr.Values = append(arr.Values, encoder.Encode(id))
+	}
+
+	// Return document
+	return &mongorpc.Value{
+		Type: &mongorpc.Value_ArrayValue{
+			ArrayValue: arr,
+		},
+	}, nil
+}
+
 func (srv *MongoRPCServer) UpdateDocument(ctx context.Context, in *mongorpc.UpdateDocumentRequest) (*mongorpc.Value, error) {
 	// decode proto document to generic interface
 	doc := decoder.Decode(in.Document)
