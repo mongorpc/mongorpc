@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 
+	"github.com/mongorpc/mongorpc/lib/decoder"
 	"github.com/mongorpc/mongorpc/lib/encoder"
 	"github.com/mongorpc/mongorpc/lib/mongorpc"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -44,4 +45,26 @@ func (c *Collection) Insert(ctx context.Context, doc interface{}) (*primitive.Ob
 		return nil, err
 	}
 	return &result, nil
+}
+
+func (c *Collection) InsertMany(ctx context.Context, docs []interface{}) (interface{}, error) {
+	database := c.parent
+
+	documents := []*mongorpc.Value{}
+	for _, doc := range docs {
+		documents = append(documents, encoder.Encode(doc))
+	}
+
+	// crate mongorpc get document request
+	resp, err := c.client.mongorpc.BulkInsertDocuments(ctx, &mongorpc.BulkInsertDocumentsRequest{
+		Database:   database.name,
+		Collection: c.name,
+		Documents:  documents,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// decode mongorpc mongorpc result to interface
+	return decoder.Decode(resp), nil
 }
