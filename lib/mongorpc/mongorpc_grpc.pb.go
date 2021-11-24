@@ -20,7 +20,8 @@ const _ = grpc.SupportPackageIsVersion7
 type MongoRPCClient interface {
 	GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*Value, error)
 	InsertDocument(ctx context.Context, in *InsertDocumentRequest, opts ...grpc.CallOption) (*ObjectId, error)
-	DeleteDocument(ctx context.Context, in *DeleteDocumentRequest, opts ...grpc.CallOption) (*Empty, error)
+	UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*Value, error)
+	DeleteDocument(ctx context.Context, in *DeleteDocumentRequest, opts ...grpc.CallOption) (*Value, error)
 }
 
 type mongoRPCClient struct {
@@ -49,8 +50,17 @@ func (c *mongoRPCClient) InsertDocument(ctx context.Context, in *InsertDocumentR
 	return out, nil
 }
 
-func (c *mongoRPCClient) DeleteDocument(ctx context.Context, in *DeleteDocumentRequest, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
+func (c *mongoRPCClient) UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*Value, error) {
+	out := new(Value)
+	err := c.cc.Invoke(ctx, "/mongorpc.MongoRPC/UpdateDocument", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mongoRPCClient) DeleteDocument(ctx context.Context, in *DeleteDocumentRequest, opts ...grpc.CallOption) (*Value, error) {
+	out := new(Value)
 	err := c.cc.Invoke(ctx, "/mongorpc.MongoRPC/DeleteDocument", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -64,7 +74,8 @@ func (c *mongoRPCClient) DeleteDocument(ctx context.Context, in *DeleteDocumentR
 type MongoRPCServer interface {
 	GetDocument(context.Context, *GetDocumentRequest) (*Value, error)
 	InsertDocument(context.Context, *InsertDocumentRequest) (*ObjectId, error)
-	DeleteDocument(context.Context, *DeleteDocumentRequest) (*Empty, error)
+	UpdateDocument(context.Context, *UpdateDocumentRequest) (*Value, error)
+	DeleteDocument(context.Context, *DeleteDocumentRequest) (*Value, error)
 	mustEmbedUnimplementedMongoRPCServer()
 }
 
@@ -78,7 +89,10 @@ func (UnimplementedMongoRPCServer) GetDocument(context.Context, *GetDocumentRequ
 func (UnimplementedMongoRPCServer) InsertDocument(context.Context, *InsertDocumentRequest) (*ObjectId, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InsertDocument not implemented")
 }
-func (UnimplementedMongoRPCServer) DeleteDocument(context.Context, *DeleteDocumentRequest) (*Empty, error) {
+func (UnimplementedMongoRPCServer) UpdateDocument(context.Context, *UpdateDocumentRequest) (*Value, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateDocument not implemented")
+}
+func (UnimplementedMongoRPCServer) DeleteDocument(context.Context, *DeleteDocumentRequest) (*Value, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteDocument not implemented")
 }
 func (UnimplementedMongoRPCServer) mustEmbedUnimplementedMongoRPCServer() {}
@@ -130,6 +144,24 @@ func _MongoRPC_InsertDocument_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MongoRPC_UpdateDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateDocumentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MongoRPCServer).UpdateDocument(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mongorpc.MongoRPC/UpdateDocument",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MongoRPCServer).UpdateDocument(ctx, req.(*UpdateDocumentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MongoRPC_DeleteDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteDocumentRequest)
 	if err := dec(in); err != nil {
@@ -162,6 +194,10 @@ var MongoRPC_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "InsertDocument",
 			Handler:    _MongoRPC_InsertDocument_Handler,
+		},
+		{
+			MethodName: "UpdateDocument",
+			Handler:    _MongoRPC_UpdateDocument_Handler,
 		},
 		{
 			MethodName: "DeleteDocument",

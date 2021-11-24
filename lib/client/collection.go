@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 
+	"github.com/mongorpc/mongorpc/lib/encoder"
 	"github.com/mongorpc/mongorpc/lib/mongorpc"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -31,6 +32,7 @@ func (c *Collection) Insert(ctx context.Context, doc interface{}) (*primitive.Ob
 	resp, err := c.client.mongorpc.InsertDocument(ctx, &mongorpc.InsertDocumentRequest{
 		Database:   database.name,
 		Collection: c.name,
+		Document:   encoder.Encode(doc),
 	})
 	if err != nil {
 		return nil, err
