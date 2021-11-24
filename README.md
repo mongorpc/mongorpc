@@ -122,3 +122,6 @@ client.database("sample_mflix").collection("movies").document(id: "573a13b0f2931
 - [ ] Use Key/Value storage to store DocumentID as Key and Document as Value.
 - [ ] Store Collection Name as Key and Document ID's Array as Value.
 - [ ] Store Last Updated Cursor, When Last Cursor changed, do some sync operations.
+
+**Deployment**
+[Run on Google Cloud](https://deploy.cloud.run)
