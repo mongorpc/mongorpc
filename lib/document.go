@@ -189,14 +189,12 @@ func (srv *MongoRPCServer) QueryDocuments(ctx context.Context, in *mongorpc.Quer
 	// Get documents
 	results, err := srv.DB.Database(in.Database).Collection(in.Collection).Find(ctx, filter, findOptions)
 	if err != nil {
-		logrus.Warnln(err)
 		return nil, err
 	}
 
 	// Decode results to map
 	documents := primitive.A{}
 	if err := results.All(ctx, &documents); err != nil {
-		logrus.Errorln(err)
 		return nil, err
 	}
 

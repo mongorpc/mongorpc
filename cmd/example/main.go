@@ -9,8 +9,8 @@ import (
 )
 
 func main() {
-	client := client.NewClient("localhost:9090")
-	conn, err := client.Connect(
+	c := client.NewClient("localhost:9090")
+	conn, err := c.Connect(
 		grpc.WithInsecure(),
 		grpc.WithBlock(),
 	)
@@ -20,7 +20,7 @@ func main() {
 	defer conn.Close()
 
 	// Initilize database
-	db := client.Database("sample_mflix")
+	db := c.Database("sample_mflix")
 
 	// Get Document By ID
 	doc, err := db.Collection("movies").Document("573a1390f29313caabcd4135").Get(context.TODO())
@@ -29,7 +29,7 @@ func main() {
 	}
 	logrus.Infoln(doc)
 
-	docs, err := db.Collection("movies").Documents().Limit(10).Skip(10).Get(context.TODO())
+	docs, err := db.Collection("movies").Documents().Limit(10).Skip(10).Sort("name", client.ASCENDING).Get(context.TODO())
 	if err != nil {
 		logrus.Errorln(err)
 	}

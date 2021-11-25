@@ -17,6 +17,7 @@ import (
 type Config struct {
 	mongoURI string
 	port     int
+	debug    bool
 }
 
 func main() {
@@ -40,9 +41,20 @@ func main() {
 				Destination: &config.port,
 				EnvVars:     []string{"PORT"},
 			},
+			&cli.BoolFlag{
+				Name:        "debug",
+				Usage:       "enable debug mode",
+				Value:       false,
+				Destination: &config.debug,
+				EnvVars:     []string{"DEBUG"},
+			},
 		},
 		Action: func(ctx *cli.Context) error {
 			port := fmt.Sprintf("0.0.0.0:%d", config.port)
+
+			if config.debug {
+				logrus.SetLevel(logrus.DebugLevel)
+			}
 
 			database, err := ConnectDatabase(ctx.Context, config.mongoURI)
 			if err != nil {
