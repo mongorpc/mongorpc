@@ -23,6 +23,7 @@ type MongoRPCClient interface {
 	UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*Value, error)
 	DeleteDocument(ctx context.Context, in *DeleteDocumentRequest, opts ...grpc.CallOption) (*Value, error)
 	BulkInsertDocuments(ctx context.Context, in *BulkInsertDocumentsRequest, opts ...grpc.CallOption) (*Value, error)
+	QueryDocuments(ctx context.Context, in *QueryDocumentsRequest, opts ...grpc.CallOption) (*Value, error)
 }
 
 type mongoRPCClient struct {
@@ -78,6 +79,15 @@ func (c *mongoRPCClient) BulkInsertDocuments(ctx context.Context, in *BulkInsert
 	return out, nil
 }
 
+func (c *mongoRPCClient) QueryDocuments(ctx context.Context, in *QueryDocumentsRequest, opts ...grpc.CallOption) (*Value, error) {
+	out := new(Value)
+	err := c.cc.Invoke(ctx, "/mongorpc.MongoRPC/QueryDocuments", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MongoRPCServer is the server API for MongoRPC service.
 // All implementations must embed UnimplementedMongoRPCServer
 // for forward compatibility
@@ -87,6 +97,7 @@ type MongoRPCServer interface {
 	UpdateDocument(context.Context, *UpdateDocumentRequest) (*Value, error)
 	DeleteDocument(context.Context, *DeleteDocumentRequest) (*Value, error)
 	BulkInsertDocuments(context.Context, *BulkInsertDocumentsRequest) (*Value, error)
+	QueryDocuments(context.Context, *QueryDocumentsRequest) (*Value, error)
 	mustEmbedUnimplementedMongoRPCServer()
 }
 
@@ -108,6 +119,9 @@ func (UnimplementedMongoRPCServer) DeleteDocument(context.Context, *DeleteDocume
 }
 func (UnimplementedMongoRPCServer) BulkInsertDocuments(context.Context, *BulkInsertDocumentsRequest) (*Value, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BulkInsertDocuments not implemented")
+}
+func (UnimplementedMongoRPCServer) QueryDocuments(context.Context, *QueryDocumentsRequest) (*Value, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryDocuments not implemented")
 }
 func (UnimplementedMongoRPCServer) mustEmbedUnimplementedMongoRPCServer() {}
 
@@ -212,6 +226,24 @@ func _MongoRPC_BulkInsertDocuments_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MongoRPC_QueryDocuments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryDocumentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MongoRPCServer).QueryDocuments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/mongorpc.MongoRPC/QueryDocuments",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MongoRPCServer).QueryDocuments(ctx, req.(*QueryDocumentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MongoRPC_ServiceDesc is the grpc.ServiceDesc for MongoRPC service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -238,6 +270,10 @@ var MongoRPC_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BulkInsertDocuments",
 			Handler:    _MongoRPC_BulkInsertDocuments_Handler,
+		},
+		{
+			MethodName: "QueryDocuments",
+			Handler:    _MongoRPC_QueryDocuments_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

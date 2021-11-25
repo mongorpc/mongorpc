@@ -168,3 +168,28 @@ func (srv *MongoRPCServer) DeleteDocument(ctx context.Context, in *mongorpc.Dele
 		DeletedCount: res.DeletedCount,
 	}), nil
 }
+
+func (srv *MongoRPCServer) QueryDocuments(ctx context.Context, in *mongorpc.QueryDocumentsRequest) (*mongorpc.Value, error) {
+	findOptions := options.Find()
+	findOptions.SetLimit(int64(in.Limit))
+	findOptions.SetSkip(int64(in.Skip))
+
+	findOptions.SetSort(decoder.Decode(in.Sort))
+
+	filter := decoder.Decode(in.Query)
+
+	// Get documents
+	results, err := srv.DB.Database(in.Database).Collection(in.Collection).Find(ctx, filter, findOptions)
+	if err != nil {
+		return nil, err
+	}
+
+	// Decode results to map
+	documents := []map[string]interface{}{}
+	if err := results.All(ctx, &documents); err != nil {
+		return nil, err
+	}
+
+	// Return documents
+	return encoder.Encode(documents), nil
+}
