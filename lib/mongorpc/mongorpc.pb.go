@@ -488,6 +488,119 @@ func (x *QueryDocumentsRequest) GetLimit() int32 {
 	return 0
 }
 
+type ListenRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// The database to listen on
+	Database string `protobuf:"bytes,1,opt,name=database,proto3" json:"database,omitempty"`
+	// The collection to listen on
+	Collection string `protobuf:"bytes,2,opt,name=collection,proto3" json:"collection,omitempty"`
+	// $match
+	Match *Value `protobuf:"bytes,3,opt,name=match,proto3" json:"match,omitempty"`
+	// ChangeStreamOptions represents options that can be used to configure a Watch operation.
+	Options *ChangeStreamOptions `protobuf:"bytes,4,opt,name=options,proto3" json:"options,omitempty"`
+}
+
+func (x *ListenRequest) Reset() {
+	*x = ListenRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_mongorpc_mongorpc_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ListenRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListenRequest) ProtoMessage() {}
+
+func (x *ListenRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_mongorpc_mongorpc_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListenRequest.ProtoReflect.Descriptor instead.
+func (*ListenRequest) Descriptor() ([]byte, []int) {
+	return file_mongorpc_mongorpc_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ListenRequest) GetDatabase() string {
+	if x != nil {
+		return x.Database
+	}
+	return ""
+}
+
+func (x *ListenRequest) GetCollection() string {
+	if x != nil {
+		return x.Collection
+	}
+	return ""
+}
+
+func (x *ListenRequest) GetMatch() *Value {
+	if x != nil {
+		return x.Match
+	}
+	return nil
+}
+
+func (x *ListenRequest) GetOptions() *ChangeStreamOptions {
+	if x != nil {
+		return x.Options
+	}
+	return nil
+}
+
+type ListenResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *ListenResponse) Reset() {
+	*x = ListenResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_mongorpc_mongorpc_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ListenResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListenResponse) ProtoMessage() {}
+
+func (x *ListenResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_mongorpc_mongorpc_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListenResponse.ProtoReflect.Descriptor instead.
+func (*ListenResponse) Descriptor() ([]byte, []int) {
+	return file_mongorpc_mongorpc_proto_rawDescGZIP(), []int{7}
+}
+
 var File_mongorpc_mongorpc_proto protoreflect.FileDescriptor
 
 var file_mongorpc_mongorpc_proto_rawDesc = []byte{
@@ -559,7 +672,19 @@ var file_mongorpc_mongorpc_proto_rawDesc = []byte{
 	0x52, 0x0a, 0x70, 0x72, 0x6f, 0x6a, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x12, 0x0a, 0x04,
 	0x73, 0x6b, 0x69, 0x70, 0x18, 0x06, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x73, 0x6b, 0x69, 0x70,
 	0x12, 0x14, 0x0a, 0x05, 0x6c, 0x69, 0x6d, 0x69, 0x74, 0x18, 0x07, 0x20, 0x01, 0x28, 0x05, 0x52,
-	0x05, 0x6c, 0x69, 0x6d, 0x69, 0x74, 0x32, 0xc0, 0x05, 0x0a, 0x08, 0x4d, 0x6f, 0x6e, 0x67, 0x6f,
+	0x05, 0x6c, 0x69, 0x6d, 0x69, 0x74, 0x22, 0xab, 0x01, 0x0a, 0x0d, 0x4c, 0x69, 0x73, 0x74, 0x65,
+	0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1a, 0x0a, 0x08, 0x64, 0x61, 0x74, 0x61,
+	0x62, 0x61, 0x73, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x64, 0x61, 0x74, 0x61,
+	0x62, 0x61, 0x73, 0x65, 0x12, 0x1e, 0x0a, 0x0a, 0x63, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69,
+	0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x63, 0x6f, 0x6c, 0x6c, 0x65, 0x63,
+	0x74, 0x69, 0x6f, 0x6e, 0x12, 0x25, 0x0a, 0x05, 0x6d, 0x61, 0x74, 0x63, 0x68, 0x18, 0x03, 0x20,
+	0x01, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x56,
+	0x61, 0x6c, 0x75, 0x65, 0x52, 0x05, 0x6d, 0x61, 0x74, 0x63, 0x68, 0x12, 0x37, 0x0a, 0x07, 0x6f,
+	0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x6d,
+	0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x53, 0x74,
+	0x72, 0x65, 0x61, 0x6d, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x52, 0x07, 0x6f, 0x70, 0x74,
+	0x69, 0x6f, 0x6e, 0x73, 0x22, 0x10, 0x0a, 0x0e, 0x4c, 0x69, 0x73, 0x74, 0x65, 0x6e, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x32, 0xae, 0x06, 0x0a, 0x08, 0x4d, 0x6f, 0x6e, 0x67, 0x6f,
 	0x52, 0x50, 0x43, 0x12, 0x72, 0x0a, 0x0b, 0x47, 0x65, 0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65,
 	0x6e, 0x74, 0x12, 0x1c, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x47, 0x65,
 	0x74, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
@@ -603,10 +728,17 @@ var file_mongorpc_mongorpc_proto_rawDesc = []byte{
 	0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x2c, 0x82, 0xd3, 0xe4,
 	0x93, 0x02, 0x26, 0x12, 0x21, 0x2f, 0x76, 0x31, 0x2f, 0x7b, 0x64, 0x61, 0x74, 0x61, 0x62, 0x61,
 	0x73, 0x65, 0x7d, 0x2f, 0x7b, 0x63, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x7d,
-	0x2f, 0x71, 0x75, 0x65, 0x72, 0x79, 0x3a, 0x01, 0x2a, 0x42, 0x27, 0x5a, 0x25, 0x67, 0x69, 0x74,
-	0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63,
-	0x2f, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x3b, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72,
-	0x70, 0x63, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x2f, 0x71, 0x75, 0x65, 0x72, 0x79, 0x3a, 0x01, 0x2a, 0x12, 0x6c, 0x0a, 0x06, 0x4c, 0x69, 0x73,
+	0x74, 0x65, 0x6e, 0x12, 0x17, 0x2e, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x4c,
+	0x69, 0x73, 0x74, 0x65, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x18, 0x2e, 0x6d,
+	0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x65, 0x6e, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x2d, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x27, 0x12, 0x22,
+	0x2f, 0x76, 0x31, 0x2f, 0x7b, 0x64, 0x61, 0x74, 0x61, 0x62, 0x61, 0x73, 0x65, 0x7d, 0x2f, 0x7b,
+	0x63, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x7d, 0x2f, 0x6c, 0x69, 0x73, 0x74,
+	0x65, 0x6e, 0x3a, 0x01, 0x2a, 0x30, 0x01, 0x42, 0x27, 0x5a, 0x25, 0x67, 0x69, 0x74, 0x68, 0x75,
+	0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x2f, 0x6d,
+	0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63, 0x3b, 0x6d, 0x6f, 0x6e, 0x67, 0x6f, 0x72, 0x70, 0x63,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -621,7 +753,7 @@ func file_mongorpc_mongorpc_proto_rawDescGZIP() []byte {
 	return file_mongorpc_mongorpc_proto_rawDescData
 }
 
-var file_mongorpc_mongorpc_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_mongorpc_mongorpc_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_mongorpc_mongorpc_proto_goTypes = []interface{}{
 	(*GetDocumentRequest)(nil),         // 0: mongorpc.GetDocumentRequest
 	(*InsertDocumentRequest)(nil),      // 1: mongorpc.InsertDocumentRequest
@@ -629,36 +761,43 @@ var file_mongorpc_mongorpc_proto_goTypes = []interface{}{
 	(*UpdateDocumentRequest)(nil),      // 3: mongorpc.UpdateDocumentRequest
 	(*BulkInsertDocumentsRequest)(nil), // 4: mongorpc.BulkInsertDocumentsRequest
 	(*QueryDocumentsRequest)(nil),      // 5: mongorpc.QueryDocumentsRequest
-	(*ObjectId)(nil),                   // 6: mongorpc.ObjectId
-	(*Value)(nil),                      // 7: mongorpc.Value
+	(*ListenRequest)(nil),              // 6: mongorpc.ListenRequest
+	(*ListenResponse)(nil),             // 7: mongorpc.ListenResponse
+	(*ObjectId)(nil),                   // 8: mongorpc.ObjectId
+	(*Value)(nil),                      // 9: mongorpc.Value
+	(*ChangeStreamOptions)(nil),        // 10: mongorpc.ChangeStreamOptions
 }
 var file_mongorpc_mongorpc_proto_depIdxs = []int32{
-	6,  // 0: mongorpc.GetDocumentRequest.document_id:type_name -> mongorpc.ObjectId
-	7,  // 1: mongorpc.InsertDocumentRequest.document:type_name -> mongorpc.Value
-	6,  // 2: mongorpc.DeleteDocumentRequest.document_id:type_name -> mongorpc.ObjectId
-	6,  // 3: mongorpc.UpdateDocumentRequest.document_id:type_name -> mongorpc.ObjectId
-	7,  // 4: mongorpc.UpdateDocumentRequest.document:type_name -> mongorpc.Value
-	7,  // 5: mongorpc.BulkInsertDocumentsRequest.documents:type_name -> mongorpc.Value
-	7,  // 6: mongorpc.QueryDocumentsRequest.query:type_name -> mongorpc.Value
-	7,  // 7: mongorpc.QueryDocumentsRequest.sort:type_name -> mongorpc.Value
-	7,  // 8: mongorpc.QueryDocumentsRequest.projection:type_name -> mongorpc.Value
-	0,  // 9: mongorpc.MongoRPC.GetDocument:input_type -> mongorpc.GetDocumentRequest
-	1,  // 10: mongorpc.MongoRPC.InsertDocument:input_type -> mongorpc.InsertDocumentRequest
-	3,  // 11: mongorpc.MongoRPC.UpdateDocument:input_type -> mongorpc.UpdateDocumentRequest
-	2,  // 12: mongorpc.MongoRPC.DeleteDocument:input_type -> mongorpc.DeleteDocumentRequest
-	4,  // 13: mongorpc.MongoRPC.BulkInsertDocuments:input_type -> mongorpc.BulkInsertDocumentsRequest
-	5,  // 14: mongorpc.MongoRPC.QueryDocuments:input_type -> mongorpc.QueryDocumentsRequest
-	7,  // 15: mongorpc.MongoRPC.GetDocument:output_type -> mongorpc.Value
-	6,  // 16: mongorpc.MongoRPC.InsertDocument:output_type -> mongorpc.ObjectId
-	7,  // 17: mongorpc.MongoRPC.UpdateDocument:output_type -> mongorpc.Value
-	7,  // 18: mongorpc.MongoRPC.DeleteDocument:output_type -> mongorpc.Value
-	7,  // 19: mongorpc.MongoRPC.BulkInsertDocuments:output_type -> mongorpc.Value
-	7,  // 20: mongorpc.MongoRPC.QueryDocuments:output_type -> mongorpc.Value
-	15, // [15:21] is the sub-list for method output_type
-	9,  // [9:15] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	8,  // 0: mongorpc.GetDocumentRequest.document_id:type_name -> mongorpc.ObjectId
+	9,  // 1: mongorpc.InsertDocumentRequest.document:type_name -> mongorpc.Value
+	8,  // 2: mongorpc.DeleteDocumentRequest.document_id:type_name -> mongorpc.ObjectId
+	8,  // 3: mongorpc.UpdateDocumentRequest.document_id:type_name -> mongorpc.ObjectId
+	9,  // 4: mongorpc.UpdateDocumentRequest.document:type_name -> mongorpc.Value
+	9,  // 5: mongorpc.BulkInsertDocumentsRequest.documents:type_name -> mongorpc.Value
+	9,  // 6: mongorpc.QueryDocumentsRequest.query:type_name -> mongorpc.Value
+	9,  // 7: mongorpc.QueryDocumentsRequest.sort:type_name -> mongorpc.Value
+	9,  // 8: mongorpc.QueryDocumentsRequest.projection:type_name -> mongorpc.Value
+	9,  // 9: mongorpc.ListenRequest.match:type_name -> mongorpc.Value
+	10, // 10: mongorpc.ListenRequest.options:type_name -> mongorpc.ChangeStreamOptions
+	0,  // 11: mongorpc.MongoRPC.GetDocument:input_type -> mongorpc.GetDocumentRequest
+	1,  // 12: mongorpc.MongoRPC.InsertDocument:input_type -> mongorpc.InsertDocumentRequest
+	3,  // 13: mongorpc.MongoRPC.UpdateDocument:input_type -> mongorpc.UpdateDocumentRequest
+	2,  // 14: mongorpc.MongoRPC.DeleteDocument:input_type -> mongorpc.DeleteDocumentRequest
+	4,  // 15: mongorpc.MongoRPC.BulkInsertDocuments:input_type -> mongorpc.BulkInsertDocumentsRequest
+	5,  // 16: mongorpc.MongoRPC.QueryDocuments:input_type -> mongorpc.QueryDocumentsRequest
+	6,  // 17: mongorpc.MongoRPC.Listen:input_type -> mongorpc.ListenRequest
+	9,  // 18: mongorpc.MongoRPC.GetDocument:output_type -> mongorpc.Value
+	8,  // 19: mongorpc.MongoRPC.InsertDocument:output_type -> mongorpc.ObjectId
+	9,  // 20: mongorpc.MongoRPC.UpdateDocument:output_type -> mongorpc.Value
+	9,  // 21: mongorpc.MongoRPC.DeleteDocument:output_type -> mongorpc.Value
+	9,  // 22: mongorpc.MongoRPC.BulkInsertDocuments:output_type -> mongorpc.Value
+	9,  // 23: mongorpc.MongoRPC.QueryDocuments:output_type -> mongorpc.Value
+	7,  // 24: mongorpc.MongoRPC.Listen:output_type -> mongorpc.ListenResponse
+	18, // [18:25] is the sub-list for method output_type
+	11, // [11:18] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_mongorpc_mongorpc_proto_init() }
@@ -740,6 +879,30 @@ func file_mongorpc_mongorpc_proto_init() {
 				return nil
 			}
 		}
+		file_mongorpc_mongorpc_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListenRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_mongorpc_mongorpc_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListenResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -747,7 +910,7 @@ func file_mongorpc_mongorpc_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_mongorpc_mongorpc_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

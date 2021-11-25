@@ -24,6 +24,7 @@ type MongoRPCClient interface {
 	DeleteDocument(ctx context.Context, in *DeleteDocumentRequest, opts ...grpc.CallOption) (*Value, error)
 	BulkInsertDocuments(ctx context.Context, in *BulkInsertDocumentsRequest, opts ...grpc.CallOption) (*Value, error)
 	QueryDocuments(ctx context.Context, in *QueryDocumentsRequest, opts ...grpc.CallOption) (*Value, error)
+	Listen(ctx context.Context, in *ListenRequest, opts ...grpc.CallOption) (MongoRPC_ListenClient, error)
 }
 
 type mongoRPCClient struct {
@@ -88,6 +89,38 @@ func (c *mongoRPCClient) QueryDocuments(ctx context.Context, in *QueryDocumentsR
 	return out, nil
 }
 
+func (c *mongoRPCClient) Listen(ctx context.Context, in *ListenRequest, opts ...grpc.CallOption) (MongoRPC_ListenClient, error) {
+	stream, err := c.cc.NewStream(ctx, &MongoRPC_ServiceDesc.Streams[0], "/mongorpc.MongoRPC/Listen", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &mongoRPCListenClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type MongoRPC_ListenClient interface {
+	Recv() (*ListenResponse, error)
+	grpc.ClientStream
+}
+
+type mongoRPCListenClient struct {
+	grpc.ClientStream
+}
+
+func (x *mongoRPCListenClient) Recv() (*ListenResponse, error) {
+	m := new(ListenResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // MongoRPCServer is the server API for MongoRPC service.
 // All implementations must embed UnimplementedMongoRPCServer
 // for forward compatibility
@@ -98,6 +131,7 @@ type MongoRPCServer interface {
 	DeleteDocument(context.Context, *DeleteDocumentRequest) (*Value, error)
 	BulkInsertDocuments(context.Context, *BulkInsertDocumentsRequest) (*Value, error)
 	QueryDocuments(context.Context, *QueryDocumentsRequest) (*Value, error)
+	Listen(*ListenRequest, MongoRPC_ListenServer) error
 	mustEmbedUnimplementedMongoRPCServer()
 }
 
@@ -122,6 +156,9 @@ func (UnimplementedMongoRPCServer) BulkInsertDocuments(context.Context, *BulkIns
 }
 func (UnimplementedMongoRPCServer) QueryDocuments(context.Context, *QueryDocumentsRequest) (*Value, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryDocuments not implemented")
+}
+func (UnimplementedMongoRPCServer) Listen(*ListenRequest, MongoRPC_ListenServer) error {
+	return status.Errorf(codes.Unimplemented, "method Listen not implemented")
 }
 func (UnimplementedMongoRPCServer) mustEmbedUnimplementedMongoRPCServer() {}
 
@@ -244,6 +281,27 @@ func _MongoRPC_QueryDocuments_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MongoRPC_Listen_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(ListenRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(MongoRPCServer).Listen(m, &mongoRPCListenServer{stream})
+}
+
+type MongoRPC_ListenServer interface {
+	Send(*ListenResponse) error
+	grpc.ServerStream
+}
+
+type mongoRPCListenServer struct {
+	grpc.ServerStream
+}
+
+func (x *mongoRPCListenServer) Send(m *ListenResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // MongoRPC_ServiceDesc is the grpc.ServiceDesc for MongoRPC service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -276,6 +334,12 @@ var MongoRPC_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MongoRPC_QueryDocuments_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Listen",
+			Handler:       _MongoRPC_Listen_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "mongorpc/mongorpc.proto",
 }
