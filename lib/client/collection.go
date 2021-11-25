@@ -26,6 +26,13 @@ func (db *Database) Collection(name string) *Collection {
 	}
 }
 
+func (c *Collection) Documents() *QueryBuilder {
+	return &QueryBuilder{
+		client:     c.client,
+		collection: c,
+	}
+}
+
 func (c *Collection) Insert(ctx context.Context, doc interface{}) (*primitive.ObjectID, error) {
 	database := c.parent
 

@@ -174,19 +174,29 @@ func (srv *MongoRPCServer) QueryDocuments(ctx context.Context, in *mongorpc.Quer
 	findOptions.SetLimit(int64(in.Limit))
 	findOptions.SetSkip(int64(in.Skip))
 
-	findOptions.SetSort(decoder.Decode(in.Sort))
-
-	filter := decoder.Decode(in.Query)
+	if in.Sort != nil {
+		findOptions.SetSort(decoder.Decode(in.Sort))
+	}
+	var filter interface{}
+	if in.Query != nil {
+		// decode proto document to generic interface
+		filter = decoder.Decode(in.Query)
+	} else {
+		// filter all documents
+		filter = bson.D{}
+	}
 
 	// Get documents
 	results, err := srv.DB.Database(in.Database).Collection(in.Collection).Find(ctx, filter, findOptions)
 	if err != nil {
+		logrus.Warnln(err)
 		return nil, err
 	}
 
 	// Decode results to map
-	documents := []map[string]interface{}{}
+	documents := primitive.A{}
 	if err := results.All(ctx, &documents); err != nil {
+		logrus.Errorln(err)
 		return nil, err
 	}
 

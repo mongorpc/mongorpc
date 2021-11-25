@@ -28,4 +28,10 @@ func main() {
 		logrus.Errorln(err)
 	}
 	logrus.Infoln(doc)
+
+	docs, err := db.Collection("movies").Documents().Limit(10).Skip(10).Get(context.TODO())
+	if err != nil {
+		logrus.Errorln(err)
+	}
+	logrus.Infoln(docs)
 }
