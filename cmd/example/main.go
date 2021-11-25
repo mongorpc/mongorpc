@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/mongorpc/mongorpc/lib/client"
 	"github.com/sirupsen/logrus"
@@ -36,4 +37,21 @@ func main() {
 		logrus.Errorln(err)
 	}
 	logrus.Infoln(docs)
+
+	// listen for changes
+	listner, err := db.Collection("movies").Listen(context.TODO())
+	if err != nil {
+		logrus.Errorln(err)
+	}
+	defer close(listner)
+
+	// go func() {
+	for doc := range listner {
+		jsonString, err := json.Marshal(doc)
+		if err != nil {
+			logrus.Errorln(err)
+		}
+		logrus.Infoln(string(jsonString))
+	}
+	// }()
 }

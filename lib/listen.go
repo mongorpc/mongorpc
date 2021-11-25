@@ -2,6 +2,7 @@ package lib
 
 import (
 	"github.com/mongorpc/mongorpc/lib/decoder"
+	"github.com/mongorpc/mongorpc/lib/encoder"
 	"github.com/mongorpc/mongorpc/lib/mongorpc"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -10,9 +11,12 @@ func (srv *MongoRPCServer) Listen(in *mongorpc.ListenRequest, stream mongorpc.Mo
 
 	// Pipeline
 	// TODO: check if pipeline decoder is working
-	var pipeline interface{}
-	if in.Match != nil {
-		pipeline = decoder.Decode(in.Match)
+	var pipeline []interface{}
+	if in.Pipeline != nil {
+		pipeline = make([]interface{}, len(in.Pipeline))
+		for i, p := range in.Pipeline {
+			pipeline[i] = decoder.Decode(p)
+		}
 	}
 
 	// Options
@@ -34,14 +38,16 @@ func (srv *MongoRPCServer) Listen(in *mongorpc.ListenRequest, stream mongorpc.Mo
 	for changes.Next(stream.Context()) {
 
 		// Get change document
-		var change map[string]interface{}
+		var change interface{}
 		err := changes.Decode(&change)
 		if err != nil {
 			return err
 		}
 
-		// send change to client
-		stream.Send(&mongorpc.ListenResponse{})
+		// Send changes to client
+		stream.Send(&mongorpc.ListenResponse{
+			Changes: encoder.Encode(change),
+		})
 	}
 	return nil
 }
