@@ -14,6 +14,7 @@ type QueryBuilder struct {
 	limit      int32
 	skip       int32
 	sort       map[string]interface{}
+	filter     map[string]map[string]interface{}
 }
 type Order int32
 
@@ -21,9 +22,6 @@ const (
 	ASCENDING  Order = 1
 	DESCENDING Order = -1
 )
-
-type Filter struct {
-}
 
 func (q *QueryBuilder) Limit(limit int32) *QueryBuilder {
 	q.limit = limit
@@ -56,6 +54,7 @@ func (q *QueryBuilder) Get(ctx context.Context) (interface{}, error) {
 		Limit:      q.limit,
 		Skip:       q.skip,
 		Sort:       encoder.Encode(q.sort),
+		Query:      encoder.Encode(q.filter),
 	})
 	if err != nil {
 		return nil, err

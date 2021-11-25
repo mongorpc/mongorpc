@@ -88,6 +88,20 @@ func Encode(in interface{}) *mongorpc.Value {
 			},
 		}
 
+	case map[string]map[string]interface{}:
+		fields := map[string]*mongorpc.Value{}
+		for k, v := range value {
+			fields[k] = Encode(v)
+		}
+
+		result = &mongorpc.Value{
+			Type: &mongorpc.Value_MapValue{
+				MapValue: &mongorpc.MapValue{
+					Fields: fields,
+				},
+			},
+		}
+
 	case nil:
 		result = &mongorpc.Value{
 			Type: &mongorpc.Value_NullValue{

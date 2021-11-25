@@ -181,6 +181,7 @@ func (srv *MongoRPCServer) QueryDocuments(ctx context.Context, in *mongorpc.Quer
 	if in.Query != nil {
 		// decode proto document to generic interface
 		filter = decoder.Decode(in.Query)
+		logrus.Debug(filter)
 	} else {
 		// filter all documents
 		filter = bson.D{}

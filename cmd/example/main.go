@@ -29,7 +29,9 @@ func main() {
 	}
 	logrus.Infoln(doc)
 
-	docs, err := db.Collection("movies").Documents().Limit(10).Skip(10).Sort("name", client.ASCENDING).Get(context.TODO())
+	// docs, err := db.Collection("movies").Documents().Limit(10).Skip(10).Sort("name", client.ASCENDING).Get(context.TODO())
+	// docs, err := db.Collection("movies").Documents().EqualTo("title", "Gertie the Dinosaur").Get(context.TODO())
+	docs, err := db.Collection("movies").Documents().Search("Batman").Get(context.TODO())
 	if err != nil {
 		logrus.Errorln(err)
 	}
