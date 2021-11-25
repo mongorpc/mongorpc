@@ -10,6 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -117,11 +118,21 @@ func (srv *MongoRPCServer) UpdateDocument(ctx context.Context, in *mongorpc.Upda
 		},
 	}
 
-	// Update document
-	result, err := srv.DB.Database(in.Database).Collection(in.Collection).UpdateOne(ctx, filter, opts)
-	if err != nil {
-		logrus.Println(err)
-		return nil, err
+	var result *mongo.UpdateResult
+	if in.Replace {
+		// Replace document with new document
+		result, err = srv.DB.Database(in.Database).Collection(in.Collection).ReplaceOne(ctx, filter, opts)
+		if err != nil {
+			logrus.Println(err)
+			return nil, err
+		}
+	} else {
+		// Update document
+		result, err = srv.DB.Database(in.Database).Collection(in.Collection).UpdateOne(ctx, filter, opts)
+		if err != nil {
+			logrus.Println(err)
+			return nil, err
+		}
 	}
 
 	type UpdateResult struct {

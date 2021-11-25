@@ -62,6 +62,32 @@ func (doc *Document) Update(ctx context.Context, data interface{}) (interface{},
 			Id: doc.documentID,
 		},
 		Document: encoder.Encode(data),
+		Replace:  false,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// decode mongorpc mongorpc result to interface
+	result := decoder.Decode(resp)
+	return result, nil
+}
+
+// Replace replaces the document with the given id.
+func (doc *Document) Replace(ctx context.Context, data interface{}) (interface{}, error) {
+
+	database := doc.parent.parent
+	collection := doc.parent
+
+	// crate mongorpc get document request
+	resp, err := doc.client.mongorpc.UpdateDocument(ctx, &mongorpc.UpdateDocumentRequest{
+		Database:   database.name,
+		Collection: collection.name,
+		DocumentId: &mongorpc.ObjectId{
+			Id: doc.documentID,
+		},
+		Document: encoder.Encode(data),
+		Replace:  true,
 	})
 	if err != nil {
 		return nil, err
