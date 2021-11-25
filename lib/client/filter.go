@@ -123,7 +123,7 @@ func (q *QueryBuilder) Size(field string, value int32) *QueryBuilder {
 	return q
 }
 
-func (q *QueryBuilder) Mod(field string, value int32, mod int32) *QueryBuilder {
+func (q *QueryBuilder) Mod(field string, value, mod int32) *QueryBuilder {
 	if q.filter == nil {
 		q.filter = make(map[string]map[string]interface{})
 	}
@@ -134,7 +134,7 @@ func (q *QueryBuilder) Mod(field string, value int32, mod int32) *QueryBuilder {
 	return q
 }
 
-func (q *QueryBuilder) Regex(field string, value string) *QueryBuilder {
+func (q *QueryBuilder) Regex(field, value string) *QueryBuilder {
 	if q.filter == nil {
 		q.filter = make(map[string]map[string]interface{})
 	}
@@ -145,7 +145,7 @@ func (q *QueryBuilder) Regex(field string, value string) *QueryBuilder {
 	return q
 }
 
-func (q *QueryBuilder) NotRegex(field string, value string) *QueryBuilder {
+func (q *QueryBuilder) NotRegex(field, value string) *QueryBuilder {
 	if q.filter == nil {
 		q.filter = make(map[string]map[string]interface{})
 	}
@@ -156,7 +156,7 @@ func (q *QueryBuilder) NotRegex(field string, value string) *QueryBuilder {
 	return q
 }
 
-func (q *QueryBuilder) RegexOptions(field string, options string) *QueryBuilder {
+func (q *QueryBuilder) RegexOptions(field, options string) *QueryBuilder {
 	if q.filter == nil {
 		q.filter = make(map[string]map[string]interface{})
 	}
