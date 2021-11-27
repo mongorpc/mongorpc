@@ -6,8 +6,6 @@ mongorpc is a server that can be used to communicate with **MongoDB** using **gR
 
 mongorpc has many client libraries for different langauges and platforms. that provides a **ORM** **like** **interface** to interact with MongoDB.
 
-in future there will be support for `Text Search`, `Geospatial Queries` and `Bulk Operations`
-
 mongorpc is in really early development, and things may change before we release version 1.0.
 
 Clients
@@ -27,6 +25,16 @@ const document = await client
   .get();
 
 console.log(document);
+
+// Text Search Documents (MongoDB 4.0+) (https://docs.mongodb.com/manual/text-search/)
+// Requires to create index on `title` field first
+const documents = await client
+  .database("sample_mflix")
+  .collection("movies")
+  .search("The Shawshank Redemption")
+  .get();
+
+console.log(documents);
 ```
 
 
@@ -35,19 +43,19 @@ console.log(document);
 // Initilize database
 db := client.Database("sample_mflix")
 
-// List Collections
-collections, err := db.ListCollectionNames(context.TODO())
-if err != nil {
-  fmt.Println(err)
-}
-fmt.Println(collections)
-
 // Get Document By ID
 doc, err := db.Collection("movies").Document("573a13b0f29313caabd35231").Get(context.TODO())
 if err != nil {
   fmt.Println(err)
 }
 fmt.Println(doc)
+
+// Search Documents
+docs, err := db.Collection("movies").Documents().Search("Batman").Get(context.TODO())
+if err != nil {
+  fmt.Println(err)
+}
+fmt.Println(docs)
 
 ```
 
@@ -71,57 +79,6 @@ client.database("sample_mflix").collection("movies").document(id: "573a13b0f2931
 }
 
 ```
-
-
-## 🚧 **Roadmap** 🚧
-
-
-**mongorpc**
-
-- [x] List Collections
-- [x] Get Document
-- [x] List Documents
-- [x] Create Document
-- [x] Update Document
-- [x] Delete Document
-- [x] Count Documents
-- [x] Listen Collection Changes
-    - [x] Return Changed Documents
-    - [ ] Add Filter, Sort and Limit in Listen Requests
-    - [ ] Return Whole Collection when some change has been done
-- [x] Create Index
-- [x] Get Indexes
-- [x] Delete Index
-- [ ] Reindex
-- [x] Ping
-- [x] Health Check
-- [x] Collection Stats
-- [x] Create Collection
-- [x] Rename Collection
-- [x] Delete Collection
-- [ ] Bulk Insert
-- [ ] Bulk Update
-- [ ] Bulk Delete
-- [ ] Bulk Replace
-- [ ] **Text Search**
-- [ ] **Geospatial Queries**
-- [x] Middlewares (All Interceptor moved to it's seprate libraries)
-    - [x] JWT/Auth Interceptor
-    - [x] Oso Interceptor
-    
-**mongorpc client's**
-
-- [x] Web (mongorpc-js)
-- [ ] iOS (mongorpc-swift)
-- [ ] Flutter (mongorpc-dart)
-- [ ] Android (mongorpc-kotlin)
-- [ ] Node.js (mongorpc-node)
-- [ ] Go (mongorpc-go)
-
-**mongorpc client's offline capability concept**
-- [ ] Use Key/Value storage to store DocumentID as Key and Document as Value.
-- [ ] Store Collection Name as Key and Document ID's Array as Value.
-- [ ] Store Last Updated Cursor, When Last Cursor changed, do some sync operations.
 
 **Deployment**
 [Run on Google Cloud](https://deploy.cloud.run)
