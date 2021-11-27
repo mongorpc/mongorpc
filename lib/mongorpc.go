@@ -11,14 +11,33 @@ type MongoRPCServer struct {
 	DB *mongo.Client
 }
 
-func NewMongoRPCServer(db *mongo.Client, opt ...grpc.ServerOption) *grpc.Server {
-	srv := &MongoRPCServer{DB: db}
-	server := grpc.NewServer(opt...)
-	mongorpc.RegisterMongoRPCServer(server, srv)
-	return server
+type MongoRPCAdminServer struct {
+	mongorpc.UnimplementedMongoRPCAdminServer
+	DB *mongo.Client
 }
 
-func NewServer(opt ...grpc.ServerOption) *grpc.Server {
+// NewMongoRPCServer creates a new MongoRPCServer
+func NewMongoRPCServer(db *mongo.Client) *MongoRPCServer {
+	srv := &MongoRPCServer{DB: db}
+	return srv
+}
+
+// NewMongoRPCAdminServer creates a new MongoRPCAdminServer
+func NewMongoRPCAdminServer(db *mongo.Client) *MongoRPCAdminServer {
+	srv := &MongoRPCAdminServer{DB: db}
+	return srv
+}
+
+// New gRPC Server
+func NewGRPCServer(opt ...grpc.ServerOption) *grpc.Server {
 	srv := grpc.NewServer(opt...)
+	return srv
+}
+
+// New MongoRPC and MongoRPCAdmin Server
+func NewServer(db *mongo.Client, opt ...grpc.ServerOption) *grpc.Server {
+	srv := NewGRPCServer(opt...)
+	mongorpc.RegisterMongoRPCServer(srv, NewMongoRPCServer(db))
+	mongorpc.RegisterMongoRPCAdminServer(srv, NewMongoRPCAdminServer(db))
 	return srv
 }

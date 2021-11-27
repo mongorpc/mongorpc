@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/mongorpc/mongorpc/lib"
-
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -61,7 +60,14 @@ func main() {
 				return err
 			}
 
-			srv := lib.NewMongoRPCServer(database)
+			// mongorpcServer := lib.NewMongoRPCServer(database)
+			// adminServer := lib.NewMongoRPCAdminServer(database)
+
+			// grpcServer := lib.NewGRPCServer()
+			// mongorpc.RegisterMongoRPCServer(grpcServer, mongorpcServer)
+			// mongorpc.RegisterMongoRPCAdminServer(grpcServer, adminServer)
+
+			srv := lib.NewServer(database)
 
 			// listen on the port
 			listener, err := net.Listen("tcp", port)
