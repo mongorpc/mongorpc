@@ -17,3 +17,8 @@ func NewMongoRPCServer(db *mongo.Client, opt ...grpc.ServerOption) *grpc.Server 
 	mongorpc.RegisterMongoRPCServer(server, srv)
 	return server
 }
+
+func NewServer(opt ...grpc.ServerOption) *grpc.Server {
+	srv := grpc.NewServer(opt...)
+	return srv
+}
