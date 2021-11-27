@@ -1,7 +1,8 @@
 
    
 #!/bin/sh
-git submodule foreach git pull origin main
+# git submodule foreach git pull origin main
+git pull && git submodule init && git submodule update && git submodule status
 
 set -e
 # remove lib/mongorpc directory if it exists
