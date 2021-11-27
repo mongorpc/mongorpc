@@ -18,12 +18,6 @@ func NewClient(address string) *MongoRPCClient {
 	}
 }
 
-func NewAdminClient(address string) *MongoRPCClient {
-	return &MongoRPCClient{
-		address: address,
-	}
-}
-
 func (c *MongoRPCClient) Connect(opts ...grpc.DialOption) (*grpc.ClientConn, error) {
 	conn, err := grpc.Dial(
 		c.address,
@@ -33,9 +27,9 @@ func (c *MongoRPCClient) Connect(opts ...grpc.DialOption) (*grpc.ClientConn, err
 		return nil, err
 	}
 
-	admin := mongorpc.NewMongoRPCAdminClient(conn)
+	c.mongorpc = mongorpc.NewMongoRPCClient(conn)
+	c.admin = mongorpc.NewMongoRPCAdminClient(conn)
 	c.client = conn
-	c.admin = admin
 
 	return conn, nil
 }
