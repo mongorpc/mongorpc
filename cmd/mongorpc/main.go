@@ -35,7 +35,7 @@ func main() {
 			},
 			&cli.IntFlag{
 				Name:        "port",
-				Value:       9090,
+				Value:       1203,
 				Usage:       "the port on which the server will listen",
 				Destination: &config.port,
 				EnvVars:     []string{"PORT"},

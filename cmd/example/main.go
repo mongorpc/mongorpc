@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	c := client.NewClient("localhost:9090")
+	c := client.NewClient("localhost:1203")
 	conn, err := c.Connect(
 		grpc.WithInsecure(),
 		grpc.WithBlock(),
