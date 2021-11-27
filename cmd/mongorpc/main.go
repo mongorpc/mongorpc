@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/mongorpc/mongorpc/lib"
+	"github.com/mongorpc/mongorpc/lib/mongorpc"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -60,14 +61,19 @@ func main() {
 				return err
 			}
 
-			// srv := lib.NewGRPCServer()
-			// mongoRPCServer := lib.NewMongoRPCServer(database)
-			// mongorpc.RegisterMongoRPCServer(srv, mongoRPCServer)
-			// mongoRPCAdminServer := lib.NewMongoRPCAdminServer(database)
-			// mongorpc.RegisterMongoRPCAdminServer(srv, mongoRPCAdminServer)
+			srv := lib.NewGRPCServer()
+			mongoRPCServer := lib.NewMongoRPCServer(database)
+			mongorpc.RegisterMongoRPCServer(srv, mongoRPCServer)
+			mongoRPCAdminServer := lib.NewMongoRPCAdminServer(database)
+			mongorpc.RegisterMongoRPCAdminServer(srv, mongoRPCAdminServer)
+
+			mongoRPCServer.Authorise = func(ctx context.Context, req interface{}) error {
+				logrus.Infof("authorise request: %+v", req)
+				return nil
+			}
 
 			// MongoRPC with MongoRPC Admin
-			srv := lib.NewServer(database)
+			// srv := lib.NewServer(database)
 
 			// listen on the port
 			listener, err := net.Listen("tcp", port)

@@ -1,6 +1,8 @@
 package lib
 
 import (
+	"context"
+
 	"github.com/mongorpc/mongorpc/lib/mongorpc"
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc"
@@ -9,6 +11,8 @@ import (
 type MongoRPCServer struct {
 	mongorpc.UnimplementedMongoRPCServer
 	DB *mongo.Client
+
+	Authorise func(context.Context, interface{}) error
 }
 
 type MongoRPCAdminServer struct {

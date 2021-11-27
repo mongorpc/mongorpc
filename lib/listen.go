@@ -9,6 +9,12 @@ import (
 
 func (srv *MongoRPCServer) Listen(in *mongorpc.ListenRequest, stream mongorpc.MongoRPC_ListenServer) error {
 
+	if srv.Authorise != nil {
+		if err := srv.Authorise(stream.Context(), in); err != nil {
+			return err
+		}
+	}
+
 	// Pipeline
 	// TODO: check if pipeline decoder is working
 	var pipeline []interface{}
