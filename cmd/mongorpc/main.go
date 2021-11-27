@@ -2,16 +2,25 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"net"
 	"os"
 
-	"github.com/mongorpc/mongorpc"
+	"github.com/mongorpc/mongorpc/lib"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
-	"google.golang.org/grpc"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+type Config struct {
+	mongoURI string
+	port     int
+	debug    bool
+}
+
 func main() {
-	config := &mongorpc.Config{}
+	config := &Config{}
 
 	app := &cli.App{
 		Name:  "mongorpc",
@@ -21,22 +30,55 @@ func main() {
 				Name:        "mongodb",
 				Value:       "mongodb://localhost:27017",
 				Usage:       "the mongodb uri",
-				Destination: &config.MongodbURI,
+				Destination: &config.mongoURI,
 				EnvVars:     []string{"MONGO_URI"},
 			},
 			&cli.IntFlag{
 				Name:        "port",
-				Value:       9090,
+				Value:       1203,
 				Usage:       "the port on which the server will listen",
-				Destination: &config.Port,
+				Destination: &config.port,
 				EnvVars:     []string{"PORT"},
 			},
+			&cli.BoolFlag{
+				Name:        "debug",
+				Usage:       "enable debug mode",
+				Value:       false,
+				Destination: &config.debug,
+				EnvVars:     []string{"DEBUG"},
+			},
 		},
-		Action: func(c *cli.Context) error {
-			config.UnaryServerInterceptors = append(config.UnaryServerInterceptors, UnaryInterceptor)
-			config.StreamServerInterceptors = append(config.StreamServerInterceptors, StreamInterceptor)
+		Action: func(ctx *cli.Context) error {
+			port := fmt.Sprintf("0.0.0.0:%d", config.port)
 
-			err := mongorpc.Serve(c.Context, config)
+			if config.debug {
+				logrus.SetLevel(logrus.DebugLevel)
+			}
+
+			database, err := ConnectDatabase(ctx.Context, config.mongoURI)
+			if err != nil {
+				return err
+			}
+
+			// srv := lib.NewGRPCServer()
+			// mongoRPCServer := lib.NewMongoRPCServer(database)
+			// mongorpc.RegisterMongoRPCServer(srv, mongoRPCServer)
+			// mongoRPCAdminServer := lib.NewMongoRPCAdminServer(database)
+			// mongorpc.RegisterMongoRPCAdminServer(srv, mongoRPCAdminServer)
+
+			// MongoRPC with MongoRPC Admin
+			srv := lib.NewServer(database)
+
+			// listen on the port
+			listener, err := net.Listen("tcp", port)
+			if err != nil {
+				return err
+			}
+
+			logrus.Printf("mongorpc server is listening at %v", listener.Addr())
+
+			// start the server
+			err = srv.Serve(listener)
 			return err
 		},
 	}
@@ -47,12 +89,18 @@ func main() {
 	}
 }
 
-func UnaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-	logrus.Infoln("method: ", info.FullMethod)
-	return handler(ctx, req)
-}
+func ConnectDatabase(ctx context.Context, mongoURI string) (*mongo.Client, error) {
+	// connect to mongodb
+	database, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoURI))
+	if err != nil {
+		return nil, err
+	}
 
-func StreamInterceptor(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
-	logrus.Infoln("method: ", info.FullMethod)
-	return handler(srv, stream)
+	// ping mongodb to check if it's up
+	err = database.Ping(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return database, nil
 }
