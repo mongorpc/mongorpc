@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/x/bsonx"
 )
 
-func (srv *MongoRPCAdminServer) ListDatabases(ctx context.Context, in *mongorpc.Empty) (*mongorpc.Value, error) {
+func (srv *MongoRPCAdminServer) ListDatabases(ctx context.Context, _ *mongorpc.Empty) (*mongorpc.Value, error) {
 	filter := bson.D{}
 	databases, err := srv.DB.ListDatabaseNames(ctx, filter, nil)
 	if err != nil {
