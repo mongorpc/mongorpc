@@ -49,5 +49,7 @@ Future<void> main(List<String> args) async {
 }
 ```
 
-**Deployment**
+
+---
+**Deploy**
 [Run on Google Cloud](https://deploy.cloud.run)
