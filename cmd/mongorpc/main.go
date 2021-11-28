@@ -67,6 +67,7 @@ func main() {
 			mongoRPCAdminServer := lib.NewMongoRPCAdminServer(database)
 			mongorpc.RegisterMongoRPCAdminServer(srv, mongoRPCAdminServer)
 
+			// this middleware used for authorization of listen requests (mongorpc change request)
 			mongoRPCServer.Authorise = func(ctx context.Context, req interface{}) error {
 				logrus.Infof("authorise request: %+v", req)
 				return nil
