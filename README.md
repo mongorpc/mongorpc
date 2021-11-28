@@ -6,7 +6,7 @@ mongorpc is a server that can be used to communicate with **MongoDB** using **gR
 
 mongorpc has many client libraries for different langauges and platforms. that provides a **ORM** **like** **interface** to interact with MongoDB.
 
-mongorpc is in really early development, and things may change before we release version 1.0.
+**mongorpc is in really early development, and things may change before we release version 1.0.**
 
 Clients
 ------
@@ -25,60 +25,31 @@ const document = await client
   .get();
 
 console.log(document);
+```
 
-// Text Search Documents (MongoDB 4.0+) (https://docs.mongodb.com/manual/text-search/)
-// Requires to create index on `title` field first
-const documents = await client
-  .database("sample_mflix")
-  .collection("movies")
-  .search("The Shawshank Redemption")
-  .get();
+- **Dart** https://github.com/mongorpc/mongorpc-dart
 
-console.log(documents);
+```dart
+import 'package:mongorpc/mongorpc.dart';
+
+Future<void> main(List<String> args) async {
+  var options = ChannelOptions(credentials: ChannelCredentials.insecure());
+  var client = await mongorpc("localhost", port: 1203, options: options);
+
+  var database = client.database("sample_mflix");
+  var collection = database.collection("movies");
+
+  var documents = await collection
+      .documents()
+      .limit(10)
+      .sort(by: "title")
+      .where("title", isEqualTo: "Blacksmith Scene")
+      .get();
+  print(documents);
+}
 ```
 
 
-- **Golang** https://github.com/mongorpc/mongorpc-go
-```go
-// Initilize database
-db := client.Database("sample_mflix")
-
-// Get Document By ID
-doc, err := db.Collection("movies").Document("573a13b0f29313caabd35231").Get(context.TODO())
-if err != nil {
-  fmt.Println(err)
-}
-fmt.Println(doc)
-
-// Search Documents
-docs, err := db.Collection("movies").Documents().Search("Batman").Get(context.TODO())
-if err != nil {
-  fmt.Println(err)
-}
-fmt.Println(docs)
-
-```
-
-
-- **Swift** https://github.com/mongorpc/mongorpc-swift
-
-```swift
-import MongoRPC
-
-
-let client = MongoRPC(host: "localhost", port: 27051)
-
-client.database("sample_mflix").collection("movies").document(id: "573a13b0f29313caabd35231").get { result in
-
-    switch result {
-    case let .success(document):
-        print(document)
-    case let .failure(error):
-        print(error.localizedDescription)
-    }
-}
-
-```
-
-**Deployment**
+---
+**Deploy**
 [Run on Google Cloud](https://deploy.cloud.run)
