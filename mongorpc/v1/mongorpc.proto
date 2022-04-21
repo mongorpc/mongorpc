@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package mongorpc.v1;
+
+option go_package = "github.com/mongorpc/mongorpc;mongorpc";
+
+// import "google/api/annotations.proto";
+// import "google/protobuf/empty.proto";
+
+service MongoRPC {}
