@@ -4,7 +4,49 @@ package mongorpc.v1;
 
 option go_package = "github.com/mongorpc/mongorpc;mongorpc";
 
+import "google/protobuf/struct.proto";
 // import "google/api/annotations.proto";
 // import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 
-service MongoRPC {}
+service MongoRPC {
+  rpc GetDocument(GetDocumentRequest) returns (Document);
+}
+
+// BSON is a BSON document.
+message Document {
+  // Unordered map of dynamically typed values.
+  map<string, Value> fields = 1;
+}
+
+// Type is a BSON type of a field.
+message Value {
+  // The kind of value.
+  oneof kind {
+    // Represents a null value.
+    google.protobuf.NullValue null_value = 1;
+    // Represents a double value.
+    double number_value = 2;
+    // Represents a string value.
+    string string_value = 3;
+    // Represents a boolean value.
+    bool bool_value = 4;
+    // Represents a structured value.
+    google.protobuf.Struct struct_value = 5;
+    // Represents a repeated `Value`.
+    google.protobuf.ListValue list_value = 6;
+    // Represents a binary value.
+    bytes binary_value = 7;
+    // Represents a timestamp value.
+    google.protobuf.Timestamp timestamp_value = 8;
+  }
+}
+
+message GetDocumentRequest {
+  // The database to query
+  string database = 1;
+  // The collection to query
+  string collection = 2;
+  // The document to query
+  string document_id = 3;
+}
