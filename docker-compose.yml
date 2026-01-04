@@ -1,0 +1,35 @@
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: mongorpc-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongodb_data:/data/db
+      - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    command: [ "mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/dev/null" ]
+    healthcheck:
+      test: [ "CMD", "mongosh", "-u", "root", "-p", "password", "--authenticationDatabase", "admin", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  # Standalone MongoDB for simpler testing (no replica set required)
+  mongodb-standalone:
+    image: mongo:7.0
+    container_name: mongorpc-mongodb-standalone
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongodb_standalone_data:/data/db
+
+volumes:
+  mongodb_data:
+  mongodb_standalone_data:
