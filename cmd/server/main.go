@@ -26,8 +26,9 @@ import (
 
 func main() {
 	app := &cli.App{
-		Name:  "mongorpc",
-		Usage: "A gRPC proxy for MongoDB",
+		Name:    "mongorpc",
+		Version: "1.0.0",
+		Usage:   "A gRPC proxy for MongoDB",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:    "address",
