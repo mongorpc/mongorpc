@@ -83,6 +83,16 @@ func main() {
 				Usage:   "Enable OpenTelemetry tracing",
 				EnvVars: []string{"ENABLE_TRACING"},
 			},
+			&cli.StringFlag{
+				Name:    "admin-key",
+				Usage:   "Admin API key for privileged operations",
+				EnvVars: []string{"MONGORPC_ADMIN_KEY"},
+			},
+			&cli.StringFlag{
+				Name:    "admin-secret",
+				Usage:   "Admin API secret for privileged operations",
+				EnvVars: []string{"MONGORPC_ADMIN_SECRET"},
+			},
 		},
 		Action: run,
 	}
@@ -185,8 +195,12 @@ func run(c *cli.Context) error {
 	)
 
 	// Register MongoRPC service
-	// Register MongoRPC service
-	mongorpcService := mongorpcapi.NewServer(mongoClient, rulesEngine)
+	adminKey := c.String("admin-key")
+	adminSecret := c.String("admin-secret")
+	if adminKey != "" && adminSecret != "" {
+		slog.Info("Admin API enabled")
+	}
+	mongorpcService := mongorpcapi.NewServer(mongoClient, rulesEngine, adminKey, adminSecret)
 	mongorpcv1.RegisterMongoRPCServer(grpcServer, mongorpcService)
 
 	// Enable reflection for debugging

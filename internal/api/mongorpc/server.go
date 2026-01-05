@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
 	mongorpcv1 "github.com/mongorpc/mongorpc/gen/mongorpc/v1"
@@ -20,16 +21,41 @@ import (
 // Server implements the MongoRPC gRPC service.
 type Server struct {
 	mongorpcv1.UnimplementedMongoRPCServer
-	db    *mongodb.Client
-	rules *rules.Engine
+	db          *mongodb.Client
+	rules       *rules.Engine
+	adminKey    string
+	adminSecret string
 }
 
 // NewServer creates a new MongoRPC server.
-func NewServer(db *mongodb.Client, rules *rules.Engine) *Server {
+func NewServer(db *mongodb.Client, rules *rules.Engine, adminKey, adminSecret string) *Server {
 	return &Server{
-		db:    db,
-		rules: rules,
+		db:          db,
+		rules:       rules,
+		adminKey:    adminKey,
+		adminSecret: adminSecret,
 	}
+}
+
+// isAdmin checks if the request has valid admin credentials.
+func (s *Server) isAdmin(ctx context.Context) bool {
+	if s.adminKey == "" || s.adminSecret == "" {
+		return false // Admin not configured
+	}
+
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return false
+	}
+
+	keys := md.Get("x-admin-key")
+	secrets := md.Get("x-admin-secret")
+
+	if len(keys) == 0 || len(secrets) == 0 {
+		return false
+	}
+
+	return keys[0] == s.adminKey && secrets[0] == s.adminSecret
 }
 
 // GetDocument retrieves a single document by ID.
