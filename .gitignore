@@ -19,4 +19,4 @@ dist/
 .envoy
 examples/
 scripts/mongo-keyfile
-scripts/mongo-init.js
+scripts/mongo-init.jsserver
