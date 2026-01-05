@@ -171,6 +171,9 @@ func run(c *cli.Context) error {
 	} else {
 		rulesEngine.SetDefaultAllow(rules.OpRead, true)
 		rulesEngine.SetDefaultAllow(rules.OpList, true)
+		rulesEngine.SetDefaultAllow(rules.OpCreate, true)
+		rulesEngine.SetDefaultAllow(rules.OpUpdate, true)
+		rulesEngine.SetDefaultAllow(rules.OpDelete, true)
 		unaryChain = append(unaryChain, rules.RulesInterceptor(rulesEngine))
 		streamChain = append(streamChain, rules.StreamRulesInterceptor(rulesEngine))
 	}

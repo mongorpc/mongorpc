@@ -84,6 +84,65 @@ func (s *Server) UpdateDocument(ctx context.Context, req *mongorpcv1.UpdateDocum
 	return response, nil
 }
 
+// UpdateMany updates multiple documents.
+func (s *Server) UpdateMany(ctx context.Context, req *mongorpcv1.UpdateManyRequest) (*mongorpcv1.UpdateManyResponse, error) {
+	if req.Database == "" || req.Collection == "" {
+		return nil, status.Error(codes.InvalidArgument, "database and collection are required")
+	}
+	if req.Update == nil {
+		return nil, status.Error(codes.InvalidArgument, "update specification is required")
+	}
+
+	slog.Debug("UpdateMany", "database", req.Database, "collection", req.Collection)
+
+	// Get collection
+	coll := s.db.Client().Database(req.Database).Collection(req.Collection)
+
+	// Build filter
+	filter := bson.D{}
+	if req.Filter != nil {
+		var err error
+		filter, err = filterToBSON(req.Filter)
+		if err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "invalid filter: %v", err)
+		}
+	}
+
+	// Build update
+	update, err := updateSpecToBSON(req.Update)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid update: %v", err)
+	}
+
+	// Build options
+	opts := options.UpdateMany()
+	if req.Upsert {
+		opts.SetUpsert(true)
+	}
+
+	// Execute update
+	result, err := coll.UpdateMany(ctx, filter, update, opts)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to update documents: %v", err)
+	}
+
+	response := &mongorpcv1.UpdateManyResponse{
+		WriteResult: &mongorpcv1.WriteResult{
+			MatchedCount:  result.MatchedCount,
+			ModifiedCount: result.ModifiedCount,
+		},
+	}
+
+	// Check for upserted ID
+	if result.UpsertedID != nil {
+		if upsertedOID, ok := result.UpsertedID.(bson.ObjectID); ok {
+			response.WriteResult.UpsertedId = &mongorpcv1.ObjectId{Hex: upsertedOID.Hex()}
+		}
+	}
+
+	return response, nil
+}
+
 // CountDocuments counts documents matching a filter.
 func (s *Server) CountDocuments(ctx context.Context, req *mongorpcv1.CountDocumentsRequest) (*mongorpcv1.CountDocumentsResponse, error) {
 	if req.Database == "" || req.Collection == "" {

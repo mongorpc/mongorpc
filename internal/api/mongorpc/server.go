@@ -113,6 +113,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *mongorpcv1.CreateDocum
 			ObjectIdValue: &mongorpcv1.ObjectId{Hex: insertedID.Hex()},
 		},
 	}
+	req.Document.Id = &mongorpcv1.ObjectId{Hex: insertedID.Hex()}
 
 	return &mongorpcv1.CreateDocumentResponse{
 		Document: req.Document,
@@ -228,6 +229,12 @@ func bsonToDocument(m bson.M) (*mongorpcv1.Document, error) {
 			return nil, fmt.Errorf("failed to convert field %s: %w", key, err)
 		}
 		doc.Fields[key] = protoVal
+
+		if key == "_id" {
+			if v, ok := protoVal.ValueType.(*mongorpcv1.Value_ObjectIdValue); ok {
+				doc.Id = v.ObjectIdValue
+			}
+		}
 	}
 
 	return doc, nil
@@ -385,7 +392,22 @@ func valueToBSON(val *mongorpcv1.Value) (interface{}, error) {
 
 // filterToBSON converts a proto Filter to BSON filter.
 func filterToBSON(filter *mongorpcv1.Filter) (bson.D, error) {
-	// TODO: Implement full filter conversion
-	// For now, return empty filter
+	if filter == nil {
+		return bson.D{}, nil
+	}
+
+	// Handle Raw filter (MapValue)
+	if raw := filter.GetRaw(); raw != nil {
+		result := bson.D{}
+		for k, v := range raw.Fields {
+			bsonVal, err := valueToBSON(v)
+			if err != nil {
+				return nil, fmt.Errorf("failed to convert filter field %s: %w", k, err)
+			}
+			result = append(result, bson.E{Key: k, Value: bsonVal})
+		}
+		return result, nil
+	}
+
 	return bson.D{}, nil
 }
