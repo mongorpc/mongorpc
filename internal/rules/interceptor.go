@@ -166,8 +166,59 @@ func extractIncomingData(req interface{}) map[string]interface{} {
 		if r.Document != nil {
 			return documentToMap(r.Document)
 		}
+	case *mongorpcv1.UpdateDocumentRequest:
+		if r.Update != nil {
+			return updateSpecToMap(r.Update)
+		}
 	}
 	return nil
+}
+
+func updateSpecToMap(spec *mongorpcv1.UpdateSpec) map[string]interface{} {
+	if spec == nil {
+		return nil
+	}
+	result := make(map[string]interface{})
+
+	// Handle Operators
+	if ops := spec.GetOperators(); ops != nil {
+		// helper to convert map value
+		convertMap := func(m map[string]*mongorpcv1.Value) map[string]interface{} {
+			res := make(map[string]interface{})
+			for k, v := range m {
+				res[k], _ = valueToInterface(v)
+			}
+			return res
+		}
+
+		if ops.Set != nil {
+			result["$set"] = convertMap(ops.Set)
+		}
+		if ops.Unset != nil {
+			result["$unset"] = ops.Unset
+		}
+		if ops.Inc != nil {
+			result["$inc"] = convertMap(ops.Inc)
+		}
+		if ops.Mul != nil {
+			result["$mul"] = convertMap(ops.Mul)
+		}
+		if ops.Min != nil {
+			result["$min"] = convertMap(ops.Min)
+		}
+		if ops.Max != nil {
+			result["$max"] = convertMap(ops.Max)
+		}
+		if ops.Rename != nil {
+			res := make(map[string]interface{})
+			for k, v := range ops.Rename {
+				res[k] = v
+			}
+			result["$rename"] = res
+		}
+	}
+
+	return result
 }
 
 func documentToMap(doc *mongorpcv1.Document) map[string]interface{} {
