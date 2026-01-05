@@ -93,6 +93,11 @@ func main() {
 				Usage:   "Admin API secret for privileged operations",
 				EnvVars: []string{"MONGORPC_ADMIN_SECRET"},
 			},
+			&cli.StringFlag{
+				Name:    "rules",
+				Usage:   "Path to security rules YAML file",
+				EnvVars: []string{"MONGORPC_RULES"},
+			},
 		},
 		Action: run,
 	}
@@ -175,15 +180,27 @@ func run(c *cli.Context) error {
 	unaryChain = append(unaryChain, middleware.ValidationInterceptor())
 
 	// Add rules engine
-	rulesEngine, err := rules.NewEngine()
+	var rulesEngine *rules.Engine
+
+	rulesPath := c.String("rules")
+	if rulesPath != "" {
+		slog.Info("Loading rules from file", "path", rulesPath)
+		rulesEngine, err = rules.LoadFromFile(rulesPath)
+	} else {
+		rulesEngine, err = rules.NewEngine()
+		if err == nil {
+			// Default to allow all if no rules file provided
+			rulesEngine.SetDefaultAllow(rules.OpRead, true)
+			rulesEngine.SetDefaultAllow(rules.OpList, true)
+			rulesEngine.SetDefaultAllow(rules.OpCreate, true)
+			rulesEngine.SetDefaultAllow(rules.OpUpdate, true)
+			rulesEngine.SetDefaultAllow(rules.OpDelete, true)
+		}
+	}
+
 	if err != nil {
 		slog.Warn("Failed to create rules engine", "error", err)
 	} else {
-		rulesEngine.SetDefaultAllow(rules.OpRead, true)
-		rulesEngine.SetDefaultAllow(rules.OpList, true)
-		rulesEngine.SetDefaultAllow(rules.OpCreate, true)
-		rulesEngine.SetDefaultAllow(rules.OpUpdate, true)
-		rulesEngine.SetDefaultAllow(rules.OpDelete, true)
 		unaryChain = append(unaryChain, rules.RulesInterceptor(rulesEngine))
 		streamChain = append(streamChain, rules.StreamRulesInterceptor(rulesEngine))
 	}

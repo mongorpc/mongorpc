@@ -20,3 +20,4 @@ dist/
 examples/
 scripts/mongo-keyfile
 scripts/mongo-init.jsserver
+mongorpc-server

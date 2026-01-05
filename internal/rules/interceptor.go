@@ -3,9 +3,11 @@ package rules
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"strings"
 
+	mongorpcv1 "github.com/mongorpc/mongorpc/gen/mongorpc/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -34,13 +36,14 @@ func RulesInterceptor(engine *Engine) grpc.UnaryServerInterceptor {
 
 		// Build rules request
 		rulesReq := &Request{
-			UserID:     userID,
-			UserEmail:  userEmail,
-			IsAdmin:    isAdmin,
-			Database:   database,
-			Collection: collection,
-			DocumentID: docID,
-			Operation:  operation,
+			UserID:       userID,
+			UserEmail:    userEmail,
+			IsAdmin:      isAdmin,
+			Database:     database,
+			Collection:   collection,
+			DocumentID:   docID,
+			Operation:    operation,
+			IncomingData: extractIncomingData(req),
 		}
 
 		// Evaluate rules
@@ -153,4 +156,83 @@ func extractAuthInfo(ctx context.Context) (userID, userEmail string, isAdmin boo
 	}
 
 	return
+}
+
+// extractIncomingData extracts data from the request.
+// extractIncomingData extracts data from the request.
+func extractIncomingData(req interface{}) map[string]interface{} {
+	switch r := req.(type) {
+	case *mongorpcv1.CreateDocumentRequest:
+		if r.Document != nil {
+			return documentToMap(r.Document)
+		}
+	}
+	return nil
+}
+
+func documentToMap(doc *mongorpcv1.Document) map[string]interface{} {
+	if doc == nil || doc.Fields == nil {
+		return nil
+	}
+	result := make(map[string]interface{})
+	for k, v := range doc.Fields {
+		result[k], _ = valueToInterface(v)
+	}
+	return result
+}
+
+func valueToInterface(val *mongorpcv1.Value) (interface{}, error) {
+	if val == nil {
+		return nil, nil
+	}
+
+	switch v := val.ValueType.(type) {
+	case *mongorpcv1.Value_NullValue:
+		return nil, nil
+	case *mongorpcv1.Value_BooleanValue:
+		return v.BooleanValue, nil
+	case *mongorpcv1.Value_Int32Value:
+		return v.Int32Value, nil
+	case *mongorpcv1.Value_Int64Value:
+		return v.Int64Value, nil
+	case *mongorpcv1.Value_DoubleValue:
+		return v.DoubleValue, nil
+	case *mongorpcv1.Value_StringValue:
+		return v.StringValue, nil
+	case *mongorpcv1.Value_BytesValue:
+		return v.BytesValue, nil
+	case *mongorpcv1.Value_ObjectIdValue:
+		if v.ObjectIdValue == nil {
+			return nil, nil
+		}
+		return v.ObjectIdValue.Hex, nil
+	case *mongorpcv1.Value_MapValue:
+		if v.MapValue == nil {
+			return nil, nil
+		}
+		result := make(map[string]interface{})
+		for k, fieldVal := range v.MapValue.Fields {
+			val, err := valueToInterface(fieldVal)
+			if err != nil {
+				return nil, err
+			}
+			result[k] = val
+		}
+		return result, nil
+	case *mongorpcv1.Value_ArrayValue:
+		if v.ArrayValue == nil {
+			return nil, nil
+		}
+		result := make([]interface{}, 0, len(v.ArrayValue.Values))
+		for _, itemVal := range v.ArrayValue.Values {
+			val, err := valueToInterface(itemVal)
+			if err != nil {
+				return nil, err
+			}
+			result = append(result, val)
+		}
+		return result, nil
+	default:
+		return nil, fmt.Errorf("unsupported value type: %T", val.ValueType)
+	}
 }
