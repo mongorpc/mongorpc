@@ -185,7 +185,8 @@ func run(c *cli.Context) error {
 	)
 
 	// Register MongoRPC service
-	mongorpcService := mongorpcapi.NewServer(mongoClient)
+	// Register MongoRPC service
+	mongorpcService := mongorpcapi.NewServer(mongoClient, rulesEngine)
 	mongorpcv1.RegisterMongoRPCServer(grpcServer, mongorpcService)
 
 	// Enable reflection for debugging

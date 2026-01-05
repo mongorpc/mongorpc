@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	mongorpcv1 "github.com/mongorpc/mongorpc/gen/mongorpc/v1"
+	"github.com/mongorpc/mongorpc/internal/rules"
 )
 
 // Aggregate runs an aggregation pipeline with streaming results.
@@ -182,12 +183,10 @@ func (s *Server) Watch(req *mongorpcv1.WatchRequest, stream mongorpcv1.MongoRPC_
 
 	// Build options
 	opts := options.ChangeStream()
+	// FORCE UpdateLookup to ensure we have data for rules
+	opts.SetFullDocument(options.UpdateLookup)
+
 	if req.Options != nil {
-		if req.Options.FullDocument == mongorpcv1.FullDocument_UPDATE_LOOKUP {
-			opts.SetFullDocument(options.UpdateLookup)
-		} else if req.Options.FullDocument == mongorpcv1.FullDocument_WHEN_AVAILABLE {
-			opts.SetFullDocument(options.WhenAvailable)
-		}
 		if req.Options.BatchSize > 0 {
 			opts.SetBatchSize(req.Options.BatchSize)
 		}
@@ -198,6 +197,9 @@ func (s *Server) Watch(req *mongorpcv1.WatchRequest, stream mongorpcv1.MongoRPC_
 			}
 		}
 	}
+
+	// FORCE UpdateLookup to ensure we have data for rules
+	opts.SetFullDocument(options.UpdateLookup)
 
 	// Start change stream
 	changeStream, err := coll.Watch(ctx, pipeline, opts)
@@ -211,6 +213,49 @@ func (s *Server) Watch(req *mongorpcv1.WatchRequest, stream mongorpcv1.MongoRPC_
 		var change bson.M
 		if err := changeStream.Decode(&change); err != nil {
 			return status.Errorf(codes.Internal, "failed to decode change: %v", err)
+		}
+
+		// Security Check: Evaluate rules
+		var op rules.Operation = rules.OpRead
+		var resource map[string]interface{}
+
+		// Use fullDocument as resource data
+		if fullDoc, ok := change["fullDocument"].(bson.M); ok {
+			resource = fullDoc
+		}
+
+		// Handle Deletes: Deletes might not have fullDocument.
+		// For MVP: If no fullDocument (delete), we allow if rule matches ID or doesn't check 'resource.data'
+		if opType, ok := change["operationType"].(string); ok && opType == "delete" {
+			// Extract document key for delete check if needed
+			if docKey, ok := change["documentKey"].(bson.M); ok {
+				if id, ok := docKey["_id"].(bson.ObjectID); ok {
+					if resource == nil {
+						resource = make(map[string]interface{})
+					}
+					resource["_id"] = id.Hex()
+				}
+			}
+		}
+
+		ruleReq := &rules.Request{
+			Operation:    op,
+			Database:     req.Database,
+			Collection:   req.Collection,
+			ExistingData: resource,
+		}
+
+		if s.rules != nil {
+			allowed, err := s.rules.Evaluate(ctx, ruleReq)
+			if err != nil {
+				slog.Error("Rule evaluation error", "error", err)
+				// Fail shut: if evaluation errors, deny access
+				continue
+			}
+			if !allowed {
+				// Silently drop unauthorized event
+				continue
+			}
 		}
 
 		// Build change event

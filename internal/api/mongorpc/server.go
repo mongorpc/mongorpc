@@ -14,17 +14,22 @@ import (
 
 	mongorpcv1 "github.com/mongorpc/mongorpc/gen/mongorpc/v1"
 	"github.com/mongorpc/mongorpc/internal/repository/mongodb"
+	"github.com/mongorpc/mongorpc/internal/rules"
 )
 
 // Server implements the MongoRPC gRPC service.
 type Server struct {
 	mongorpcv1.UnimplementedMongoRPCServer
-	db *mongodb.Client
+	db    *mongodb.Client
+	rules *rules.Engine
 }
 
 // NewServer creates a new MongoRPC server.
-func NewServer(db *mongodb.Client) *Server {
-	return &Server{db: db}
+func NewServer(db *mongodb.Client, rules *rules.Engine) *Server {
+	return &Server{
+		db:    db,
+		rules: rules,
+	}
 }
 
 // GetDocument retrieves a single document by ID.
